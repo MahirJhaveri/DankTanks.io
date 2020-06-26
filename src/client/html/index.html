@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sample.io</title>
+</head>
+
+<body>
+    <canvas id="game-canvas" style="z-index:0;"></canvas>
+
+    <canvas id="map-canvas" style="position: absolute; left: 0; top: 0; z-index:1;"></canvas>
+
+
+    <div id="play-menu" class="hidden" style="z-index:2;">
+        <h1>Sample .io Game</h1>
+
+        <input type="text" id="username-input" placeholder="Username" />
+        <button id="play-button">PLAY</button>
+    </div>
+
+    <div id="leaderboard" class="hidden" style="z-index:2;">
+        <h4>Leaderboard</h4>
+        <table>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="scorecard" class="hidden" style="z-index:2;">
+        <h5>Score: <span></span></h5>
+    </div>
+
+</body>
+
+</html>
