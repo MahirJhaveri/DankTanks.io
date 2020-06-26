@@ -41,8 +41,8 @@ const game = new Game();
 
 // NOTE: This keyword ??? idk how that works??
 
-function joinGame(username) {
-    game.addPlayer(this, username);
+function joinGame(msg) {
+    game.addPlayer(this, msg.username, (msg.color) ? msg.color : Constants.TANK.BLUE);
 }
 
 // Use the mouse data to move the turret

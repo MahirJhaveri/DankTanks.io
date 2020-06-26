@@ -3,7 +3,7 @@ const Bullet = require('./bullet');
 const Constants = require('../shared/constants');
 
 class Player extends ObjectClass {
-    constructor(id, username, x, y) {
+    constructor(id, username, x, y, tankStyle) {
         super(id, x, y, Math.PI / 2, Constants.PLAYER_SPEED);
         //super(id, x, y, Math.random() * 2 * Math.PI, Constants.PLAYER_SPEED);
         this.username = username;
@@ -11,6 +11,7 @@ class Player extends ObjectClass {
         this.fireCooldown = 0;
         this.score = 0;
         this.turretDirection = Math.random() * 2 * Math.PI; // Set Initial turret direction randomnly
+        this.tankStyle = tankStyle;
     }
 
     update(dt) {
@@ -44,7 +45,8 @@ class Player extends ObjectClass {
             direction: this.direction,
             turretDirection: this.turretDirection,
             username: this.username,
-            hp: this.hp
+            hp: this.hp,
+            tankStyle: this.tankStyle
         };
     }
 
@@ -52,7 +54,7 @@ class Player extends ObjectClass {
     serializeForMapUpdate() {
         return {
             x: this.x,
-            y: this.y,
+            y: this.y
         }
     }
 

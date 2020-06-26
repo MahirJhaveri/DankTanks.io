@@ -1,4 +1,4 @@
-import { getAsset } from './assets';
+import { getAsset, getTank, getTurret } from './assets';
 import { getCurrentState } from './state';
 
 const Constants = require('../../shared/constants');
@@ -64,7 +64,7 @@ function renderBullet(me, bullet) {
 // renders a player at the given coordinates
 // enemy: Boolean -> if the player is the user or an enemy
 function renderPlayer(me, player) {
-    const { x, y, direction, turretDirection, username } = player;
+    const { x, y, direction, turretDirection, username, tankStyle } = player;
     const canvasX = canvas.width / 2 + x - me.x;
     const canvasY = canvas.height / 2 + y - me.y;
 
@@ -74,23 +74,13 @@ function renderPlayer(me, player) {
     context.rotate(direction);
 
     // If self, then blue, else red
-    if (me == player) {
-        context.drawImage(
-            getAsset('TankBlue.png'),
-            -PLAYER_RADIUS,
-            -PLAYER_RADIUS,
-            PLAYER_RADIUS * 2,
-            PLAYER_RADIUS * 2,
-        );
-    } else {
-        context.drawImage(
-            getAsset('TankRed.png'),
-            -PLAYER_RADIUS,
-            -PLAYER_RADIUS,
-            PLAYER_RADIUS * 2,
-            PLAYER_RADIUS * 2,
-        );
-    }
+    context.drawImage(
+        getTank(tankStyle),
+        -PLAYER_RADIUS,
+        -PLAYER_RADIUS,
+        PLAYER_RADIUS * 2,
+        PLAYER_RADIUS * 2,
+    );
     context.restore();
 
     // Draw the turret
@@ -98,23 +88,13 @@ function renderPlayer(me, player) {
     context.translate(canvasX, canvasY);
     context.rotate(turretDirection);
 
-    if (me == player) {
-        context.drawImage(
-            getAsset('TurretBlue.png'),
-            -12.5,
-            -25,
-            25,
-            40,
-        );
-    } else {
-        context.drawImage(
-            getAsset('TurretRed.png'),
-            -12.5,
-            -25,
-            25,
-            40,
-        );
-    }
+    context.drawImage(
+        getTurret(tankStyle),
+        -12.5,
+        -25,
+        25,
+        40,
+    );
     context.restore();
 
     // Draw health bar

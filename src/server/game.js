@@ -16,12 +16,12 @@ class Game {
         setInterval(this.update_map.bind(this), 1000 / 5); // send out map updates at 5fps
     }
 
-    addPlayer(socket, username) {
+    addPlayer(socket, username, tankStyle) {
         this.sockets[socket.id] = socket;
 
         const x = Constants.MAP_SIZE * (0.25 + Math.random() * 0.5);
         const y = Constants.MAP_SIZE * (0.25 + Math.random() * 0.5);
-        this.players[socket.id] = new Player(socket.id, username, x, y);
+        this.players[socket.id] = new Player(socket.id, username, x, y, tankStyle);
     }
 
     removePlayer(socket) {
