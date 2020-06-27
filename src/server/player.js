@@ -46,7 +46,7 @@ class Player extends ObjectClass {
             turretDirection: this.turretDirection,
             username: this.username,
             hp: this.hp,
-            tankStyle: this.tankStyle
+            tankStyle: this.tankStyle,
         };
     }
 

@@ -27,8 +27,8 @@ export const connect = onGameOver => (
 );
 
 // join game with username
-export const play = username => {
-    socket.emit(Constants.MSG_TYPES.JOIN_GAME, { username: username });
+export const play = (username, color) => {
+    socket.emit(Constants.MSG_TYPES.JOIN_GAME, { username: username, color: color });
 };
 
 

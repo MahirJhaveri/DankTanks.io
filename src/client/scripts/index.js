@@ -5,6 +5,7 @@ import { downloadAssets } from './assets';
 import { initState } from './state';
 import { startRenderingLeaderboard, stopRenderingLeaderboard } from './leaderboard';
 import { startRenderingMap, stopRenderingMap } from './map';
+import { initChooseTankController, getTankStyle } from './chooseTankController';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
@@ -19,10 +20,11 @@ Promise.all([
     downloadAssets(),
 ]).then(() => {
     playMenu.classList.remove('hidden');
+    initChooseTankController();
     usernameInput.focus();
     playButton.onclick = () => {
         // start playing...
-        play(usernameInput.value);
+        play(usernameInput.value, getTankStyle());
         playMenu.classList.add('hidden');
         initState();
         startCapturingInput();

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Sample.io</title>
+    <title>DankTanks.io</title>
 </head>
 
 <body>
@@ -12,8 +12,12 @@
 
 
     <div id="play-menu" class="hidden" style="z-index:2;">
-        <h1>Sample .io Game</h1>
-
+        <h1>DankTanks.io</h1>
+        <div id="choose-tank">
+            <button id="prev-tank-button" style="vertical-align:middle;">&larr;</button>
+            <canvas id="choose-tank-canvas" style="vertical-align:middle;"></canvas>
+            <button id="next-tank-button" style="vertical-align:middle;">&rarr;</button>
+        </div>
         <input type="text" id="username-input" placeholder="Username" />
         <button id="play-button">PLAY</button>
     </div>

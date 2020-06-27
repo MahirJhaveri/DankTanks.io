@@ -39,7 +39,7 @@ module.exports = Object.freeze({
     LEADERBOARD_SIZE: 5,
 
     TANK: {
-        BLUE: 'blue',
-        RED: 'red',
+        BLUE: 0,
+        RED: 1,
     },
 });
