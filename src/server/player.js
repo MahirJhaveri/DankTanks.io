@@ -1,8 +1,8 @@
-const ObjectClass = require('./Object');
+const Entity = require('./entity');
 const Bullet = require('./bullet');
 const Constants = require('../shared/constants');
 
-class Player extends ObjectClass {
+class Player extends Entity {
     constructor(id, username, x, y, tankStyle) {
         super(id, x, y, Math.PI / 2, Constants.PLAYER_SPEED);
         //super(id, x, y, Math.random() * 2 * Math.PI, Constants.PLAYER_SPEED);

@@ -2,7 +2,7 @@
 // Constants shared by both client and server
 
 module.exports = Object.freeze({
-    PLAYER_RADIUS: 30,
+    PLAYER_RADIUS: 40,
     PLAYER_MAX_HP: 100,
     PLAYER_SPEED: 300,
     PLAYER_FIRE_COOLDOWN: 0.25,
@@ -10,6 +10,8 @@ module.exports = Object.freeze({
     BULLET_RADIUS: 3,
     BULLET_SPEED: 800,
     BULLET_DAMAGE: 10,
+
+    EXPLOSION_RADIUS: 60,
 
     SCORE_BULLET_HIT: 20,
     SCORE_PER_SECOND: 1,
@@ -41,5 +43,23 @@ module.exports = Object.freeze({
     TANK: {
         BLUE: 0,
         RED: 1,
+    },
+
+    SPRITES: {
+        TANK_RED: "TankRed.png",
+        TANK_BLUE: "TankBlue.png",
+        TURRET_RED: "TurretRed.png",
+        TURRET_BLUE: "TurretBlue.png",
+        BULLET: "bullet.svg",
+        EXPLOSION: {
+            STATE1: "explosions/explosion1.png",
+            STATE2: "explosions/explosion2.png",
+            STATE3: "explosions/explosion3.png",
+            STATE4: "explosions/explosion4.png",
+            STATE5: "explosions/explosion5.png",
+            STATE6: "explosions/explosion6.png",
+            STATE7: "explosions/explosion7.png",
+            STATE8: "explosions/explosion8.png",
+        },
     },
 });

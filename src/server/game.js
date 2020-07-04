@@ -2,12 +2,14 @@ const Constants = require('../shared/constants');
 const Player = require('./player');
 const applyCollisions = require('./collisions');
 const Leaderboard = require('./leaderboard');
+const Explosion = require('./explosion');
 
 class Game {
     constructor() {
         this.sockets = {};
         this.players = {};
         this.bullets = [];
+        this.explosions = [];
         this.leaderboard = new Leaderboard(Constants.LEADERBOARD_SIZE);
         this.lastUpdateTime = Date.now();
         this.shouldSendUpdate = false;
@@ -46,14 +48,15 @@ class Game {
      * Sends out map updates, independent of game updates
      */
     update_map() {
-        const update = {
-            players: []
-        }
+        const playerLocations = [];
         Object.keys(this.players).forEach(playerID => {
-            update.players.push(this.players[playerID].serializeForMapUpdate());
+            playerLocations.push(this.players[playerID].serializeForMapUpdate());
         });
         Object.keys(this.sockets).forEach(socketID => {
-            this.sockets[socketID].emit(Constants.MSG_TYPES.MAP_UPDATE, update);
+            this.sockets[socketID].emit(Constants.MSG_TYPES.MAP_UPDATE, {
+                players: playerLocations,
+                curr: this.players[socketID].serializeForMapUpdate()
+            });
         });
     }
 
@@ -115,8 +118,22 @@ class Game {
             if (player.hp <= 0) {
                 socket.emit(Constants.MSG_TYPES.GAME_OVER);
                 this.removePlayer(socket);
+                this.explosions.push(new Explosion(player.x, player.y));
             }
         });
+
+        // update each explosion (for optimized version use linkedlist)
+        this.explosions = this.explosions.map(
+            explosion => {
+                explosion.update(dt);
+                return explosion;
+            }
+        );
+        this.explosions = this.explosions.filter(
+            explosion => explosion.state != null
+        );
+
+
 
         // Precompute the leaderboardUpdate package for efficiency
         var leaderboardUpdate = null;
@@ -158,11 +175,16 @@ class Game {
             b => b.distanceTo(player) <= Constants.MAP_SIZE / 2
         );
 
+        const nearbyExplosions = this.explosions.filter(
+            e => player.distanceTo(e) <= Constants.MAP_SIZE / 2
+        )
+
         return {
             t: Date.now(),
             me: player.serializeForUpdate(),
             others: nearbyPlayers.map(p => p.serializeForUpdate()),
-            bullets: nearbyBullets.map(b => b.serializeForUpdate())
+            bullets: nearbyBullets.map(b => b.serializeForUpdate()),
+            explosions: nearbyExplosions.map(e => e.serializeForUpdate()),
         }
     }
 }

@@ -1,4 +1,4 @@
-class Object {
+class Entity {
     constructor(id, x, y, dir, speed) {
         this.id = id;
         this.x = x;
@@ -33,4 +33,4 @@ class Object {
     }
 }
 
-module.exports = Object;
+module.exports = Entity;

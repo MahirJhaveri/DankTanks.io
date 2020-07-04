@@ -19,8 +19,6 @@ const originY = canvas.height - NAV_MAP_SIZE - 30;
 function drawPlayerOnMap(x, y) {
     context.beginPath();
     context.arc(x, y - 2, 2, 0, 2 * Math.PI, false);
-    context.lineWidth = 0.1;
-    context.fillStyle = '#FF0000';
     context.fill();
 }
 
@@ -37,9 +35,13 @@ function renderMap() {
     context.fillRect(originX + NAV_MAP_SIZE / 2, originY + NAV_MAP_SIZE / 2, NAV_MAP_SIZE / 2, NAV_MAP_SIZE / 2);
 
     if (navMap) {
+        context.lineWidth = 0.1;
+        context.fillStyle = '#FF0000';
         navMap.players.forEach(player => {
             drawPlayerOnMap(originX + (player.x * NAV_MAP_SIZE * 1.0 / MAP_SIZE), originY + (player.y * NAV_MAP_SIZE * 1.0 / MAP_SIZE));
         });
+        context.fillStyle = '#FFFF00';
+        drawPlayerOnMap(originX + (navMap.curr.x * NAV_MAP_SIZE * 1.0 / MAP_SIZE), originY + (navMap.curr.y * NAV_MAP_SIZE * 1.0 / MAP_SIZE));
     }
 }
 

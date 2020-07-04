@@ -2,7 +2,7 @@ import { getAsset, getTank, getTurret } from './assets';
 import { getCurrentState } from './state';
 
 const Constants = require('../../shared/constants');
-const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE } = Constants;
+const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES, EXPLOSION_RADIUS } = Constants;
 
 const canvas = document.getElementById('game-canvas');
 const context = canvas.getContext('2d');
@@ -14,7 +14,7 @@ canvas.height = window.innerHeight;
 // add setCanvasDimensions for supporting smaller screens
 
 function render() {
-    const { me, others, bullets } = getCurrentState();
+    const { me, others, bullets, explosions } = getCurrentState();
     if (!me) {
         return;
     }
@@ -46,6 +46,8 @@ function render() {
     // Draw all players
     renderPlayer(me, me);
     others.forEach(renderPlayer.bind(null, me));
+
+    explosions.forEach(renderExplosion.bind(null, me));
 }
 
 // ... Helper functions here excluded
@@ -84,16 +86,16 @@ function renderPlayer(me, player) {
     context.restore();
 
     // Draw the turret
-    context.save()
+    context.save();
     context.translate(canvasX, canvasY);
     context.rotate(turretDirection);
 
     context.drawImage(
         getTurret(tankStyle),
-        -12.5,
-        -25,
-        25,
-        40,
+        -15,
+        -40,
+        30,
+        60,
     );
     context.restore();
 
@@ -142,6 +144,17 @@ function renderBackground(x, y) {
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function renderExplosion(me, explosion) {
+    const { x, y, state } = explosion;
+    context.drawImage(
+        getAsset(state),
+        canvas.width / 2 + x - me.x - EXPLOSION_RADIUS,
+        canvas.height / 2 + y - me.y - EXPLOSION_RADIUS,
+        EXPLOSION_RADIUS * 2,
+        EXPLOSION_RADIUS * 2,
+    );
+}
+
 // Display the main menu
 function renderMainMenu() {
     const t = Date.now() / 7500;
@@ -155,7 +168,7 @@ function renderMainMenu() {
 let renderInterval = setInterval(renderMainMenu, 1000 / 60);
 export function startRendering() {
     clearInterval(renderInterval);
-    renderInterval = setInterval(render, 1000 / 60);
+    renderInterval = setInterval(render, 1000 / 90);
 }
 export function stopRendering() {
     clearInterval(renderInterval);
