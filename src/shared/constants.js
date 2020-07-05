@@ -4,11 +4,11 @@
 module.exports = Object.freeze({
     PLAYER_RADIUS: 40,
     PLAYER_MAX_HP: 100,
-    PLAYER_SPEED: 300,
+    PLAYER_SPEED: 400,
     PLAYER_FIRE_COOLDOWN: 0.25,
 
     BULLET_RADIUS: 3,
-    BULLET_SPEED: 800,
+    BULLET_SPEED: 1000,
     BULLET_DAMAGE: 10,
 
     EXPLOSION_RADIUS: 60,
@@ -43,13 +43,19 @@ module.exports = Object.freeze({
     TANK: {
         BLUE: 0,
         RED: 1,
+        GREEN: 2,
+        GRAY: 3
     },
 
     SPRITES: {
         TANK_RED: "TankRed.png",
-        TANK_BLUE: "TankBlue.png",
         TURRET_RED: "TurretRed.png",
+        TANK_BLUE: "TankBlue.png",
         TURRET_BLUE: "TurretBlue.png",
+        TANK_GREEN: "TankGreen.png",
+        TURRET_GREEN: "TurretGreen.png",
+        TANK_GRAY: "TankGray.png",
+        TURRET_GRAY: "TurretGray.png",
         BULLET: "bullet.svg",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",

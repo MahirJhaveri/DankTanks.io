@@ -36,9 +36,13 @@ function render() {
     }
 
     // Draw boundaries
-    context.strokeStyle = 'black';
-    context.lineWidth = 1;
+    context.save();
+    context.strokeStyle = '#FF3300';
+    context.lineWidth = 5;
+    //context.shadowBlur = 4;
+    //context.shadowColor = '#CC00FF';
     context.strokeRect(canvas.width / 2 - me.x, canvas.height / 2 - me.y, MAP_SIZE, MAP_SIZE);
+    context.restore();
 
     // Draw all bullets
     bullets.forEach(renderBullet.bind(null, me));
@@ -138,8 +142,8 @@ function renderBackground(x, y) {
         backgroundY,
         MAP_SIZE / 2,
     );
-    backgroundGradient.addColorStop(0, 'black');
-    backgroundGradient.addColorStop(1, 'gray');
+    backgroundGradient.addColorStop(0, '#011f14');
+    backgroundGradient.addColorStop(1, '#03925e');
     context.fillStyle = backgroundGradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
 }

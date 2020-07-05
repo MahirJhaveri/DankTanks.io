@@ -2,9 +2,10 @@
 const Constants = require('../../shared/constants');
 const { TANK, SPRITES } = Constants;
 
-const ASSET_NAMES = [SPRITES.TANK_RED, SPRITES.TURRET_RED, SPRITES.TANK_BLUE, SPRITES.TURRET_BLUE, SPRITES.BULLET,
-SPRITES.EXPLOSION.STATE1, SPRITES.EXPLOSION.STATE2, SPRITES.EXPLOSION.STATE3, SPRITES.EXPLOSION.STATE4,
-SPRITES.EXPLOSION.STATE5, SPRITES.EXPLOSION.STATE6, SPRITES.EXPLOSION.STATE7, SPRITES.EXPLOSION.STATE8];
+const ASSET_NAMES = [SPRITES.TANK_RED, SPRITES.TURRET_RED, SPRITES.TANK_BLUE, SPRITES.TURRET_BLUE, SPRITES.TANK_GREEN,
+SPRITES.TURRET_GREEN, SPRITES.TANK_GRAY, SPRITES.TURRET_GRAY, SPRITES.BULLET, SPRITES.EXPLOSION.STATE1,
+SPRITES.EXPLOSION.STATE2, SPRITES.EXPLOSION.STATE3, SPRITES.EXPLOSION.STATE4, SPRITES.EXPLOSION.STATE5,
+SPRITES.EXPLOSION.STATE6, SPRITES.EXPLOSION.STATE7, SPRITES.EXPLOSION.STATE8];
 
 const assets = {};
 const downloadPromise = Promise.all(ASSET_NAMES.map(downloadAsset));
@@ -34,6 +35,12 @@ export const getTank = (tankStyle) => {
         case TANK.RED:
             return getAsset(SPRITES.TANK_RED);
             break;
+        case TANK.GREEN:
+            return getAsset(SPRITES.TANK_GREEN);
+            break;
+        case TANK.GRAY:
+            return getAsset(SPRITES.TANK_GRAY);
+            break;
         default:
             return getAsset(SPRITES.TANK_BLUE);
     }
@@ -44,6 +51,12 @@ export const getTurret = (tankStyle) => {
     switch (tankStyle) {
         case TANK.RED:
             return getAsset(SPRITES.TURRET_RED);
+            break;
+        case TANK.GREEN:
+            return getAsset(SPRITES.TURRET_GREEN);
+            break;
+        case TANK.GRAY:
+            return getAsset(SPRITES.TURRET_GRAY);
             break;
         default:
             return getAsset(SPRITES.TURRET_BLUE);
