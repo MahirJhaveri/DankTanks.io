@@ -4,7 +4,7 @@
     "description": "",
     "main": "src/server/server.js",
     "scripts": {
-        "build": "webpack --config webpack.prod.js",
+        "build": "",
         "lint": "eslint --cache --ext .js,.jsx src/",
         "develop": "cross-env NODE_ENV=development node src/server/server.js",
         "start": "cross-env NODE_ENV=production node src/server/server.js",
