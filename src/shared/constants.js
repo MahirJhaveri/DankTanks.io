@@ -34,8 +34,10 @@ module.exports = Object.freeze({
     },
 
     KEY: {
-        LEFT: 37,
-        RIGHT: 39
+        LEFT: 1.5,
+        UP: 0,
+        RIGHT: 0.5,
+        DOWN: 1
     },
 
     LEADERBOARD_SIZE: 5,

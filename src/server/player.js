@@ -5,7 +5,6 @@ const Constants = require('../shared/constants');
 class Player extends Entity {
     constructor(id, username, x, y, tankStyle) {
         super(id, x, y, Math.PI / 2, Constants.PLAYER_SPEED);
-        //super(id, x, y, Math.random() * 2 * Math.PI, Constants.PLAYER_SPEED);
         this.username = username;
         this.hp = Constants.PLAYER_MAX_HP;
         this.fireCooldown = 0;
@@ -63,15 +62,12 @@ class Player extends Entity {
         this.turretDirection = dir;
     }
 
-    // Change direction based on which key was pressed
-    // directionToMove can be LEFT or RIGHT
-    updateTankDirection(directionToMove) {
-        //const delta = Math.atan2(0.4, 1);
-        const delta = Math.PI / 2;
-        if (directionToMove == Constants.KEY.LEFT) {
-            this.direction -= delta;
-        } else if (directionToMove == Constants.KEY.RIGHT) {
-            this.direction += delta;
+    // Change direction, only if new direction is adjacent to the current direction
+    // directionKeyCode * MATH.PI == new direction
+    updateTankDirection(directionKeyCode) {
+        const delta = Math.abs(directionKeyCode * Math.PI - this.direction);
+        if (delta > 0.00001 && Math.abs(delta - Math.PI) > 0.00001) {
+            this.direction = Math.PI * directionKeyCode;
         }
     }
 }
