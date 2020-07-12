@@ -1,8 +1,30 @@
+
 class Entity {
-    constructor(id, x, y, dir, speed) {
+    constructor(id, x, y) {
         this.id = id;
         this.x = x;
         this.y = y;
+    }
+
+    // optimize app by not using sqrt at all and simply using squares everywhere
+    distanceTo(entity) {
+        const dx = this.x - object.x;
+        const dy = this.y - object.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    // Return fields relevant to the client for rendering
+    serializeForUpdate() {
+        return {
+            x: this.x,
+            y: this.y
+        };
+    }
+}
+
+class DynamicEntity extends Entity {
+    constructor(id, x, y, dir, speed) {
+        super(id, x, y);
         this.direction = dir;
         this.speed = speed;
     }
@@ -12,25 +34,12 @@ class Entity {
         this.y -= dt * this.speed * Math.cos(this.direction);
     }
 
-    // optimize app by not using sqrt at all and simply using squares everywhere
-    distanceTo(object) {
-        const dx = this.x - object.x;
-        const dy = this.y - object.y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
     setDirection(dir) {
         this.direction = dir;
     }
-
-    // Return fields relevant to the client for rendering
-    serializeForUpdate() {
-        return {
-            id: this.id,
-            x: this.x,
-            y: this.y
-        };
-    }
 }
 
-module.exports = Entity;
+module.exports = {
+    Entity: Entity,
+    DynamicEntity: DynamicEntity,
+};

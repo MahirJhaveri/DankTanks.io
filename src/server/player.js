@@ -1,8 +1,8 @@
-const Entity = require('./entity');
+const DynamicEntity = require('./entity');
 const Bullet = require('./bullet');
 const Constants = require('../shared/constants');
 
-class Player extends Entity {
+class Player extends DynamicEntity {
     constructor(id, username, x, y, tankStyle) {
         super(id, x, y, Math.PI / 2, Constants.PLAYER_SPEED);
         this.username = username;

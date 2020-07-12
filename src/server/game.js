@@ -3,12 +3,14 @@ const Player = require('./player');
 const applyCollisions = require('./collisions');
 const Leaderboard = require('./leaderboard');
 const Explosion = require('./explosion');
+const Crown = require('./crown');
 
 class Game {
     constructor() {
         this.sockets = {};
         this.players = {};
         this.bullets = [];
+        this.crowns = [new Crown(Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
         this.explosions = [];
         this.leaderboard = new Leaderboard(Constants.LEADERBOARD_SIZE);
         this.lastUpdateTime = Date.now();
@@ -177,6 +179,10 @@ class Game {
 
         const nearbyExplosions = this.explosions.filter(
             e => player.distanceTo(e) <= Constants.MAP_SIZE / 2
+        );
+
+        const nearbyCrowns = this.crowns.filter(
+            c => player.distanceTo(c) <= Constants.MAP_SIZE / 2
         )
 
         return {
@@ -185,6 +191,7 @@ class Game {
             others: nearbyPlayers.map(p => p.serializeForUpdate()),
             bullets: nearbyBullets.map(b => b.serializeForUpdate()),
             explosions: nearbyExplosions.map(e => e.serializeForUpdate()),
+            crowns: nearbyCrowns.map(c => c.serializeForUpdate()),
         }
     }
 }
