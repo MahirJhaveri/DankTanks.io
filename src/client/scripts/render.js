@@ -35,14 +35,14 @@ function render() {
         X += 100;
     }
 
-    // Draw boundaries
+    /*// Draw boundaries
     context.save();
     context.strokeStyle = '#FF3300';
     context.lineWidth = 5;
     //context.shadowBlur = 4;
     //context.shadowColor = '#CC00FF';
     context.strokeRect(canvas.width / 2 - me.x, canvas.height / 2 - me.y, MAP_SIZE, MAP_SIZE);
-    context.restore();
+    context.restore();*/
 
     // Draw all bullets
     bullets.forEach(renderBullet.bind(null, me));
@@ -137,13 +137,13 @@ function renderBackground(x, y) {
     const backgroundGradient = context.createRadialGradient(
         backgroundX,
         backgroundY,
-        MAP_SIZE / 10,
+        MAP_SIZE / 5,
         backgroundX,
         backgroundY,
         MAP_SIZE / 2,
     );
-    backgroundGradient.addColorStop(0, '#011f14');
-    backgroundGradient.addColorStop(1, '#03925e');
+    backgroundGradient.addColorStop(0, 'black');
+    backgroundGradient.addColorStop(1, 'gray');
     context.fillStyle = backgroundGradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
