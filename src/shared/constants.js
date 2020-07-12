@@ -13,6 +13,8 @@ module.exports = Object.freeze({
 
     EXPLOSION_RADIUS: 60,
 
+    CROWN_RADIUS: 30,
+
     SCORE_BULLET_HIT: 20,
     SCORE_PER_SECOND: 1,
 
@@ -59,6 +61,7 @@ module.exports = Object.freeze({
         TANK_GRAY: "TankGray.png",
         TURRET_GRAY: "TurretGray.png",
         BULLET: "bullet.svg",
+        CROWN: "crown.png",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",
             STATE2: "explosions/explosion2.png",

@@ -1,5 +1,5 @@
 const shortid = require('shortid');
-const DynamicEntity = require('./entity');
+const DynamicEntity = require('./dynamicEntity');
 const Constants = require('../shared/constants');
 
 class Bullet extends DynamicEntity {

@@ -1,4 +1,4 @@
-const DynamicEntity = require('./entity');
+const DynamicEntity = require('./dynamicEntity');
 const Bullet = require('./bullet');
 const Constants = require('../shared/constants');
 

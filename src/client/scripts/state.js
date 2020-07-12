@@ -77,7 +77,8 @@ export function getCurrentState() {
                 me: interpolateObject(baseUpdate.me, nextUpdate.me, r),
                 others: interpolateObjectArray(baseUpdate.others, nextUpdate.others, r),
                 bullets: interpolateObjectArray(baseUpdate.bullets, nextUpdate.bullets, r),
-                explosions: baseUpdate.explosions
+                explosions: baseUpdate.explosions,
+                crowns: baseUpdate.crowns,
             };
         }
     }
