@@ -65,10 +65,7 @@ class Player extends Entity {
     // Change direction, only if new direction is adjacent to the current direction
     // directionKeyCode * MATH.PI == new direction
     updateTankDirection(directionKeyCode) {
-        const delta = Math.abs(directionKeyCode * Math.PI - this.direction);
-        if (delta > 0.00001 && Math.abs(delta - Math.PI) > 0.00001) {
-            this.direction = Math.PI * directionKeyCode;
-        }
+        this.direction = directionKeyCode * Math.PI;
     }
 }
 
