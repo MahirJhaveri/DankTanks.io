@@ -1,6 +1,7 @@
 const DynamicEntity = require('./dynamicEntity');
 const Bullet = require('./bullet');
 const Constants = require('../shared/constants');
+const Crown = require('./crown');
 
 class Player extends DynamicEntity {
     constructor(id, username, x, y, tankStyle) {
@@ -11,6 +12,9 @@ class Player extends DynamicEntity {
         this.score = 0;
         this.turretDirection = Math.random() * 2 * Math.PI; // Set Initial turret direction randomnly
         this.tankStyle = tankStyle;
+        this.crownPowerup = null;     // powerups from crowns, at most one at a time
+        this.fireCooldownSpeed = Constants.PLAYER_FIRE_COOLDOWN;
+        this.bulletSpeed = Constants.BULLET_SPEED
     }
 
     update(dt) {
@@ -24,8 +28,8 @@ class Player extends DynamicEntity {
 
         this.fireCooldown -= dt;
         if (this.fireCooldown <= 0) {
-            this.fireCooldown += Constants.PLAYER_FIRE_COOLDOWN;
-            return new Bullet(this.id, this.x, this.y, this.turretDirection);
+            this.fireCooldown += this.fireCooldownSpeed;
+            return new Bullet(this.id, this.x, this.y, this.turretDirection, this.bulletSpeed);
         }
         return null;
     }
@@ -66,6 +70,23 @@ class Player extends DynamicEntity {
     // directionKeyCode * MATH.PI == new direction
     updateTankDirection(directionKeyCode) {
         this.direction = directionKeyCode * Math.PI;
+    }
+
+    // Methods deal with adding and dropping crowned powerups
+    addCrownPowerup(crown) {
+        if (this.crownPowerup != null) {
+            // implement this when you add more than one powerup
+        }
+        this.crownPowerup = crown.id;
+        this.fireCooldownSpeed = Constants.RAPID_FIRE_COOLDOWN;
+        this.bulletSpeed = Constants.RAPID_FIRE_BULLET_SPEED;
+    }
+
+    dropCrownPowerup() {
+        if (this.crownPowerup) {
+            return new Crown(this.crownPowerup, this.x, this.y);
+        }
+        return null;
     }
 }
 

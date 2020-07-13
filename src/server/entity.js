@@ -15,7 +15,6 @@ class Entity {
     // Return fields relevant to the client for rendering
     serializeForUpdate() {
         return {
-            id: this.id,
             x: this.x,
             y: this.y
         };

@@ -10,7 +10,7 @@ class Game {
         this.sockets = {};
         this.players = {};
         this.bullets = [];
-        this.crowns = [new Crown(Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
+        this.crowns = [new Crown(Constants.CROWN_POWERUP.RAPID_FIRE, Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
         this.explosions = [];
         this.leaderboard = new Leaderboard(Constants.LEADERBOARD_SIZE);
         this.lastUpdateTime = Date.now();
@@ -95,11 +95,12 @@ class Game {
         });
 
         // Check for collisions
-        const destroyedBullets = applyCollisions(
+        const destroyedEntities = applyCollisions(
             Object.values(this.players),
-            this.bullets
+            this.bullets,
+            this.crowns
         );
-        destroyedBullets.forEach(bullet => {
+        destroyedEntities.destroyedBullets.forEach(bullet => {
             if (this.players[bullet.parentID]) {
                 this.players[bullet.parentID].onDealtDamage()
                 if (this.shouldSendLeaderboard == 0) {
@@ -108,9 +109,13 @@ class Game {
                 }
             }
         });
+        // optimize this by use of maps instead of lists
         this.bullets = this.bullets.filter(
-            b => !destroyedBullets.includes(b)
+            b => !destroyedEntities.destroyedBullets.includes(b)
         );
+        this.crowns = this.crowns.filter(
+            c => !destroyedEntities.destroyedCrowns.includes(c)
+        )
 
         // Check for dead players
         Object.keys(this.sockets).forEach(playerID => {
@@ -118,6 +123,10 @@ class Game {
             const player = this.players[playerID];
 
             if (player.hp <= 0) {
+                // remove player crown and make it available on the map
+                const crown = player.dropCrownPowerup();
+                if (crown) this.crowns.push(crown);
+
                 socket.emit(Constants.MSG_TYPES.GAME_OVER);
                 this.removePlayer(socket);
                 this.explosions.push(new Explosion(player.x, player.y));

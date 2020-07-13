@@ -16,6 +16,13 @@ class DynamicEntity extends Entity {
     setDirection(dir) {
         this.direction = dir;
     }
+
+    serializeForUpdate() {
+        return {
+            ...(super.serializeForUpdate()),
+            id: this.id,
+        }
+    }
 }
 
 module.exports = DynamicEntity;
