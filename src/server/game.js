@@ -32,7 +32,7 @@ class Game {
         // release crowns if player has any
         const player = this.players[socket.id];
         const crown = player.dropCrownPowerup();
-        if (crown) this.crowns.append(crown);
+        if (crown) this.crowns.push(crown);
 
         delete this.sockets[socket.id];
         delete this.players[socket.id];
