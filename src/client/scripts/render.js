@@ -22,7 +22,7 @@ function render() {
     // Draw background
     renderBackground(me.x, me.y);
 
-    /*// Draw the grid
+    // Draw the grid
     context.strokeStyle = 'white';
     context.lineWidth = 0.1;
     let X = 0;
@@ -33,7 +33,7 @@ function render() {
             Y += 100;
         }
         X += 100;
-    }*/
+    }
 
     /*// Draw boundaries
     context.save();
@@ -190,7 +190,11 @@ function renderMainMenu() {
 let renderInterval = setInterval(renderMainMenu, 1000 / 60);
 export function startRendering() {
     clearInterval(renderInterval);
-    renderInterval = setInterval(render, 1000 / 60);
+    renderInterval = setInterval(() => {
+        const start = Date.now();
+        render();
+        console.log(`Time to render = ${(Date.now() - start) / 1000}s`);
+    }, 1000 / 60);
 }
 export function stopRendering() {
     clearInterval(renderInterval);

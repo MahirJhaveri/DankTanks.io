@@ -29,6 +29,11 @@ class Game {
     }
 
     removePlayer(socket) {
+        // release crowns if player has any
+        const player = this.players[socket.id];
+        const crown = player.dropCrownPowerup();
+        if (crown) this.crowns.append(crown);
+
         delete this.sockets[socket.id];
         delete this.players[socket.id];
     }

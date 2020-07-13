@@ -24,6 +24,8 @@ export function processGameUpdate(update) {
         gameStart = Date.now()
     }
 
+    console.log(`Network delay = ${(firstServerTimestamp + (Date.now() - gameStart) - update.t) / 1000}s`)
+
     // add game updates to the queue
     gameUpdates.push(update);
 
