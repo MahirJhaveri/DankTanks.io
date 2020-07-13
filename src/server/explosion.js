@@ -1,13 +1,14 @@
+const Entity = require('./entity');
+const shortid = require('shortid');
 const Constants = require('../shared/constants');
 const EXPLOSION = Constants.SPRITES.EXPLOSION;
 
 const states = [EXPLOSION.STATE1, EXPLOSION.STATE2, EXPLOSION.STATE3, EXPLOSION.STATE4, EXPLOSION.STATE5, EXPLOSION.STATE6,
 EXPLOSION.STATE7, EXPLOSION.STATE8];
 
-class Explosion {
+class Explosion extends Entity {
     constructor(x, y) {
-        this.x = x;
-        this.y = y;
+        super(shortid(), x, y);
         this.stateIndex = 0;
         this.state = states[this.stateIndex];
         this.timeSinceLastUpdate = 0;
@@ -26,8 +27,7 @@ class Explosion {
 
     serializeForUpdate() {
         return {
-            x: this.x,
-            y: this.y,
+            ...(super.serializeForUpdate()),
             state: this.state,
         };
     }

@@ -4,14 +4,16 @@
 module.exports = Object.freeze({
     PLAYER_RADIUS: 40,
     PLAYER_MAX_HP: 100,
-    PLAYER_SPEED: 400,
+    PLAYER_SPEED: 500,
     PLAYER_FIRE_COOLDOWN: 0.25,
 
-    BULLET_RADIUS: 3,
+    BULLET_RADIUS: 5,
     BULLET_SPEED: 1000,
     BULLET_DAMAGE: 10,
 
     EXPLOSION_RADIUS: 60,
+
+    CROWN_RADIUS: 30,
 
     SCORE_BULLET_HIT: 20,
     SCORE_PER_SECOND: 1,
@@ -59,6 +61,7 @@ module.exports = Object.freeze({
         TANK_GRAY: "TankGray.png",
         TURRET_GRAY: "TurretGray.png",
         BULLET: "bullet.svg",
+        CROWN: "crown.png",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",
             STATE2: "explosions/explosion2.png",
@@ -70,4 +73,11 @@ module.exports = Object.freeze({
             STATE8: "explosions/explosion8.png",
         },
     },
+
+    CROWN_POWERUP: {
+        RAPID_FIRE: "rapidfire",
+    },
+
+    RAPID_FIRE_BULLET_SPEED: 1500,
+    RAPID_FIRE_COOLDOWN: 0.2,
 });

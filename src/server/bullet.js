@@ -1,10 +1,10 @@
 const shortid = require('shortid');
-const Entity = require('./entity');
+const DynamicEntity = require('./dynamicEntity');
 const Constants = require('../shared/constants');
 
-class Bullet extends Entity {
-    constructor(parentID, x, y, dir) {
-        super(shortid(), x, y, dir, Constants.BULLET_SPEED);
+class Bullet extends DynamicEntity {
+    constructor(parentID, x, y, dir, speed) {
+        super(shortid(), x, y, dir, speed);
         this.parentID = parentID;
     }
 

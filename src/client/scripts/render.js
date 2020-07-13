@@ -2,7 +2,7 @@ import { getAsset, getTank, getTurret } from './assets';
 import { getCurrentState } from './state';
 
 const Constants = require('../../shared/constants');
-const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES, EXPLOSION_RADIUS } = Constants;
+const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES, EXPLOSION_RADIUS, CROWN_RADIUS } = Constants;
 
 const canvas = document.getElementById('game-canvas');
 const context = canvas.getContext('2d');
@@ -14,7 +14,7 @@ canvas.height = window.innerHeight;
 // add setCanvasDimensions for supporting smaller screens
 
 function render() {
-    const { me, others, bullets, explosions } = getCurrentState();
+    const { me, others, bullets, explosions, crowns } = getCurrentState();
     if (!me) {
         return;
     }
@@ -52,6 +52,8 @@ function render() {
     others.forEach(renderPlayer.bind(null, me));
 
     explosions.forEach(renderExplosion.bind(null, me));
+
+    crowns.forEach(renderCrowns.bind(null, me));
 }
 
 // ... Helper functions here excluded
@@ -156,6 +158,17 @@ function renderExplosion(me, explosion) {
         canvas.height / 2 + y - me.y - EXPLOSION_RADIUS,
         EXPLOSION_RADIUS * 2,
         EXPLOSION_RADIUS * 2,
+    );
+}
+
+function renderCrowns(me, crown) {
+    const { x, y } = crown;
+    context.drawImage(
+        getAsset(SPRITES.CROWN),
+        canvas.width / 2 + x - me.x - CROWN_RADIUS,
+        canvas.height / 2 + y - me.y - CROWN_RADIUS,
+        CROWN_RADIUS * 2,
+        CROWN_RADIUS * 2,
     );
 }
 
