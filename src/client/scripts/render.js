@@ -22,7 +22,7 @@ function render() {
     // Draw background
     renderBackground(me.x, me.y);
 
-    // Draw the grid
+    /*// Draw the grid
     context.strokeStyle = 'white';
     context.lineWidth = 0.1;
     let X = 0;
@@ -33,7 +33,7 @@ function render() {
             Y += 100;
         }
         X += 100;
-    }
+    }*/
 
     /*// Draw boundaries
     context.save();
@@ -43,6 +43,11 @@ function render() {
     //context.shadowColor = '#CC00FF';
     context.strokeRect(canvas.width / 2 - me.x, canvas.height / 2 - me.y, MAP_SIZE, MAP_SIZE);
     context.restore();*/
+    context.save();
+    context.strokeStyle = 'black';
+    context.lineWidth = 2;
+    context.strokeRect(canvas.width / 2 - me.x, canvas.height / 2 - me.y, MAP_SIZE, MAP_SIZE);
+    context.restore();
 
     // Draw all bullets
     bullets.forEach(renderBullet.bind(null, me));
@@ -185,7 +190,7 @@ function renderMainMenu() {
 let renderInterval = setInterval(renderMainMenu, 1000 / 60);
 export function startRendering() {
     clearInterval(renderInterval);
-    renderInterval = setInterval(render, 1000 / 90);
+    renderInterval = setInterval(render, 1000 / 60);
 }
 export function stopRendering() {
     clearInterval(renderInterval);

@@ -175,6 +175,8 @@ class Game {
         }
 
         this.shouldSendLeaderboard = (this.shouldSendLeaderboard + 1) % 4;
+
+        //console.log(`Time to run update = ${(Date.now() - now) / 1000}`);
     }
 
     createUpdate(player) {
