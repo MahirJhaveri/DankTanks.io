@@ -132,8 +132,8 @@ function renderPlayer(me, player) {
     context.font = "10px Comic Sans MS";
     context.textAlign = "center";
     // substring because username is being appended with NaN for some weird reason
-    context.fillText(username.substring(0, username.length - 3),
-        canvasX - (username.length - 3) / 2, canvasY + PLAYER_RADIUS + 25);
+    context.fillText(username.substring(0, username.length),
+        canvasX - (username.length) / 2, canvasY + PLAYER_RADIUS + 25);
 }
 
 // render the background
