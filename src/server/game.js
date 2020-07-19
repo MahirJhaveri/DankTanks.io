@@ -31,8 +31,10 @@ class Game {
     removePlayer(socket) {
         // release crowns if player has any
         const player = this.players[socket.id];
-        const crown = player.dropCrownPowerup();
-        if (crown) this.crowns.push(crown);
+        if (player) {
+            const crown = player.dropCrownPowerup();
+            if (crown) this.crowns.push(crown);
+        }
 
         delete this.sockets[socket.id];
         delete this.players[socket.id];
@@ -128,10 +130,6 @@ class Game {
             const player = this.players[playerID];
 
             if (player.hp <= 0) {
-                // remove player crown and make it available on the map
-                const crown = player.dropCrownPowerup();
-                if (crown) this.crowns.push(crown);
-
                 socket.emit(Constants.MSG_TYPES.GAME_OVER);
                 this.removePlayer(socket);
                 this.explosions.push(new Explosion(player.x, player.y));
