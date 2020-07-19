@@ -188,14 +188,20 @@ function renderMainMenu() {
 // set rendering rate of 60 FPS
 // Basically redraw the whole thing every 1000/60 ms
 let renderInterval = setInterval(renderMainMenu, 1000 / 60);
+let prevTime = null;
 export function startRendering() {
     clearInterval(renderInterval);
     renderInterval = setInterval(() => {
         const start = Date.now();
+        if (prevTime && Math.abs(start - prevTime - 1000 / 60) > 5) {
+            console.log(`Time lag between renders = ${start - prevTime - 1000 / 60}`);
+        }
+        prevTime = start;
         render();
-        console.log(`Time to render = ${(Date.now() - start) / 1000}s`);
+        //console.log(`Time to render = ${(Date.now() - start) / 1000}s`);
     }, 1000 / 60);
 }
 export function stopRendering() {
     clearInterval(renderInterval);
+    let prevTime = null;
 }

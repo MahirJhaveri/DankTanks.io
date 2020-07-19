@@ -24,7 +24,7 @@ export function processGameUpdate(update) {
         gameStart = Date.now()
     }
 
-    console.log(`Network delay = ${(firstServerTimestamp + (Date.now() - gameStart) - update.t) / 1000}s`)
+    //console.log(`Network delay = ${(firstServerTimestamp + (Date.now() - gameStart) - update.t) / 1000}s`)
 
     // add game updates to the queue
     gameUpdates.push(update);
@@ -69,6 +69,7 @@ export function getCurrentState() {
             // revaluate: base can only be < 0 at the start of the game
             return gameUpdates[gameUpdates.length - 1]
         } else if (base == gameUpdates.length - 1) {
+            console.log("new state not yet received: network/server lag");
             return gameUpdates[gameUpdates.length - 1]
         } else {
             const baseUpdate = gameUpdates[base];
