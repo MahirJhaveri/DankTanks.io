@@ -18,7 +18,7 @@ module.exports = Object.freeze({
     SCORE_BULLET_HIT: 20,
     SCORE_PER_SECOND: 1,
 
-    RENDER_DELAY: 100,
+    RENDER_DELAY: 120,
 
     MAP_SIZE: 3000,
     NAV_MAP_SIZE: 100,
