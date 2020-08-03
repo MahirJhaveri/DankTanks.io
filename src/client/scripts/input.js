@@ -31,7 +31,6 @@ function handleKeyDown(keyCode) {
         updateTankDirection(Constants.KEY.LEFT);
     }
     else if (keyCode == 87 || keyCode == 38) {
-        console.log("updating direction to UP");
         updateTankDirection(Constants.KEY.UP);
     }
     else if (keyCode == 68 || keyCode == 39) {
