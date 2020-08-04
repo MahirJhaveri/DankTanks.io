@@ -12,14 +12,17 @@
 
 
     <div id="play-menu" class="hidden" style="z-index:2;">
-        <h1>DankTanks.io</h1>
-        <div id="choose-tank">
-            <button id="prev-tank-button" style="vertical-align:middle;">&larr;</button>
-            <canvas id="choose-tank-canvas" style="vertical-align:middle;"></canvas>
-            <button id="next-tank-button" style="vertical-align:middle;">&rarr;</button>
+        <h1 id="logo"><strong><span style="color:#c7b68f;">Dank</span><span style="color:#768a5f;">Tanks</span><span
+                    style="color:#c7b68f;">.io</span></strong></h1>
+        <div id="game-options">
+            <div id="choose-tank">
+                <button id="prev-tank-button" class="change-tank-button">&lt;</button>
+                <canvas id="choose-tank-canvas" style="vertical-align:middle;"></canvas>
+                <button id="next-tank-button" class="change-tank-button">&gt;</button>
+            </div>
+            <input type="text" id="username-input" placeholder="Enter a name..." />
+            <button id="play-button"><strong>Lesgooo!</strong></button>
         </div>
-        <input type="text" id="username-input" placeholder="Username" />
-        <button id="play-button">PLAY</button>
     </div>
 
     <div id="leaderboard" class="hidden" style="z-index:2;">

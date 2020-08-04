@@ -15,20 +15,20 @@ const nextButton = document.getElementById("next-tank-button");
 function updateChooseTankDisplay() {
     context.clearRect(0, 0, 100, 100);
     context.save()
-    context.translate(50, 50);
+    context.translate(125, 125);
     context.drawImage(
         getTank(styles[tankStyle]),
-        -PLAYER_RADIUS,
-        -PLAYER_RADIUS,
-        PLAYER_RADIUS * 2,
-        PLAYER_RADIUS * 2,
+        -PLAYER_RADIUS * 2,
+        -PLAYER_RADIUS * 2,
+        PLAYER_RADIUS * 4,
+        PLAYER_RADIUS * 4,
     );
     context.drawImage(
         getTurret(styles[tankStyle]),
-        -12.5,
         -25,
-        25,
-        40,
+        -70,
+        50,
+        100,
     );
     context.restore();
 }
@@ -44,8 +44,8 @@ function handleNextTankButton() {
 }
 
 export function initChooseTankController() {
-    chooseTankCanvas.width = 100;
-    chooseTankCanvas.height = 100;
+    chooseTankCanvas.width = 250;
+    chooseTankCanvas.height = 250;
     prevButton.onclick = handlePrevTankButton;
     nextButton.onclick = handleNextTankButton;
     updateChooseTankDisplay();
