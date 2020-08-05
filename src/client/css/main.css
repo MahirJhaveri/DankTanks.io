@@ -88,6 +88,18 @@ html, body {
   #play-menu p {
     margin-bottom: 0;
   }
+
+  @keyframes boxShadowAnimation {
+    0% {box-shadow: rgb(0,0,0) 0px 0px 0px;}
+    50% {box-shadow: rgb(0,0,0) 0px 0px 30px;}
+    100% {box-shadow: rgb(0,0,0) 0px 0px 0px;}
+  }
+
+  @keyframes textShadowAnimation {
+    0% {text-shadow: rgb(0,0,0) 0px 0px 0px;}
+    50% {text-shadow: rgb(0,0,0) 0px 6px 50px;}
+    100% {text-shadow: rgb(0,0,0) 0px 0px 0px;}
+  }
   
   #play-menu input {
     font-size: 20px;
@@ -101,7 +113,9 @@ html, body {
     border: 3px solid black !important;
     background-color: #9276A3;
     color: white;
-    box-shadow: rgb(0,0,0) 0px 6px 50px;
+    animation-name: boxShadowAnimation;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
   }
   
   #play-menu input:hover {
@@ -120,7 +134,9 @@ html, body {
     background-color: #AECCA2;
     color: black;
     line-height: initial;
-    box-shadow: rgb(0,0,0) 0px 6px 50px;
+    animation-name: boxShadowAnimation;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
   }
 
   #play-menu #play-button:hover {
@@ -129,7 +145,9 @@ html, body {
 
   #logo {
     font-size: 80px;
-    text-shadow: rgb(0,0,0) 0px 6px 50px;
+    animation-name: textShadowAnimation;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
   }
 
   #scorecard {

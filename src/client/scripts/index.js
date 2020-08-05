@@ -5,7 +5,7 @@ import { downloadAssets } from './assets';
 import { initState } from './state';
 import { startRenderingLeaderboard, stopRenderingLeaderboard } from './leaderboard';
 import { startRenderingMap, stopRenderingMap } from './map';
-import { initChooseTankController, getTankStyle } from './chooseTankController';
+import { initChooseTankController, getTankStyle } from './playMenu';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
