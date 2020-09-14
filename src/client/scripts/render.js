@@ -189,11 +189,7 @@ function renderMainMenu() {
 let renderInterval = setInterval(renderMainMenu, 1000 / 60);
 export function startRendering() {
     clearInterval(renderInterval);
-    renderInterval = setInterval(() => {
-        const start = Date.now();
-        render();
-        console.log(`Time to render = ${(Date.now() - start) / 1000}s`);
-    }, 1000 / 60);
+    renderInterval = setInterval(render, 1000 / 60);
 }
 export function stopRendering() {
     clearInterval(renderInterval);
