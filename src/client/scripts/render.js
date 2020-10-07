@@ -5,22 +5,28 @@ const Constants = require('../../shared/constants');
 const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES, EXPLOSION_RADIUS, CROWN_RADIUS } = Constants;
 
 const canvas = document.getElementById('game-canvas');
-const context = canvas.getContext('2d');
+const canvas2 = document.getElementById('game-canvas-2');
 
-// Make the canvas fullscreen
+// Make both the canvases fullscreen
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+canvas2.width = window.innerWidth;
+canvas2.height = window.innerHeight;
+
+// set canvas2 to be hidden
+canvas2.classList.add('hidden')
 
 // add setCanvasDimensions for supporting smaller screens
 
-function render() {
+function render(canvas) {
+    const context = canvas.getContext('2d');
     const { me, others, bullets, explosions, crowns } = getCurrentState();
     if (!me) {
         return;
     }
 
     // Draw background
-    renderBackground(me.x, me.y);
+    renderBackground(canvas, me.x, me.y);
 
     // Draw the grid
     context.strokeStyle = 'white';
@@ -50,20 +56,21 @@ function render() {
     context.restore();
 
     // Draw all bullets
-    bullets.forEach(renderBullet.bind(null, me));
+    bullets.forEach(renderBullet.bind(null, canvas, me));
 
     // Draw all players
-    renderPlayer(me, me);
-    others.forEach(renderPlayer.bind(null, me));
+    renderPlayer(canvas, me, me);
+    others.forEach(renderPlayer.bind(null, canvas, me));
 
-    explosions.forEach(renderExplosion.bind(null, me));
+    explosions.forEach(renderExplosion.bind(null, canvas, me));
 
-    crowns.forEach(renderCrowns.bind(null, me));
+    crowns.forEach(renderCrowns.bind(null, canvas, me));
 }
 
 // ... Helper functions here excluded
 
-function renderBullet(me, bullet) {
+function renderBullet(canvas, me, bullet) {
+    const context = canvas.getContext('2d');
     const { x, y } = bullet;
     context.drawImage(
         getAsset('bullet.svg'),
@@ -76,7 +83,8 @@ function renderBullet(me, bullet) {
 
 // renders a player at the given coordinates
 // enemy: Boolean -> if the player is the user or an enemy
-function renderPlayer(me, player) {
+function renderPlayer(canvas, me, player) {
+    const context = canvas.getContext('2d');
     const { x, y, direction, turretDirection, username, tankStyle } = player;
     const canvasX = canvas.width / 2 + x - me.x;
     const canvasY = canvas.height / 2 + y - me.y;
@@ -137,7 +145,8 @@ function renderPlayer(me, player) {
 
 // render the background
 // play around with this
-function renderBackground(x, y) {
+function renderBackground(canvas, x, y) {
+    const context = canvas.getContext('2d');
     const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
     const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
     const backgroundGradient = context.createRadialGradient(
@@ -154,7 +163,8 @@ function renderBackground(x, y) {
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-function renderExplosion(me, explosion) {
+function renderExplosion(canvas, me, explosion) {
+    const context = canvas.getContext('2d');
     const { x, y, state } = explosion;
     context.drawImage(
         getAsset(state),
@@ -165,7 +175,8 @@ function renderExplosion(me, explosion) {
     );
 }
 
-function renderCrowns(me, crown) {
+function renderCrowns(canvas, me, crown) {
+    const context = canvas.getContext('2d');
     const { x, y } = crown;
     context.drawImage(
         getAsset(SPRITES.CROWN),
@@ -177,20 +188,41 @@ function renderCrowns(me, crown) {
 }
 
 // Display the main menu
-function renderMainMenu() {
+function renderMainMenu(canvas) {
     const t = Date.now() / 7500;
     const x = MAP_SIZE / 2 + 800 * Math.cos(t);
     const y = MAP_SIZE / 2 + 800 * Math.sin(t);
-    renderBackground(x, y);
+    renderBackground(canvas, x, y);
 }
+
+let renderInterval = setInterval(renderMainMenu.bind(null, canvas), 1000 / 60);
 
 // set rendering rate of 60 FPS
 // Basically redraw the whole thing every 1000/60 ms
-let renderInterval = setInterval(renderMainMenu, 1000 / 60);
 export function startRendering() {
     clearInterval(renderInterval);
-    renderInterval = setInterval(render, 1000 / 60);
+    renderInterval = setInterval(render.bind(null, canvas), 1000 / 60);
 }
+
+// Use double buffering while rendering
+var currCanvas = canvas2;
+export function startRenderingWithDoubleBuffering() {
+    clearInterval(renderInterval);
+    renderInterval = setInterval(() => {
+      if (currCanvas == canvas) {
+        canvas.classList.add('hidden');
+        canvas2.classList.remove('hidden');
+        render(canvas);
+        currCanvas = canvas2;
+      } else {
+        canvas2.classList.add('hidden');
+        canvas.classList.remove('hidden');
+        render(canvas2);
+        currCanvas = canvas;
+      }
+    }, 1000 / 60);
+}
+
 export function stopRendering() {
     clearInterval(renderInterval);
 }
