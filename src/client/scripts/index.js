@@ -10,6 +10,8 @@ import { initChooseTankController, getTankStyle } from './playMenu';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
 
+/* Use to toggle double buffering off while debugging but should be ON in PROD */
+const ENABLE_DOUBLE_BUFFERING = true;
 
 const playMenu = document.getElementById('play-menu');
 const playButton = document.getElementById('play-button');
@@ -28,7 +30,7 @@ Promise.all([
         playMenu.classList.add('hidden');
         initState();
         startCapturingInput();
-        startRenderingWithDoubleBuffering();
+        (ENABLE_DOUBLE_BUFFERING) ? startRenderingWithDoubleBuffering() : startRendering();
         startRenderingLeaderboard();
         startRenderingMap();
     };
