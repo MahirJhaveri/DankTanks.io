@@ -27,8 +27,8 @@ export const connect = onGameOver => (
 );
 
 // join game with username
-export const play = (username, color) => {
-    socket.emit(Constants.MSG_TYPES.JOIN_GAME, { username: username, color: color });
+export const play = (username, color, fireToggle) => {
+    socket.emit(Constants.MSG_TYPES.JOIN_GAME, { username: username, color: color, fireToggle:fireToggle });
 };
 
 
@@ -39,4 +39,8 @@ export const updateTurretDirection = dir => {
 // Send the key to update the tank direction
 export const updateTankDirection = keyCode => {
     socket.emit(Constants.MSG_TYPES.INPUT.KEY, keyCode);
+}
+
+export const updateFireToggle = toggle => {
+    socket.emit(Constants.MSG_TYPES.INPUT.FIRE, toggle);
 }

@@ -28,7 +28,8 @@ module.exports = Object.freeze({
         GAME_UPDATE: 'update',
         INPUT: {
             MOUSE: 'mouse_input',
-            KEY: 'keydown_input'
+            KEY: 'keydown_input',
+            FIRE: 'mouse_fire'
         },
         GAME_OVER: 'dead',
         LEADERBOARD_UPDATE: 'leaderboard_update',

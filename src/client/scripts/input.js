@@ -1,4 +1,5 @@
-import { updateTurretDirection, updateTankDirection } from './networking';
+import { updateTurretDirection, updateTankDirection, updateFireToggle } from './networking';
+import {intialToggle} from './index';
 const Constants = require('../../shared/constants');
 
 // NEW INPUT CONFIG:
@@ -41,10 +42,24 @@ function handleKeyDown(keyCode) {
     }
 }
 
+function startFiring(x,y) {
+    if (intialToggle.checked) {
+        updateFireToggle(true);
+    }
+}
+
+function stopFiring(x,y) {
+    if (intialToggle.checked) {
+        updateFireToggle(false);
+    }
+}
 // used to start sending data to server
 export function startCapturingInput() {
     window.addEventListener('mousemove', onMouseInput);
     window.addEventListener('click', onMouseInput);
+
+    window.addEventListener('mousedown', startFiring);
+    window.addEventListener('mouseup', stopFiring);
 
     // Add event listerner to start capturing input on keydown events
     window.addEventListener('keydown', onKeyDown);
@@ -63,4 +78,8 @@ export function stopCapturingInput() {
 
     window.removeEventListener('touchstart', onTouchInput);
     window.removeEventListener('touchmove', onTouchInput);
+
+    window.removeEventListener('mousedown', startFiring);
+    window.removeEventListener('mouseup', stopFiring);
+
 }

@@ -4,7 +4,7 @@ const Constants = require('../shared/constants');
 const Crown = require('./crown');
 
 class Player extends DynamicEntity {
-    constructor(id, username, x, y, tankStyle) {
+    constructor(id, username, x, y, tankStyle, fireToogle) {
         super(id, x, y, Math.PI / 2, Constants.PLAYER_SPEED);
         this.username = username;
         this.hp = Constants.PLAYER_MAX_HP;
@@ -14,7 +14,10 @@ class Player extends DynamicEntity {
         this.tankStyle = tankStyle;
         this.crownPowerup = null;     // powerups from crowns, at most one at a time
         this.fireCooldownSpeed = Constants.PLAYER_FIRE_COOLDOWN;
-        this.bulletSpeed = Constants.BULLET_SPEED
+        this.bulletSpeed = Constants.BULLET_SPEED;
+        this.fireToogle = fireToogle;
+        this.successiveToogle = !fireToogle;
+
     }
 
     update(dt) {
@@ -27,7 +30,7 @@ class Player extends DynamicEntity {
         this.y = Math.max(0, Math.min(Constants.MAP_SIZE, this.y));
 
         this.fireCooldown -= dt;
-        if (this.fireCooldown <= 0) {
+        if (this.fireCooldown <= 0 && (!this.fireToogle || (this.fireToogle && this.successiveToogle))) {
             this.fireCooldown += this.fireCooldownSpeed;
             return new Bullet(this.id, this.x, this.y, this.turretDirection, this.bulletSpeed);
         }
@@ -72,6 +75,11 @@ class Player extends DynamicEntity {
         this.direction = directionKeyCode * Math.PI;
     }
 
+    updateFireToggle(toggle) {
+        if(this.fireToogle) {
+            this.successiveToogle = toggle;
+        }
+    }
     // Methods deal with adding and dropping crowned powerups
     addCrownPowerup(crown) {
         if (this.crownPowerup != null) {
