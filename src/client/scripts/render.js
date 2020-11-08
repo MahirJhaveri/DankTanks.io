@@ -210,14 +210,14 @@ export function startRenderingWithDoubleBuffering() {
     clearInterval(renderInterval);
     renderInterval = setInterval(() => {
       if (currCanvas == canvas) {
-        canvas.classList.add('hidden');
-        canvas2.classList.remove('hidden');
         render(canvas);
+        canvas.classList.remove('hidden');
+        canvas2.classList.add('hidden');
         currCanvas = canvas2;
       } else {
-        canvas2.classList.add('hidden');
-        canvas.classList.remove('hidden');
         render(canvas2);
+        canvas2.classList.remove('hidden');
+        canvas.classList.add('hidden');
         currCanvas = canvas;
       }
     }, 1000 / 60);
