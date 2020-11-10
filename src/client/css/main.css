@@ -293,7 +293,7 @@ html, body {
     position: absolute;
     transform: translate(-50%,-50%);
     top: 50%;
-    left: 40%;
+    left: 36%;
     font-size: 15.4px;
     font-family: "Courier New";
   }
@@ -303,7 +303,7 @@ html, body {
     color: #dbdbdb;
     position: absolute;
     transform: translate(-50%,-50%);
-    top: 50%;
+    top: 56%;
     left: 63%;
     font-size: 15px;
     font-family: "Courier New";

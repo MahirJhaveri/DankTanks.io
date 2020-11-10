@@ -44,8 +44,6 @@ const game = new Game();
 // NOTE: This keyword ??? idk how that works??
 
 function joinGame(msg) {
-    console.log("HERE");
-    console.log(msg);
     game.addPlayer(this, msg.username, (msg.color) ? msg.color : Constants.TANK.BLUE, msg.fireToggle);
 }
 
