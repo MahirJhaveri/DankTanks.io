@@ -20,12 +20,12 @@ class Game {
         setInterval(this.update_map.bind(this), 1000 / 5); // send out map updates at 5fps
     }
 
-    addPlayer(socket, username, tankStyle) {
+    addPlayer(socket, username, tankStyle, fireToggle) {
         this.sockets[socket.id] = socket;
 
         const x = Constants.MAP_SIZE * (0.25 + Math.random() * 0.5);
         const y = Constants.MAP_SIZE * (0.25 + Math.random() * 0.5);
-        this.players[socket.id] = new Player(socket.id, username, x, y, tankStyle);
+        this.players[socket.id] = new Player(socket.id, username, x, y, tankStyle,fireToggle);
     }
 
     removePlayer(socket) {
@@ -50,6 +50,13 @@ class Game {
         // Check if player is still connected
         if (this.players[socket.id]) {
             this.players[socket.id].updateTankDirection(keyCode);
+        }
+    }
+
+    handleFireInput(socket, toggle) {
+        // Check if player is still connected
+        if (this.players[socket.id]) {
+            this.players[socket.id].updateFireToggle(toggle);
         }
     }
 

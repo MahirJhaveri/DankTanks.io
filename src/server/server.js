@@ -33,6 +33,8 @@ io.on('connection', socket => {
     socket.on(Constants.MSG_TYPES.JOIN_GAME, joinGame);
     socket.on(Constants.MSG_TYPES.INPUT.MOUSE, handleMouseInput);  // sets the direction of the turret
     socket.on(Constants.MSG_TYPES.INPUT.KEY, handleKeyInput);  // sets the direction of the tank
+    socket.on(Constants.MSG_TYPES.INPUT.FIRE, handleFireInput);  // sets the direction of the tank
+
     socket.on('disconnect', onDisconnect);
 });
 
@@ -42,7 +44,7 @@ const game = new Game();
 // NOTE: This keyword ??? idk how that works??
 
 function joinGame(msg) {
-    game.addPlayer(this, msg.username, (msg.color) ? msg.color : Constants.TANK.BLUE);
+    game.addPlayer(this, msg.username, (msg.color) ? msg.color : Constants.TANK.BLUE, msg.fireToggle);
 }
 
 // Use the mouse data to move the turret
@@ -52,6 +54,10 @@ function handleMouseInput(dir) {
 
 function handleKeyInput(keyCode) {
     game.handleKeyInput(this, keyCode);
+}
+
+function handleFireInput(toggle) {
+    game.handleFireInput(this, toggle);
 }
 
 function onDisconnect() {
