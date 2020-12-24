@@ -19,6 +19,19 @@ class Player extends DynamicEntity {
     this.successiveToogle = !fireToogle;
   }
 
+  computeDirAndSpeed(dir1, speed1, dir2, speed2) {
+    const x1 = speed1 * Math.sin(dir1);
+    const y1 = speed1 * Math.cos(dir1);
+    const x2 = speed2 * Math.sin(dir2);
+    const y2 = speed2 * Math.cos(dir2);
+    const newSpeed = Math.sqrt((x1+x2)*(x1+x2) + (y1+y2)*(y1+y2));
+    var newDir = Math.acos((y1+y2)/newSpeed);
+    if ((x1+x2) < 0) {
+      newDir = 2*Math.PI - newDir;
+    }
+    return [newDir, newSpeed];
+  }
+
   update(dt) {
     super.update(dt);
 
@@ -40,12 +53,13 @@ class Player extends DynamicEntity {
       (!this.fireToogle || (this.fireToogle && this.successiveToogle))
     ) {
       this.fireCooldown += this.fireCooldownSpeed;
+      var [newTurretDirection, newBulletSpeed] = this.computeDirAndSpeed(this.turretDirection, this.bulletSpeed, this.direction, Constants.PLAYER_SPEED);
       return new Bullet(
         this.id,
         this.x,
         this.y,
-        this.turretDirection,
-        this.bulletSpeed
+        newTurretDirection,
+        newBulletSpeed
       );
     }
     return null;
