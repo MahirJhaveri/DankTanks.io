@@ -16,6 +16,7 @@ if (process.env.NODE_ENV === 'development') {
     const compiler = webpack(webpackConfig);
     app.use(webpackDevMiddleware(compiler));
 } else {
+    // Use the pre-compiled files 
     app.use(express.static('dist'));
 }
 
