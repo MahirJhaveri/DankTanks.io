@@ -1,14 +1,15 @@
 {
-    "name": "sample-io-game",
+    "name": "danktanks.io",
     "version": "1.0.0",
     "description": "",
     "main": "src/server/server.js",
     "scripts": {
-        "build": "",
+        "build": "webpack --config webpack.prod.js",
+        "clean": "rm -r ./dist",
         "lint": "eslint --cache --ext .js,.jsx src/",
         "develop": "cross-env NODE_ENV=development node src/server/server.js",
         "start": "cross-env NODE_ENV=production node src/server/server.js",
-        "test": "jest"
+        "test": ""
     },
     "author": "Mahir Jhaveri",
     "dependencies": {
