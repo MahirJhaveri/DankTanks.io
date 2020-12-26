@@ -71,14 +71,21 @@ function render(canvas) {
 
 function renderBullet(canvas, me, bullet) {
     const context = canvas.getContext('2d');
-    const { x, y } = bullet;
+    const { x, y, drawAngle } = bullet;
+    const canvasX = canvas.width / 2 + x - me.x;
+    const canvasY = canvas.height / 2 + y - me.y;
+
+    context.save();
+    context.translate(canvasX, canvasY);
+    context.rotate(drawAngle);
     context.drawImage(
-        getAsset('bullet.svg'),
-        canvas.width / 2 + x - me.x - BULLET_RADIUS,
-        canvas.height / 2 + y - me.y - BULLET_RADIUS,
-        BULLET_RADIUS * 2,
-        BULLET_RADIUS * 2,
+        getAsset(SPRITES.LASERBEAM),
+        -BULLET_RADIUS * 4,
+        -BULLET_RADIUS * 4,
+        BULLET_RADIUS * 8,
+        BULLET_RADIUS * 8,
     );
+    context.restore();
 }
 
 // renders a player at the given coordinates
