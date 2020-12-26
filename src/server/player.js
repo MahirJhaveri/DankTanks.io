@@ -59,7 +59,7 @@ class Player extends DynamicEntity {
         this.x,
         this.y,
         newTurretDirection,
-        Constants.BULLET_SPEED,
+        newBulletSpeed,
         this.turretDirection
       );
     }
