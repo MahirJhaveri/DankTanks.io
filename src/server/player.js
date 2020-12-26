@@ -51,7 +51,9 @@ class Player extends DynamicEntity {
       (!this.fireToogle || (this.fireToogle && this.successiveToogle))
     ) {
       this.fireCooldown += this.fireCooldownSpeed;
-      var [newTurretDirection, newBulletSpeed] = this.computeDirAndSpeed(this.turretDirection, this.bulletSpeed, (this.x - oldX)/dt, (this.y - oldY)/dt);
+      const tankSpeedX = (this.x - oldX != 0) ? this.speed * Math.sin(this.direction) : 0;
+      const tankSpeedY = (this.y - oldY != 0) ? this.speed * Math.cos(this.direction) : 0;
+      var [newTurretDirection, newBulletSpeed] = this.computeDirAndSpeed(this.turretDirection, Constants.BULLET_SPEED, tankSpeedX, tankSpeedY);
       return new Bullet(
         this.id,
         this.x,
