@@ -62,6 +62,8 @@ module.exports = Object.freeze({
         TANK_GRAY: "TankGray.png",
         TURRET_GRAY: "TurretGray.png",
         BULLET: "bullet.svg",
+        LASERBEAM: "LaserBeam.png",
+        MISSILE: "Missile.png",
         CROWN: "crown.png",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",
