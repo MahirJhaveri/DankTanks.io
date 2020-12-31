@@ -2,7 +2,7 @@
 Deals with rendering the the navigation map at the bottom right corner of each player
 */
 const Constants = require('../../shared/constants');
-const { MAP_SIZE, NAV_MAP_SIZE } = Constants;
+const { MAP_SIZE, NAV_MAP_SIZE, OBSTACLES } = Constants;
 
 const canvas = document.getElementById('map-canvas');
 const context = canvas.getContext('2d');
@@ -22,6 +22,25 @@ function drawPlayerOnMap(x, y) {
     context.fill();
 }
 
+function renderPolygon(vertices) {
+    context.beginPath();
+    context.moveTo(originX + (vertices[0][0] * NAV_MAP_SIZE * 1.0 / MAP_SIZE), originY + (vertices[0][1] * NAV_MAP_SIZE * 1.0 / MAP_SIZE));
+    var i = 1;
+    while (i < vertices.length) {
+        context.lineTo(originX + (vertices[i][0] * NAV_MAP_SIZE * 1.0 / MAP_SIZE), originY + (vertices[i][1] * NAV_MAP_SIZE * 1.0 / MAP_SIZE));
+        i++;
+    }
+    //context.stroke();
+    context.fill();
+}
+
+function drawObstaclesOnMap() {
+    context.save();
+    context.fillStyle = "#926F5B";
+    OBSTACLES.forEach(renderPolygon);
+    context.restore();
+}
+
 function renderMap() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -33,6 +52,8 @@ function renderMap() {
     context.fillStyle = 'rgba(38, 156, 56, 0.2)';
     context.fillRect(originX, originY, NAV_MAP_SIZE / 2, NAV_MAP_SIZE / 2);
     context.fillRect(originX + NAV_MAP_SIZE / 2, originY + NAV_MAP_SIZE / 2, NAV_MAP_SIZE / 2, NAV_MAP_SIZE / 2);
+
+    drawObstaclesOnMap();
 
     if (navMap) {
         context.lineWidth = 0.1;

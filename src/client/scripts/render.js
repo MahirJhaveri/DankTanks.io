@@ -2,7 +2,8 @@ import { getAsset, getTank, getTurret } from './assets';
 import { getCurrentState } from './state';
 
 const Constants = require('../../shared/constants');
-const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES, EXPLOSION_RADIUS, CROWN_RADIUS } = Constants;
+const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES, 
+    EXPLOSION_RADIUS, CROWN_RADIUS, OBSTACLES } = Constants;
 
 const canvas = document.getElementById('game-canvas');
 const canvas2 = document.getElementById('game-canvas-2');
@@ -27,6 +28,9 @@ function render(canvas) {
 
     // Draw background
     renderBackground(canvas, me.x, me.y);
+
+    /* Draw obstacles */
+    renderObstacles(canvas, me);
 
     // Draw the grid
     context.strokeStyle = 'white';
@@ -168,6 +172,32 @@ function renderBackground(canvas, x, y) {
     backgroundGradient.addColorStop(1, 'gray');
     context.fillStyle = backgroundGradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+/* Renders a polygon with given vertices */
+function renderPolygon(context, me, vertices) {
+    context.beginPath();
+    const offsetX = canvas.width / 2 - me.x;
+    const offsetY = canvas.height / 2 - me.y;
+    context.moveTo(offsetX + vertices[0][0], offsetY + vertices[0][1]);
+    var i = 1;
+    while (i < vertices.length) {
+        context.lineTo(offsetX + vertices[i][0], offsetY + vertices[i][1]);
+        i++;
+    }
+    context.stroke();
+    context.fill();
+}
+
+/* Renders all the obstacles as required */
+function renderObstacles(canvas, me) {
+    const context = canvas.getContext('2d');
+    context.save();
+    context.fillStyle = "#B24BCB";
+    context.strokeStyle = "#652DC1";
+    //context.lineWidth = 15;
+    OBSTACLES.forEach(renderPolygon.bind(null, context, me));
+    context.restore();
 }
 
 function renderExplosion(canvas, me, explosion) {
