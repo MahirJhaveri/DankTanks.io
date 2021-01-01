@@ -9,9 +9,13 @@ const isSeparable = require('./utils/sat');
  * check for collision of obstacles with bullets
  */
 
+ /* Caching to avoid recomputing normals for obstacles over and over */
+const cache = {};
+
 function applyCollisions(players, bullets, obstacles, crowns) {
     const bulletsHit = []; /* bullets that hit another player */
     const crownsCaptured = []; /* crowns captured by someone */
+    const bulletsToRemove = {};
 
     /* Bullet-Obstacle Collisions 
     * simply, remove the destroyed bullet from bullets, since we dont need to 
@@ -19,15 +23,13 @@ function applyCollisions(players, bullets, obstacles, crowns) {
     */
     for(let i = 0; i < bullets.length; i++) {
         const bullet = bullets[i];
-        const bulletsToRemove = [];
         for(let l = 0; l < obstacles.length; l++) {
             const obstacle = obstacles[l];
-            if(!isSeparable(undefined, obstacle.vertices, 
-                bullet.getCoordinates(), Constants.BULLET_RADIUS, undefined)) {
-                bulletsToRemove.push(bullet);
+            if(!isSeparable(obstacle.id, obstacle.vertices, 
+                bullet.getCoordinates(), Constants.BULLET_RADIUS, cache)) {
+                bulletsToRemove[bullet.id] = true;
             }
         }
-        bullets = bullets.filter(b => !bulletsToRemove.includes(b));
     }
     
     /* Player Collision */
@@ -37,8 +39,8 @@ function applyCollisions(players, bullets, obstacles, crowns) {
         /* Player-Obstacle Collision */
         for(let l = 0; l < obstacles.length; l++) {
             const obstacle = obstacles[l];
-            if(!isSeparable(undefined, obstacle.vertices, 
-                player.getCoordinates(), Constants.PLAYER_RADIUS, undefined)) {
+            if(!isSeparable(obstacle.id, obstacle.vertices, 
+                player.getCoordinates(), Constants.PLAYER_RADIUS, cache)) {
                 player.kill();
                 continue;
             }
@@ -50,6 +52,7 @@ function applyCollisions(players, bullets, obstacles, crowns) {
             if (bullet.parentID != player.id &&
                 bullet.distanceTo(player) <= (Constants.BULLET_RADIUS + Constants.PLAYER_RADIUS)) {
                 bulletsHit.push(bullet);
+                bulletsToRemove[bullet.id] = true;
                 player.takeBulletDamage();
                 break;
             }
@@ -69,7 +72,7 @@ function applyCollisions(players, bullets, obstacles, crowns) {
     }
 
     return {
-        updatedBullets: bullets,
+        updatedBullets: bullets.filter(b => !bulletsToRemove[b.id]),
         bulletsHit: bulletsHit,
         crownsCaptured: crownsCaptured,
     };

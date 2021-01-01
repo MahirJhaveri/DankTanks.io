@@ -136,11 +136,9 @@ class Game {
                 }
             }
         });
+        
         this.bullets = destroyedEntities.updatedBullets;
-        // optimize this by use of maps instead of lists
-        this.bullets = this.bullets.filter(
-            b => !destroyedEntities.bulletsHit.includes(b)
-        );
+        
         this.crowns = this.crowns.filter(
             c => !destroyedEntities.crownsCaptured.includes(c)
         )

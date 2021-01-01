@@ -195,7 +195,7 @@ function renderObstacles(canvas, me) {
     context.save();
     context.fillStyle = "#B24BCB";
     //context.strokeStyle = "#652DC1";
-    context.shadowBlur = 20;
+    context.shadowBlur = 30;
     context.shadowColor = "#652DC1";
     //context.lineWidth = 15;
     OBSTACLES.forEach(renderPolygon.bind(null, context, me));
