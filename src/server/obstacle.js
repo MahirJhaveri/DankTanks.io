@@ -1,12 +1,14 @@
-class Obstacle {
-    constructor(id, points) {
-        this.id = id;
-        this.points = points;
+const Entity = require('./entity');
+
+class Obstacle extends Entity {
+    constructor(id, vertices) {
+        super(id);
+        this.vertices = vertices;
     }
 
     serializeForUpdate() {
         return {
-            points: this.points,
+            vertices: this.vertices,
         }
     }
 }

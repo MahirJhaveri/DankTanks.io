@@ -8,10 +8,19 @@ EXPLOSION.STATE7, EXPLOSION.STATE8];
 
 class Explosion extends Entity {
     constructor(x, y) {
-        super(shortid(), x, y);
+        super(shortid());
+        this.x = x;
+        this.y = y;
         this.stateIndex = 0;
         this.state = states[this.stateIndex];
         this.timeSinceLastUpdate = 0;
+    }
+
+    // optimize app by not using sqrt at all and simply using squares everywhere
+    distanceTo(entity) {
+        const dx = this.x - entity.x;
+        const dy = this.y - entity.y;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     // deals with updating the state of the explosion
@@ -27,7 +36,8 @@ class Explosion extends Entity {
 
     serializeForUpdate() {
         return {
-            ...(super.serializeForUpdate()),
+            x: this.x,
+            y: this.y,
             state: this.state,
         };
     }
