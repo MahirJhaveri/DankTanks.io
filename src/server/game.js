@@ -4,12 +4,14 @@ const applyCollisions = require('./collisions');
 const Leaderboard = require('./leaderboard');
 const Explosion = require('./explosion');
 const Crown = require('./crown');
+const Obstacle = require('./obstacle');
 
 class Game {
     constructor() {
         this.sockets = {};
         this.players = {};
         this.bullets = [];
+        this.obstacles = this.initObstacles();
         this.crowns = [new Crown(Constants.CROWN_POWERUP.RAPID_FIRE, Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
         this.explosions = [];
         this.leaderboard = new Leaderboard(Constants.LEADERBOARD_SIZE);
@@ -18,6 +20,15 @@ class Game {
         this.shouldSendLeaderboard = 1; // send leaderboard updates only once every 4 game updates
         setInterval(this.update.bind(this), 1000 / 60); // process game updates at 60fps
         setInterval(this.update_map.bind(this), 1000 / 5); // send out map updates at 5fps
+    }
+
+    /* Initializes a list of Obstacles from data in constants */
+    initObstacles() {
+        const obs = [];
+        for(let i = 0; i < Constants.OBSTACLES.length; i++) {
+            obs.push(new Obstacle(`Obstacle${i}`, Constants.OBSTACLES[i]));
+        }
+        return obs;
     }
 
     addPlayer(socket, username, tankStyle, fireToggle) {
@@ -112,9 +123,11 @@ class Game {
         const destroyedEntities = applyCollisions(
             Object.values(this.players),
             this.bullets,
+            this.obstacles,
             this.crowns
         );
-        destroyedEntities.destroyedBullets.forEach(bullet => {
+
+        destroyedEntities.bulletsHit.forEach(bullet => {
             if (this.players[bullet.parentID]) {
                 this.players[bullet.parentID].onDealtDamage()
                 if (this.shouldSendLeaderboard == 0) {
@@ -123,12 +136,11 @@ class Game {
                 }
             }
         });
-        // optimize this by use of maps instead of lists
-        this.bullets = this.bullets.filter(
-            b => !destroyedEntities.destroyedBullets.includes(b)
-        );
+        
+        this.bullets = destroyedEntities.updatedBullets;
+        
         this.crowns = this.crowns.filter(
-            c => !destroyedEntities.destroyedCrowns.includes(c)
+            c => !destroyedEntities.crownsCaptured.includes(c)
         )
 
         // Check for dead players
@@ -186,7 +198,7 @@ class Game {
 
         this.shouldSendLeaderboard = (this.shouldSendLeaderboard + 1) % 4;
 
-        //console.log(`Time to run update = ${(Date.now() - now) / 1000}`);
+        //console.log(`Time to run update = ${(Date.now() - now)}`);
     }
 
     createUpdate(player) {

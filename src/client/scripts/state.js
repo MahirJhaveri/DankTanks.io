@@ -69,6 +69,7 @@ export function getCurrentState() {
             // revaluate: base can only be < 0 at the start of the game
             return gameUpdates[gameUpdates.length - 1]
         } else if (base == gameUpdates.length - 1) {
+            //console.log("Awaiting game update from server");
             return gameUpdates[gameUpdates.length - 1]
         } else {
             const baseUpdate = gameUpdates[base];

@@ -125,6 +125,10 @@ class Player extends DynamicEntity {
     }
     return null;
   }
+
+  kill() {
+    this.hp = 0;
+  }
 }
 
 module.exports = Player;
