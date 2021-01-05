@@ -114,7 +114,7 @@ function isSeparable(id, vertices, center, radius, cache) {
         boundingBox.push([center[0]+temp[i][0]*radius, center[1]+temp[i][1]*radius]);
         i++;
     }
-    return isSeparableAux(id, vertices, undefined, boundingBox, cache);
+    return isSeparableAux(id, vertices, "boundingBoxNormals", boundingBox, cache);
 }
 
 module.exports = isSeparable

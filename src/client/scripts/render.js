@@ -32,18 +32,8 @@ function render(canvas) {
     /* Draw obstacles */
     renderObstacles(canvas, me);
 
-    // Draw the grid
-    context.strokeStyle = 'white';
-    context.lineWidth = 0.1;
-    let X = 0;
-    while (X < MAP_SIZE) {
-        let Y = 0;
-        while (Y < MAP_SIZE) {
-            context.strokeRect(canvas.width / 2 - me.x + X, canvas.height / 2 - me.y + Y, 100, 100);
-            Y += 100;
-        }
-        X += 100;
-    }
+    /* Draw the grid */
+    renderGrid(context, me);
 
     /*// Draw boundaries
     context.save();
@@ -113,6 +103,9 @@ function renderPlayer(canvas, me, player) {
         PLAYER_RADIUS * 2,
         PLAYER_RADIUS * 2,
     );
+    context.strokeStyle = 'white';
+    context.lineWidth = 2;
+    context.strokeRect(-PLAYER_RADIUS, -PLAYER_RADIUS, PLAYER_RADIUS*2, PLAYER_RADIUS*2);
     context.restore();
 
     // Draw the turret
@@ -174,6 +167,20 @@ function renderBackground(canvas, x, y) {
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function renderGrid(context, me) {
+    context.strokeStyle = 'white';
+    context.lineWidth = 0.1;
+    let X = 0;
+    while (X < MAP_SIZE) {
+        let Y = 0;
+        while (Y < MAP_SIZE) {
+            context.strokeRect(canvas.width / 2 - me.x + X, canvas.height / 2 - me.y + Y, 100, 100);
+            Y += 100;
+        }
+        X += 100;
+    }
+}
+
 /* Renders a polygon with given vertices */
 function renderPolygon(context, me, vertices) {
     context.beginPath();
@@ -195,7 +202,7 @@ function renderObstacles(canvas, me) {
     context.save();
     context.fillStyle = "#B24BCB";
     //context.strokeStyle = "#652DC1";
-    context.shadowBlur = 30;
+    context.shadowBlur = 35;
     context.shadowColor = "#652DC1";
     //context.lineWidth = 15;
     OBSTACLES.forEach(renderPolygon.bind(null, context, me));
