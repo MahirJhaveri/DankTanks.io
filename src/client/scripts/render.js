@@ -103,9 +103,6 @@ function renderPlayer(canvas, me, player) {
         PLAYER_RADIUS * 2,
         PLAYER_RADIUS * 2,
     );
-    context.strokeStyle = 'white';
-    context.lineWidth = 2;
-    context.strokeRect(-PLAYER_RADIUS, -PLAYER_RADIUS, PLAYER_RADIUS*2, PLAYER_RADIUS*2);
     context.restore();
 
     // Draw the turret
