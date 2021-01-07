@@ -149,6 +149,12 @@ class Game {
             const player = this.players[playerID];
 
             if (player.hp <= 0) {
+                /* Restore the health of player who killed */
+                if(player.lastHitByPlayer) {
+                    const killedByPlayer = this.players[player.lastHitByPlayer];
+                    killedByPlayer.hp = Constants.PLAYER_MAX_HP;
+                }
+
                 socket.emit(Constants.MSG_TYPES.GAME_OVER);
                 this.removePlayer(socket);
                 this.explosions.push(new Explosion(player.x, player.y));
