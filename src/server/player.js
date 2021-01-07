@@ -17,6 +17,7 @@ class Player extends DynamicEntity {
     this.bulletSpeed = Constants.BULLET_SPEED;
     this.fireToogle = fireToogle;
     this.successiveToogle = !fireToogle;
+    this.lastHitByPlayer = null; /*to restore player health on kill*/
   }
 
   computeDirAndSpeed(dir1, speed1, tankSpeedX, tankSpeedY) {
@@ -66,8 +67,9 @@ class Player extends DynamicEntity {
     return null;
   }
 
-  takeBulletDamage() {
+  takeBulletDamage(bullet) {
     this.hp -= Constants.BULLET_DAMAGE;
+    this.lastHitByPlayer = bullet.parentID;
   }
 
   onDealtDamage() {

@@ -41,6 +41,7 @@ function applyCollisions(players, bullets, obstacles, crowns) {
             const obstacle = obstacles[l];
             if(!isSeparable(obstacle.id, obstacle.vertices, 
                 player.getCoordinates(), Constants.PLAYER_RADIUS, cache)) {
+                player.lastHitByPlayer = null; /*since collided with obstacle*/
                 player.kill();
                 continue;
             }
@@ -53,7 +54,7 @@ function applyCollisions(players, bullets, obstacles, crowns) {
                 bullet.distanceTo(player) <= (Constants.BULLET_RADIUS + Constants.PLAYER_RADIUS)) {
                 bulletsHit.push(bullet);
                 bulletsToRemove[bullet.id] = true;
-                player.takeBulletDamage();
+                player.takeBulletDamage(bullet);
                 break;
             }
         }
