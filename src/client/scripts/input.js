@@ -81,7 +81,6 @@ export function startCapturingInput() {
 
     // Add event listerner to start capturing input on keydown events
     window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', () => updateTankDirection(null)); // Stop rotation on keyup
 
     window.addEventListener('touchstart', onTouchInput, { passive: false });
     window.addEventListener('touchmove', onTouchInput, { passive: false });
@@ -177,7 +176,6 @@ export function stopCapturingInput() {
 
     // Stop event listerner to start capturing input on keydown events
     window.removeEventListener('keydown', onKeyDown);
-    window.removeEventListener('keyup', () => updateTankDirection(null));
 
 
     window.removeEventListener('touchstart', onTouchInput);
