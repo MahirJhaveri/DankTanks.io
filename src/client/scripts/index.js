@@ -17,6 +17,15 @@ import { initChooseTankController, getTankStyle } from "./playMenu";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/main.css";
 
+// Mobile-friendly
+function detectTouch() {
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  if (isTouch) {
+    document.body.classList.add('touch-device');
+  }
+}
+detectTouch();
+
 /* Use to toggle double buffering off while debugging but should be ON in PROD */
 const ENABLE_DOUBLE_BUFFERING = true;
 
