@@ -14,24 +14,31 @@ The game is built on a classic **client-server architecture**.
 Communication between the client and server is handled in real-time using **Socket.IO**, which enables low-latency, event-based communication over WebSockets. The server runs on Express.js, which also serves the static client files.
 
 ```mermaid
-graph TD
-    subgraph "Client (Browser)"
-        UserInput[User Input] --> ClientLogic
-        ClientLogic[Client-Side Logic] --> Networking
-        Networking[Networking (socket.io)] --> Rendering
-        Rendering[Canvas Rendering]
-    end
+graph TD;
+    subgraph Client (Browser);
+        A[User Input];
+        B[Client-Side Logic];
+        C[Networking];
+        D[Canvas Rendering];
+    end;
 
-    subgraph "Server (Node.js)"
-        ServerNetworking[Networking (socket.io)] --> GameLogic
-        GameLogic[Game Logic (game.js)] --> Physics
-        Physics[Physics & Collisions]
-        GameLogic --> PlayerManagement
-        PlayerManagement[Player & Entity Management]
-    end
+    subgraph Server (Node.js);
+        E[Networking];
+        F[Game Logic];
+        G[Physics & Collisions];
+        H[Player & Entity Management];
+    end;
 
-    ClientLogic -- "Sends Input" --> ServerNetworking
-    ServerNetworking -- "Sends Game State" --> ClientLogic
+    A --> B;
+    B --> C;
+    C --> D;
+
+    E --> F;
+    F --> G;
+    F --> H;
+
+    B -- Sends Input --> E;
+    E -- Sends Game State --> B;
 ```
 
 ### 2.1. Client-Server Interaction Flow
@@ -105,7 +112,7 @@ The server is authoritative and controls all aspects of the game logic.
 *   `player.js`, `bullet.js`, `obstacle.js`, etc.: Classes representing the different game entities.
 *   `collisions.js`: Handles collision detection logic.
 *   `leaderboard.js`: Manages the leaderboard data.
-*   `utils/sat.js`: An implementation of the Separating Axis Theorem for collision detection.
+*   `utils/sat.js`: An implementation of the Separating Axis Theorem for collision.
 
 ### 4.2. Core Game Logic (`game.js`)
 
