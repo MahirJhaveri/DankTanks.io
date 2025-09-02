@@ -1,4 +1,4 @@
-# DankTanks.io Design Document (Detailed)
+# DankTanks.io Design Document
 
 ## 1. Introduction
 
@@ -12,24 +12,6 @@ The game is built on a classic **client-server architecture**.
 *   **Client:** A lightweight web-based client that renders the game state received from the server and captures user input. The client is essentially a "dumb" terminal that displays what the server tells it to.
 
 Communication between the client and server is handled in real-time using **Socket.IO**, which enables low-latency, event-based communication over WebSockets. The server runs on Express.js, which also serves the static client files.
-
-```mermaid
-graph TD
-    subgraph "Client (Browser)"
-        A[User Input] --> B[Client-Side Logic];
-        B --> C[Networking];
-        C --> D[Canvas Rendering];
-    end
-
-    subgraph "Server (Node.js)"
-        E[Networking] --> F[Game Logic];
-        F --> G[Physics & Collisions];
-        F --> H[Player & Entity Management];
-    end
-
-    B -- "Sends Input" --> E;
-    E -- "Sends Game State" --> B;
-```
 
 ### 2.1. Client-Server Interaction Flow
 
