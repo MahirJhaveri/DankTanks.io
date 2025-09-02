@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-DankTanks.io is a fast-paced, real-time multiplayer 2D tank game. Players control tanks, battle against each other to score points, and compete for the top spot on a leaderboard. The game features power-ups, such as a rapid-fire crown, to enhance gameplay. This document provides a detailed overview of the system's architecture and implementation.
+DankTanka.io is a fast-paced, real-time multiplayer 2D tank game. Players control tanks, battle against each other to score points, and compete for the top spot on a leaderboard. The game features power-ups, such as a rapid-fire crown, to enhance gameplay. This document provides a detailed overview of the system's architecture and implementation.
 
 ## 2. System Architecture
 
@@ -14,31 +14,21 @@ The game is built on a classic **client-server architecture**.
 Communication between the client and server is handled in real-time using **Socket.IO**, which enables low-latency, event-based communication over WebSockets. The server runs on Express.js, which also serves the static client files.
 
 ```mermaid
-graph TD;
-    subgraph Client (Browser);
-        A[User Input];
-        B[Client-Side Logic];
-        C[Networking];
-        D[Canvas Rendering];
-    end;
+graph TD
+    subgraph "Client (Browser)"
+        A[User Input] --> B[Client-Side Logic];
+        B --> C[Networking];
+        C --> D[Canvas Rendering];
+    end
 
-    subgraph Server (Node.js);
-        E[Networking];
-        F[Game Logic];
-        G[Physics & Collisions];
-        H[Player & Entity Management];
-    end;
+    subgraph "Server (Node.js)"
+        E[Networking] --> F[Game Logic];
+        F --> G[Physics & Collisions];
+        F --> H[Player & Entity Management];
+    end
 
-    A --> B;
-    B --> C;
-    C --> D;
-
-    E --> F;
-    F --> G;
-    F --> H;
-
-    B -- Sends Input --> E;
-    E -- Sends Game State --> B;
+    B -- "Sends Input" --> E;
+    E -- "Sends Game State" --> B;
 ```
 
 ### 2.1. Client-Server Interaction Flow
