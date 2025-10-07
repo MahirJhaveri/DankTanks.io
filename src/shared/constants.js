@@ -49,7 +49,8 @@ module.exports = Object.freeze({
         BLUE: 0,
         RED: 1,
         GREEN: 2,
-        GRAY: 3
+        GRAY: 3,
+        USA: 4
     },
 
     SPRITES: {
@@ -61,6 +62,8 @@ module.exports = Object.freeze({
         TURRET_GREEN: "TurretGreen.png",
         TANK_GRAY: "TankGray.png",
         TURRET_GRAY: "TurretGray.png",
+        TANK_USA: "TankUSA.png",
+        TURRET_USA: "TurretUSA.png",
         BULLET: "bullet.svg",
         LASERBEAM: "LaserBeam.png",
         MISSILE: "Missile.png",
