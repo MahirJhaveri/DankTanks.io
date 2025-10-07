@@ -1,6 +1,8 @@
 # DankTanks.io
 
-DankTanks.io is a fast-paced multiplayer tank game where you battle other players for the top spot on the leaderboard.
+[DankTanks.io](https://danktanks-io.fly.dev/) is a fast-paced multiplayer tank game where you battle other players for the top spot on the leaderboard.
+
+🚨[Click here to play online!](https://danktanks-io.fly.dev/)🚨
 
 ## 🎮 Gameplay
 
