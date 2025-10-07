@@ -5,7 +5,8 @@ import { processMapUpdate } from './map'
 
 const Constants = require('../../shared/constants');
 
-const socket = io(`ws://${window.location.host}`);
+const protocol = window.location.protocol.includes('https') ? 'wss' : 'ws';
+const socket = io(`${protocol}://${window.location.host}`, { transports: ['websocket'] });
 
 // promise to connect to game server
 const connectedPromise = new Promise(resolve => {
