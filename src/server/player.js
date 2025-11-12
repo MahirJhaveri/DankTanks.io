@@ -128,6 +128,18 @@ class Player extends DynamicEntity {
     return null;
   }
 
+  // Health pack methods
+  heal(amount) {
+    const previousHp = this.hp;
+    this.hp = Math.min(this.hp + amount, Constants.PLAYER_MAX_HP);
+    const actualHealed = this.hp - previousHp;
+    return actualHealed; // Return actual amount healed for feedback
+  }
+
+  canCollectHealthPack() {
+    return this.hp < Constants.PLAYER_MAX_HP;
+  }
+
   kill() {
     this.hp = 0;
   }
