@@ -64,6 +64,38 @@ export function createHealthPickupEffect(x, y) {
     }
 }
 
+// Create a golden burst effect for crown collection
+export function createCrownPickupEffect(x, y) {
+    // Golden starburst particles
+    for (let i = 0; i < 16; i++) {
+        const angle = (Math.PI * 2 * i) / 16;
+        const speed = 120 + Math.random() * 60;
+        // Vary gold color slightly for richness
+        const colorVariation = Math.floor(Math.random() * 30);
+        particles.push(new Particle(
+            x, y,
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed,
+            0.6,  // 0.6 second life
+            `255, ${215 - colorVariation}, 0`,  // Gold RGB with variation
+            10
+        ));
+    }
+
+    // Add floating sparkle symbols
+    for (let i = 0; i < 4; i++) {
+        particles.push(new Particle(
+            x + (Math.random() - 0.5) * 40,
+            y,
+            (Math.random() - 0.5) * 50,
+            -100 - Math.random() * 40,
+            0.9,  // 0.9 second life
+            '255, 255, 150',  // Yellow/white RGB
+            14
+        ));
+    }
+}
+
 // Update all particles
 export function updateParticles(dt) {
     for (let i = particles.length - 1; i >= 0; i--) {

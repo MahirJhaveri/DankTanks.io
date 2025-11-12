@@ -232,12 +232,17 @@ function renderExplosion(canvas, me, explosion) {
 function renderCrowns(canvas, me, crown) {
     const context = canvas.getContext('2d');
     const { x, y } = crown;
+
+    // Pulsing animation (15% variation, slightly faster than health pack)
+    const pulseScale = 1 + 0.15 * Math.sin(Date.now() / 180);
+    const size = CROWN_RADIUS * 2 * pulseScale;
+
     context.drawImage(
         getAsset(SPRITES.CROWN),
-        canvas.width / 2 + x - me.x - CROWN_RADIUS,
-        canvas.height / 2 + y - me.y - CROWN_RADIUS,
-        CROWN_RADIUS * 2,
-        CROWN_RADIUS * 2,
+        canvas.width / 2 + x - me.x - size / 2,
+        canvas.height / 2 + y - me.y - size / 2,
+        size,
+        size,
     );
 }
 

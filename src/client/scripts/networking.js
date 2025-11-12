@@ -3,7 +3,7 @@ import { processGameUpdate } from './state';
 import { processLeaderboardUpdate } from './leaderboard';
 import { processMapUpdate } from './map';
 import { playSound, SOUNDS } from './audio';
-import { createHealthPickupEffect } from './particles';
+import { createHealthPickupEffect, createCrownPickupEffect } from './particles';
 
 const Constants = require('../../shared/constants');
 
@@ -29,6 +29,10 @@ export const connect = onGameOver => (
         socket.on(Constants.MSG_TYPES.HEALTH_PACK_COLLECTED, ({ x, y, healedAmount }) => {
             playSound(SOUNDS.HEALTH_PICKUP);
             createHealthPickupEffect(x, y);
+        });
+        socket.on(Constants.MSG_TYPES.CROWN_COLLECTED, ({ x, y, powerupType }) => {
+            playSound(SOUNDS.CROWN_PICKUP);
+            createCrownPickupEffect(x, y);
         });
     })
 );

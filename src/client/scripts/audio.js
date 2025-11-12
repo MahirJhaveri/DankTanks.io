@@ -1,7 +1,8 @@
 // Audio system for game sound effects using Web Audio API
 
 const SOUNDS = {
-    HEALTH_PICKUP: 'health_pickup'
+    HEALTH_PICKUP: 'health_pickup',
+    CROWN_PICKUP: 'crown_pickup'
     // Future sounds: SHOOT, HIT, EXPLOSION, etc.
 };
 
@@ -64,6 +65,54 @@ function playHealthPickupSound(volume = 0.3) {
     osc2.stop(now + 0.4);
 }
 
+// Procedurally generate crown pickup sound effect
+function playCrownPickupSound(volume = 0.4) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Create oscillators for a powerful "power-up" sound
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const osc3 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    // Connect audio graph
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    osc3.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Power chord (G + D) with square waves for punch
+    osc1.type = 'square';
+    osc2.type = 'square';
+    osc1.frequency.setValueAtTime(196, now);      // G3
+    osc2.frequency.setValueAtTime(293.66, now);   // D4
+
+    // Transition to bright sine wave arpeggio
+    osc1.frequency.setValueAtTime(523.25, now + 0.15);  // C5
+    osc2.frequency.setValueAtTime(659.25, now + 0.25);  // E5
+    osc3.frequency.setValueAtTime(783.99, now + 0.35);  // G5
+
+    osc1.type = 'sine';
+    osc2.type = 'sine';
+    osc3.type = 'sine';
+
+    // Envelope for punchy attack and smooth decay
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.01); // Instant attack
+    gainNode.gain.setValueAtTime(volume, now + 0.3);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.45); // Smooth decay
+
+    // Start and stop
+    osc1.start(now);
+    osc2.start(now);
+    osc3.start(now + 0.15);  // osc3 only for arpeggio
+    osc1.stop(now + 0.45);
+    osc2.stop(now + 0.45);
+    osc3.stop(now + 0.45);
+}
+
 // Play a sound effect
 export function playSound(soundKey, volume = 0.3) {
     if (!audioContext) {
@@ -79,6 +128,9 @@ export function playSound(soundKey, volume = 0.3) {
     switch (soundKey) {
         case SOUNDS.HEALTH_PICKUP:
             playHealthPickupSound(volume);
+            break;
+        case SOUNDS.CROWN_PICKUP:
+            playCrownPickupSound(volume);
             break;
         default:
             console.warn(`Unknown sound: ${soundKey}`);
