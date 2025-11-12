@@ -7,6 +7,9 @@ const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES,
     EXPLOSION_RADIUS, CROWN_RADIUS, HEALTH_PACK_RADIUS, OBSTACLES,
     SMOKE_SPAWN_DISTANCE } = Constants;
 
+const Theme = require('../../shared/theme');
+const { getCurrentTheme } = Theme;
+
 const canvas = document.getElementById('game-canvas');
 const canvas2 = document.getElementById('game-canvas-2');
 
@@ -43,17 +46,11 @@ function render(canvas) {
     /* Draw the grid */
     renderGrid(context, me);
 
-    /*// Draw boundaries
+    // Draw boundaries
+    const theme = getCurrentTheme();
     context.save();
-    context.strokeStyle = '#FF3300';
-    context.lineWidth = 5;
-    //context.shadowBlur = 4;
-    //context.shadowColor = '#CC00FF';
-    context.strokeRect(canvas.width / 2 - me.x, canvas.height / 2 - me.y, MAP_SIZE, MAP_SIZE);
-    context.restore();*/
-    context.save();
-    context.strokeStyle = 'black';
-    context.lineWidth = 2;
+    context.strokeStyle = theme.boundary.color;
+    context.lineWidth = theme.boundary.lineWidth;
     context.strokeRect(canvas.width / 2 - me.x, canvas.height / 2 - me.y, MAP_SIZE, MAP_SIZE);
     context.restore();
 
@@ -223,6 +220,7 @@ function renderPlayer(canvas, me, player) {
 // play around with this
 function renderBackground(canvas, x, y) {
     const context = canvas.getContext('2d');
+    const theme = getCurrentTheme();
     const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
     const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
     const backgroundGradient = context.createRadialGradient(
@@ -233,15 +231,19 @@ function renderBackground(canvas, x, y) {
         backgroundY,
         MAP_SIZE / 2,
     );
-    backgroundGradient.addColorStop(0, 'black');
-    backgroundGradient.addColorStop(1, 'gray');
+    backgroundGradient.addColorStop(0, theme.background.colors[0]);
+    backgroundGradient.addColorStop(1, theme.background.colors[1]);
     context.fillStyle = backgroundGradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function renderGrid(context, me) {
-    context.strokeStyle = 'white';
-    context.lineWidth = 0.1;
+    const theme = getCurrentTheme();
+    if (!theme.grid.enabled) {
+        return;
+    }
+    context.strokeStyle = theme.grid.color;
+    context.lineWidth = theme.grid.lineWidth;
     let X = 0;
     while (X < MAP_SIZE) {
         let Y = 0;
@@ -271,12 +273,11 @@ function renderPolygon(context, me, vertices) {
 /* Renders all the obstacles as required */
 function renderObstacles(canvas, me) {
     const context = canvas.getContext('2d');
+    const theme = getCurrentTheme();
     context.save();
-    context.fillStyle = "#B24BCB";
-    //context.strokeStyle = "#652DC1";
-    context.shadowBlur = 35;
-    context.shadowColor = "#652DC1";
-    //context.lineWidth = 15;
+    context.fillStyle = theme.obstacles.fillColor;
+    context.shadowBlur = theme.obstacles.shadowBlur;
+    context.shadowColor = theme.obstacles.shadowColor;
     OBSTACLES.forEach(renderPolygon.bind(null, context, me));
     context.restore();
 }
