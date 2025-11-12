@@ -72,6 +72,10 @@ class Player extends DynamicEntity {
     this.lastHitByPlayer = bullet.parentID;
   }
 
+  increaseHealth(amount) {
+    this.hp = Math.min(Constants.PLAYER_MAX_HP, this.hp + amount);
+  }
+
   onDealtDamage() {
     this.score += Constants.SCORE_BULLET_HIT;
   }

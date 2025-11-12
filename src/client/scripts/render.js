@@ -21,7 +21,7 @@ canvas2.classList.add('hidden')
 
 function render(canvas) {
     const context = canvas.getContext('2d');
-    const { me, others, bullets, explosions, crowns } = getCurrentState();
+    const { me, others, bullets, explosions, crowns, healthpacks } = getCurrentState();
     if (!me) {
         return;
     }
@@ -59,6 +59,8 @@ function render(canvas) {
     explosions.forEach(renderExplosion.bind(null, canvas, me));
 
     crowns.forEach(renderCrowns.bind(null, canvas, me));
+
+    healthpacks.forEach(renderHealthpack.bind(null, canvas, me));
 }
 
 // ... Helper functions here excluded
@@ -227,6 +229,18 @@ function renderCrowns(canvas, me, crown) {
         canvas.height / 2 + y - me.y - CROWN_RADIUS,
         CROWN_RADIUS * 2,
         CROWN_RADIUS * 2,
+    );
+}
+
+function renderHealthpack(canvas, me, healthpack) {
+    const context = canvas.getContext('2d');
+    const { x, y } = healthpack;
+    context.drawImage(
+        getAsset(SPRITES.HEALTH_PACK),
+        canvas.width / 2 + x - me.x - Constants.HEALTH_PACK_RADIUS,
+        canvas.height / 2 + y - me.y - Constants.HEALTH_PACK_RADIUS,
+        Constants.HEALTH_PACK_RADIUS * 2,
+        Constants.HEALTH_PACK_RADIUS * 2,
     );
 }
 
