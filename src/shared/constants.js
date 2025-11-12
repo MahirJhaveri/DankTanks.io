@@ -15,6 +15,11 @@ module.exports = Object.freeze({
 
     CROWN_RADIUS: 30,
 
+    HEALTH_PACK_RADIUS: 25,
+    HEALTH_PACK_HEAL_AMOUNT: 50,
+    MAX_HEALTH_PACKS: 3,
+    HEALTH_PACK_SPAWN_DELAY: 20000, // 20 seconds
+
     SCORE_BULLET_HIT: 20,
     SCORE_PER_SECOND: 1,
 
@@ -68,6 +73,7 @@ module.exports = Object.freeze({
         LASERBEAM: "LaserBeam.png",
         MISSILE: "Missile.png",
         CROWN: "crown.png",
+        HEALTH_PACK: "healthpack.svg",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",
             STATE2: "explosions/explosion2.png",

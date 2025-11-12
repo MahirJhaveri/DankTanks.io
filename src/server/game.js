@@ -5,6 +5,8 @@ const Leaderboard = require('./leaderboard');
 const Explosion = require('./explosion');
 const Crown = require('./crown');
 const Obstacle = require('./obstacle');
+const Healthpack = require('./healthpack');
+const isSeparable = require('./utils/sat');
 
 class Game {
     constructor() {
@@ -13,6 +15,8 @@ class Game {
         this.bullets = [];
         this.obstacles = this.initObstacles();
         this.crowns = [new Crown(Constants.CROWN_POWERUP.RAPID_FIRE, Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
+        this.healthpacks = [];
+        this.healthpackSpawnTime = Date.now();
         this.explosions = [];
         this.leaderboard = new Leaderboard(Constants.LEADERBOARD_SIZE);
         this.lastUpdateTime = Date.now();
@@ -95,6 +99,38 @@ class Game {
         const dt = (now - this.lastUpdateTime) / 1000;
         this.lastUpdateTime = now;
 
+        // Spawn health packs
+        if (this.healthpacks.length < Constants.MAX_HEALTH_PACKS && now - this.healthpackSpawnTime > Constants.HEALTH_PACK_SPAWN_DELAY) {
+            let x, y;
+            let attempts = 0;
+            let separated = false;
+
+            do {
+                x = Math.random() * Constants.MAP_SIZE;
+                y = Math.random() * Constants.MAP_SIZE;
+
+                let collided = false;
+                for (let a = 0; a < this.obstacles.length; a++) {
+                    if (!isSeparable(this.obstacles[a].id, this.obstacles[a].vertices, [x, y], Constants.HEALTH_PACK_RADIUS)) {
+                        collided = true;
+                        break;
+                    }
+                }
+
+                if (!collided) {
+                    separated = true;
+                }
+
+                attempts++;
+            } while (!separated && attempts < 100);
+
+            if (separated) {
+                this.healthpacks.push(new Healthpack(Date.now(), x, y));
+            }
+
+            this.healthpackSpawnTime = now;
+        }
+
         // update each bullet
         const bulletsRemoved = [];
         this.bullets.forEach(bullet => {
@@ -124,7 +160,8 @@ class Game {
             Object.values(this.players),
             this.bullets,
             this.obstacles,
-            this.crowns
+            this.crowns,
+            this.healthpacks,
         );
 
         destroyedEntities.bulletsHit.forEach(bullet => {
@@ -141,6 +178,10 @@ class Game {
         
         this.crowns = this.crowns.filter(
             c => !destroyedEntities.crownsCaptured.includes(c)
+        )
+
+        this.healthpacks = this.healthpacks.filter(
+            h => !destroyedEntities.healthpacksCaptured.includes(h)
         )
 
         // Check for dead players
@@ -231,6 +272,7 @@ class Game {
             bullets: nearbyBullets.map(b => b.serializeForUpdate()),
             explosions: nearbyExplosions.map(e => e.serializeForUpdate()),
             crowns: nearbyCrowns.map(c => c.serializeForUpdate()),
+            healthpacks: this.healthpacks.map(h => h.serializeForUpdate()),
         }
     }
 }
