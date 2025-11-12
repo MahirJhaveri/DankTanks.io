@@ -1,10 +1,11 @@
 import { getAsset, getTank, getTurret } from './assets';
 import { getCurrentState } from './state';
-import { updateParticles, renderParticles } from './particles';
+import { updateParticles, renderParticles, createTankSmoke } from './particles';
 
 const Constants = require('../../shared/constants');
 const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES,
-    EXPLOSION_RADIUS, CROWN_RADIUS, HEALTH_PACK_RADIUS, OBSTACLES } = Constants;
+    EXPLOSION_RADIUS, CROWN_RADIUS, HEALTH_PACK_RADIUS, OBSTACLES,
+    SMOKE_SPAWN_DISTANCE } = Constants;
 
 const canvas = document.getElementById('game-canvas');
 const canvas2 = document.getElementById('game-canvas-2');
@@ -17,6 +18,9 @@ canvas2.height = window.innerHeight;
 
 // set canvas2 to be hidden
 canvas2.classList.add('hidden')
+
+// Position tracking for smoke effect
+const lastPlayerPositions = new Map();
 
 // add setCanvasDimensions for supporting smaller screens
 
@@ -56,6 +60,13 @@ function render(canvas) {
     // Draw all bullets
     bullets.forEach(renderBullet.bind(null, canvas, me));
 
+    // Check and emit smoke for all moving players
+    checkAndEmitSmoke(canvas, me, me);
+    others.forEach(other => checkAndEmitSmoke(canvas, me, other));
+
+    // Cleanup position tracking for disconnected players
+    cleanupPositionTracking([me, ...others]);
+
     // Draw all players
     renderPlayer(canvas, me, me);
     others.forEach(renderPlayer.bind(null, canvas, me));
@@ -70,6 +81,59 @@ function render(canvas) {
 
     // Render particles (after all game objects)
     renderParticles(canvas, me.x, me.y);
+}
+
+// Helper function to check if a player is visible on screen
+function isPlayerVisible(canvas, me, player) {
+    const canvasX = canvas.width / 2 + player.x - me.x;
+    const canvasY = canvas.height / 2 + player.y - me.y;
+
+    // Add a margin to start rendering smoke slightly before tank enters screen
+    const margin = 200;
+    return canvasX > -margin && canvasX < canvas.width + margin &&
+           canvasY > -margin && canvasY < canvas.height + margin;
+}
+
+// Check player movement and emit smoke if needed
+function checkAndEmitSmoke(canvas, me, player) {
+    // Only emit smoke for visible tanks (performance optimization)
+    if (!isPlayerVisible(canvas, me, player)) {
+        return;
+    }
+
+    const playerId = player.id || 'me';
+    const lastPos = lastPlayerPositions.get(playerId);
+
+    if (!lastPos) {
+        // First time seeing this player, just store position
+        lastPlayerPositions.set(playerId, { x: player.x, y: player.y });
+        return;
+    }
+
+    // Calculate distance moved
+    const dx = player.x - lastPos.x;
+    const dy = player.y - lastPos.y;
+    const distMoved = Math.sqrt(dx * dx + dy * dy);
+
+    // Emit smoke if moved enough
+    if (distMoved > SMOKE_SPAWN_DISTANCE) {
+        // Calculate smoke emission point at the back of the tank
+        const smokeX = player.x - Math.sin(player.direction) * PLAYER_RADIUS;
+        const smokeY = player.y + Math.cos(player.direction) * PLAYER_RADIUS;
+
+        createTankSmoke(smokeX, smokeY, player.direction, player.hp, Constants);
+        lastPlayerPositions.set(playerId, { x: player.x, y: player.y });
+    }
+}
+
+// Cleanup disconnected players from position tracking
+function cleanupPositionTracking(currentPlayers) {
+    const currentPlayerIds = new Set(currentPlayers.map(p => p.id || 'me'));
+    for (const playerId of lastPlayerPositions.keys()) {
+        if (!currentPlayerIds.has(playerId)) {
+            lastPlayerPositions.delete(playerId);
+        }
+    }
 }
 
 // ... Helper functions here excluded

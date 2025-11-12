@@ -21,6 +21,13 @@ module.exports = Object.freeze({
     HEALTH_PACK_SPAWN_INTERVAL: 20000, // 20 seconds in ms
     HEALTH_PACK_SPAWN_MARGIN: 100, // Distance from edges
 
+    // Smoke effect constants
+    SMOKE_PARTICLE_COLOR: '60, 60, 60', // Dark gray RGB
+    SMOKE_PARTICLE_LIFESPAN: 1, // seconds
+    SMOKE_PARTICLE_DENSITY: 3, // particles per emission
+    SMOKE_PARTICLE_SPEED: 80, // base speed in pixels/second
+    SMOKE_SPAWN_DISTANCE: 10, // min pixels moved to emit smoke
+
     SCORE_BULLET_HIT: 20,
     SCORE_PER_SECOND: 1,
 

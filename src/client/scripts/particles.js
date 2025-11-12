@@ -96,6 +96,64 @@ export function createCrownPickupEffect(x, y) {
     }
 }
 
+// Create smoke particles for tank movement
+export function createTankSmoke(x, y, direction, hp, constants) {
+    const { SMOKE_PARTICLE_COLOR, SMOKE_PARTICLE_LIFESPAN,
+            SMOKE_PARTICLE_DENSITY, SMOKE_PARTICLE_SPEED, PLAYER_MAX_HP } = constants;
+
+    // Calculate damage ratio (0 = no damage, 1 = critical damage)
+    const damageRatio = Math.max(0, (PLAYER_MAX_HP - hp) / PLAYER_MAX_HP);
+
+    // Scale smoke intensity based on damage (more damage = more smoke)
+    // At full health: base density; at 0 health: 2.5x density
+    const densityMultiplier = 1 + damageRatio * 1.5;
+    const adjustedDensity = Math.ceil(SMOKE_PARTICLE_DENSITY * densityMultiplier);
+
+    // Calculate opposite direction for smoke emission
+    const smokeDirection = direction + Math.PI;
+
+    // Create multiple smoke particles
+    for (let i = 0; i < adjustedDensity; i++) {
+        // Add randomization to direction (±30 degrees)
+        const angleVariation = (Math.random() - 0.5) * Math.PI / 3;
+        const particleAngle = smokeDirection + angleVariation;
+
+        // Add speed variation (±30%)
+        const speedVariation = 0.7 + Math.random() * 0.6;
+        const speed = SMOKE_PARTICLE_SPEED * speedVariation;
+
+        // Calculate velocity components
+        const vx = Math.cos(particleAngle) * speed;
+        const vy = Math.sin(particleAngle) * speed;
+
+        // Add slight position offset for natural spread
+        const offsetX = (Math.random() - 0.5) * 20;
+        const offsetY = (Math.random() - 0.5) * 20;
+
+        // Vary particle size (3-6 pixels), larger when damaged
+        // At full health: 3-6 pixels; at critical: 4-8 pixels
+        const baseSizeMin = 3 + damageRatio;
+        const baseSizeRange = 3 + damageRatio;
+        const size = baseSizeMin + Math.random() * baseSizeRange;
+
+        // Slight color variation for realism
+        // More damage = darker smoke
+        const colorVariation = Math.floor(Math.random() * 20);
+        const grayValue = Math.max(40, 60 - damageRatio * 20 + colorVariation);
+        const smokeColor = `${grayValue}, ${grayValue}, ${grayValue}`;
+
+        particles.push(new Particle(
+            x + offsetX,
+            y + offsetY,
+            vx,
+            vy,
+            SMOKE_PARTICLE_LIFESPAN,
+            smokeColor,
+            size
+        ));
+    }
+}
+
 // Update all particles
 export function updateParticles(dt) {
     for (let i = particles.length - 1; i >= 0; i--) {
