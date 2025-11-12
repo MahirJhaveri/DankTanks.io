@@ -118,8 +118,8 @@ function checkAndEmitSmoke(canvas, me, player) {
     // Emit smoke if moved enough
     if (distMoved > SMOKE_SPAWN_DISTANCE) {
         // Calculate smoke emission point at the back of the tank
-        const smokeX = player.x - Math.cos(player.direction) * PLAYER_RADIUS;
-        const smokeY = player.y - Math.sin(player.direction) * PLAYER_RADIUS;
+        const smokeX = player.x - Math.sin(player.direction) * PLAYER_RADIUS;
+        const smokeY = player.y + Math.cos(player.direction) * PLAYER_RADIUS;
 
         createTankSmoke(smokeX, smokeY, player.direction, player.hp, Constants);
         lastPlayerPositions.set(playerId, { x: player.x, y: player.y });
