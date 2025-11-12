@@ -41,6 +41,7 @@ module.exports = Object.freeze({
         LEADERBOARD_UPDATE: 'leaderboard_update',
         MAP_UPDATE: 'map_update',
         HEALTH_PACK_COLLECTED: 'health_pack_collected',
+        CROWN_COLLECTED: 'crown_collected',
     },
 
     KEY: {

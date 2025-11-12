@@ -64,10 +64,13 @@ function applyCollisions(players, bullets, obstacles, crowns, healthPacks) {
         for (let k = 0; k < crowns.length; k++) {
             const crown = crowns[k];
             // Update this to use maps and have a faster check (will not matter now as there is just one crown)
-            if (!crownsCaptured.includes(crown) &&
+            if (!crownsCaptured.find(c => c.crown === crown) &&
                 player.distanceTo(crown) <= (Constants.CROWN_RADIUS + Constants.PLAYER_RADIUS)) {
                 player.addCrownPowerup(crown);
-                crownsCaptured.push(crown);
+                crownsCaptured.push({
+                    crown: crown,
+                    playerId: player.id
+                });
                 break;
             }
         }

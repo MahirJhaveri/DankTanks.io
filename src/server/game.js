@@ -143,9 +143,21 @@ class Game {
         
         this.bullets = destroyedEntities.updatedBullets;
 
-        this.crowns = this.crowns.filter(
-            c => !destroyedEntities.crownsCaptured.includes(c)
-        )
+        // Process collected crowns (emit events for VFX/SFX)
+        destroyedEntities.crownsCaptured.forEach(({ crown, playerId }) => {
+            // Remove crown from game
+            this.crowns = this.crowns.filter(c => c !== crown);
+
+            // Emit collection event to player for VFX/SFX
+            const socket = this.sockets[playerId];
+            if (socket) {
+                socket.emit(Constants.MSG_TYPES.CROWN_COLLECTED, {
+                    x: crown.x,
+                    y: crown.y,
+                    powerupType: crown.id
+                });
+            }
+        });
 
         // Process collected health packs
         destroyedEntities.healthPacksCollected.forEach(({ healthPack, playerId, healedAmount }) => {
