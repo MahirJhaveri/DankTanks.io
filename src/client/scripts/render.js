@@ -1,9 +1,10 @@
 import { getAsset, getTank, getTurret } from './assets';
 import { getCurrentState } from './state';
+import { updateParticles, renderParticles } from './particles';
 
 const Constants = require('../../shared/constants');
-const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES, 
-    EXPLOSION_RADIUS, CROWN_RADIUS, OBSTACLES } = Constants;
+const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES,
+    EXPLOSION_RADIUS, CROWN_RADIUS, HEALTH_PACK_RADIUS, OBSTACLES } = Constants;
 
 const canvas = document.getElementById('game-canvas');
 const canvas2 = document.getElementById('game-canvas-2');
@@ -21,10 +22,13 @@ canvas2.classList.add('hidden')
 
 function render(canvas) {
     const context = canvas.getContext('2d');
-    const { me, others, bullets, explosions, crowns } = getCurrentState();
+    const { me, others, bullets, explosions, crowns, healthPacks } = getCurrentState();
     if (!me) {
         return;
     }
+
+    // Update particles
+    updateParticles(1 / 60); // dt for 60 FPS
 
     // Draw background
     renderBackground(canvas, me.x, me.y);
@@ -59,6 +63,13 @@ function render(canvas) {
     explosions.forEach(renderExplosion.bind(null, canvas, me));
 
     crowns.forEach(renderCrowns.bind(null, canvas, me));
+
+    if (healthPacks) {
+        healthPacks.forEach(renderHealthPack.bind(null, canvas, me));
+    }
+
+    // Render particles (after all game objects)
+    renderParticles(canvas, me.x, me.y);
 }
 
 // ... Helper functions here excluded
@@ -228,6 +239,32 @@ function renderCrowns(canvas, me, crown) {
         CROWN_RADIUS * 2,
         CROWN_RADIUS * 2,
     );
+}
+
+function renderHealthPack(canvas, me, healthPack) {
+    const context = canvas.getContext('2d');
+    const { x, y } = healthPack;
+    const canvasX = canvas.width / 2 + x - me.x;
+    const canvasY = canvas.height / 2 + y - me.y;
+
+    // Pulse animation
+    const pulseScale = 1 + 0.1 * Math.sin(Date.now() / 200);
+    const size = HEALTH_PACK_RADIUS * 2 * pulseScale;
+
+    context.save();
+    context.translate(canvasX, canvasY);
+    context.scale(pulseScale, pulseScale);
+
+    const sprite = getAsset(SPRITES.HEALTH_PACK);
+    context.drawImage(
+        sprite,
+        -size / 2 / pulseScale,
+        -size / 2 / pulseScale,
+        size / pulseScale,
+        size / pulseScale
+    );
+
+    context.restore();
 }
 
 // Display the main menu

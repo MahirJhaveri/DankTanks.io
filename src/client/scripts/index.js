@@ -7,6 +7,7 @@ import {
 import { startCapturingInput, stopCapturingInput } from "./input";
 import { downloadAssets } from "./assets";
 import { initState } from "./state";
+import { loadAudio } from "./audio";
 import {
   startRenderingLeaderboard,
   stopRenderingLeaderboard,
@@ -27,6 +28,7 @@ export const intialToggle = document.getElementById("togBtn"); // true is auto(o
 
 Promise.all([connect(onGameOver), downloadAssets()])
   .then(() => {
+    loadAudio(); // Initialize audio system
     playMenu.classList.remove("hidden");
     initChooseTankController();
     usernameInput.focus();

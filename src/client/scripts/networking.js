@@ -1,7 +1,9 @@
 import io from 'socket.io-client';
 import { processGameUpdate } from './state';
 import { processLeaderboardUpdate } from './leaderboard';
-import { processMapUpdate } from './map'
+import { processMapUpdate } from './map';
+import { playSound, SOUNDS } from './audio';
+import { createHealthPickupEffect } from './particles';
 
 const Constants = require('../../shared/constants');
 
@@ -16,7 +18,7 @@ const connectedPromise = new Promise(resolve => {
     })
 });
 
-// add callback to listen for game updates and game over 
+// add callback to listen for game updates and game over
 export const connect = onGameOver => (
     connectedPromise.then(() => {
         // callbacks
@@ -24,6 +26,10 @@ export const connect = onGameOver => (
         socket.on(Constants.MSG_TYPES.GAME_OVER, onGameOver);
         socket.on(Constants.MSG_TYPES.LEADERBOARD_UPDATE, processLeaderboardUpdate);
         socket.on(Constants.MSG_TYPES.MAP_UPDATE, processMapUpdate);
+        socket.on(Constants.MSG_TYPES.HEALTH_PACK_COLLECTED, ({ x, y, healedAmount }) => {
+            playSound(SOUNDS.HEALTH_PICKUP);
+            createHealthPickupEffect(x, y);
+        });
     })
 );
 

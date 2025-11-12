@@ -15,6 +15,12 @@ module.exports = Object.freeze({
 
     CROWN_RADIUS: 30,
 
+    HEALTH_PACK_RADIUS: 25,
+    HEALTH_PACK_HEAL: 50,
+    HEALTH_PACK_MAX_ACTIVE: 3,
+    HEALTH_PACK_SPAWN_INTERVAL: 20000, // 20 seconds in ms
+    HEALTH_PACK_SPAWN_MARGIN: 100, // Distance from edges
+
     SCORE_BULLET_HIT: 20,
     SCORE_PER_SECOND: 1,
 
@@ -34,6 +40,7 @@ module.exports = Object.freeze({
         GAME_OVER: 'dead',
         LEADERBOARD_UPDATE: 'leaderboard_update',
         MAP_UPDATE: 'map_update',
+        HEALTH_PACK_COLLECTED: 'health_pack_collected',
     },
 
     KEY: {
@@ -68,6 +75,7 @@ module.exports = Object.freeze({
         LASERBEAM: "LaserBeam.png",
         MISSILE: "Missile.png",
         CROWN: "crown.png",
+        HEALTH_PACK: "healthpack.svg",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",
             STATE2: "explosions/explosion2.png",

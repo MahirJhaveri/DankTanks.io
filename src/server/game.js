@@ -5,6 +5,7 @@ const Leaderboard = require('./leaderboard');
 const Explosion = require('./explosion');
 const Crown = require('./crown');
 const Obstacle = require('./obstacle');
+const HealthPack = require('./healthPack');
 
 class Game {
     constructor() {
@@ -13,6 +14,8 @@ class Game {
         this.bullets = [];
         this.obstacles = this.initObstacles();
         this.crowns = [new Crown(Constants.CROWN_POWERUP.RAPID_FIRE, Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
+        this.healthPacks = [];
+        this.lastHealthPackSpawn = Date.now();
         this.explosions = [];
         this.leaderboard = new Leaderboard(Constants.LEADERBOARD_SIZE);
         this.lastUpdateTime = Date.now();
@@ -124,7 +127,8 @@ class Game {
             Object.values(this.players),
             this.bullets,
             this.obstacles,
-            this.crowns
+            this.crowns,
+            this.healthPacks
         );
 
         destroyedEntities.bulletsHit.forEach(bullet => {
@@ -138,10 +142,26 @@ class Game {
         });
         
         this.bullets = destroyedEntities.updatedBullets;
-        
+
         this.crowns = this.crowns.filter(
             c => !destroyedEntities.crownsCaptured.includes(c)
         )
+
+        // Process collected health packs
+        destroyedEntities.healthPacksCollected.forEach(({ healthPack, playerId, healedAmount }) => {
+            // Remove health pack from game
+            this.healthPacks = this.healthPacks.filter(h => h.id !== healthPack.id);
+
+            // Emit collection event to player for VFX/SFX
+            const socket = this.sockets[playerId];
+            if (socket) {
+                socket.emit(Constants.MSG_TYPES.HEALTH_PACK_COLLECTED, {
+                    x: healthPack.x,
+                    y: healthPack.y,
+                    healedAmount: healedAmount
+                });
+            }
+        });
 
         // Check for dead players
         Object.keys(this.sockets).forEach(playerID => {
@@ -172,7 +192,13 @@ class Game {
             explosion => explosion.state != null
         );
 
-
+        // Spawn health packs
+        const now_spawn = Date.now();
+        if (now_spawn - this.lastHealthPackSpawn >= Constants.HEALTH_PACK_SPAWN_INTERVAL &&
+            this.healthPacks.length < Constants.HEALTH_PACK_MAX_ACTIVE) {
+            this.spawnHealthPack();
+            this.lastHealthPackSpawn = now_spawn;
+        }
 
         // Precompute the leaderboardUpdate package for efficiency
         var leaderboardUpdate = null;
@@ -224,6 +250,10 @@ class Game {
             c => player.distanceTo(c) <= Constants.MAP_SIZE / 2
         )
 
+        const nearbyHealthPacks = this.healthPacks.filter(
+            h => player.distanceTo(h) <= Constants.MAP_SIZE / 2
+        )
+
         return {
             t: Date.now(),
             me: player.serializeForUpdate(),
@@ -231,7 +261,20 @@ class Game {
             bullets: nearbyBullets.map(b => b.serializeForUpdate()),
             explosions: nearbyExplosions.map(e => e.serializeForUpdate()),
             crowns: nearbyCrowns.map(c => c.serializeForUpdate()),
+            healthPacks: nearbyHealthPacks.map(h => h.serializeForUpdate()),
         }
+    }
+
+    spawnHealthPack() {
+        const margin = Constants.HEALTH_PACK_SPAWN_MARGIN;
+        const maxPos = Constants.MAP_SIZE - margin;
+
+        // Random position avoiding edges
+        const x = margin + Math.random() * (maxPos - margin);
+        const y = margin + Math.random() * (maxPos - margin);
+
+        const id = `healthpack_${Date.now()}_${Math.random()}`;
+        this.healthPacks.push(new HealthPack(id, x, y));
     }
 }
 

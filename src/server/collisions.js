@@ -12,9 +12,10 @@ const isSeparable = require('./utils/sat');
  /* Caching to avoid recomputing normals for obstacles over and over */
 const cache = {};
 
-function applyCollisions(players, bullets, obstacles, crowns) {
+function applyCollisions(players, bullets, obstacles, crowns, healthPacks) {
     const bulletsHit = []; /* bullets that hit another player */
     const crownsCaptured = []; /* crowns captured by someone */
+    const healthPacksCollected = []; /* health packs collected by players */
     const bulletsToRemove = {};
 
     /* Bullet-Obstacle Collisions 
@@ -70,12 +71,31 @@ function applyCollisions(players, bullets, obstacles, crowns) {
                 break;
             }
         }
+
+        /* Player-HealthPack Collision */
+        for (let m = 0; m < healthPacks.length; m++) {
+            const healthPack = healthPacks[m];
+
+            if (!healthPacksCollected.find(h => h.healthPack.id === healthPack.id) &&
+                player.canCollectHealthPack() &&
+                player.distanceTo(healthPack) <= (Constants.HEALTH_PACK_RADIUS + Constants.PLAYER_RADIUS)) {
+
+                const healedAmount = player.heal(healthPack.healAmount);
+                healthPacksCollected.push({
+                    healthPack: healthPack,
+                    playerId: player.id,
+                    healedAmount: healedAmount
+                });
+                break; // One health pack per player per frame
+            }
+        }
     }
 
     return {
         updatedBullets: bullets.filter(b => !bulletsToRemove[b.id]),
         bulletsHit: bulletsHit,
         crownsCaptured: crownsCaptured,
+        healthPacksCollected: healthPacksCollected,
     };
 }
 
