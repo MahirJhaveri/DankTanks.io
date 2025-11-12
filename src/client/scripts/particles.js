@@ -96,6 +96,52 @@ export function createCrownPickupEffect(x, y) {
     }
 }
 
+// Create smoke particles for tank movement
+export function createTankSmoke(x, y, direction, constants) {
+    const { SMOKE_PARTICLE_COLOR, SMOKE_PARTICLE_LIFESPAN,
+            SMOKE_PARTICLE_DENSITY, SMOKE_PARTICLE_SPEED } = constants;
+
+    // Calculate opposite direction for smoke emission
+    const smokeDirection = direction + Math.PI;
+
+    // Create multiple smoke particles
+    for (let i = 0; i < SMOKE_PARTICLE_DENSITY; i++) {
+        // Add randomization to direction (±30 degrees)
+        const angleVariation = (Math.random() - 0.5) * Math.PI / 3;
+        const particleAngle = smokeDirection + angleVariation;
+
+        // Add speed variation (±30%)
+        const speedVariation = 0.7 + Math.random() * 0.6;
+        const speed = SMOKE_PARTICLE_SPEED * speedVariation;
+
+        // Calculate velocity components
+        const vx = Math.cos(particleAngle) * speed;
+        const vy = Math.sin(particleAngle) * speed;
+
+        // Add slight position offset for natural spread
+        const offsetX = (Math.random() - 0.5) * 20;
+        const offsetY = (Math.random() - 0.5) * 20;
+
+        // Vary particle size (3-6 pixels)
+        const size = 3 + Math.random() * 3;
+
+        // Slight color variation for realism
+        const colorVariation = Math.floor(Math.random() * 20);
+        const grayValue = 60 + colorVariation;
+        const smokeColor = `${grayValue}, ${grayValue}, ${grayValue}`;
+
+        particles.push(new Particle(
+            x + offsetX,
+            y + offsetY,
+            vx,
+            vy,
+            SMOKE_PARTICLE_LIFESPAN,
+            smokeColor,
+            size
+        ));
+    }
+}
+
 // Update all particles
 export function updateParticles(dt) {
     for (let i = particles.length - 1; i >= 0; i--) {
