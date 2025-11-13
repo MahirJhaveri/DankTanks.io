@@ -232,6 +232,40 @@ function renderPlayer(canvas, me, player) {
         context.restore();
     }
 
+    // Draw crown effect if player has crown powerup
+    if (player.crownPowerup) {
+        const currentTime = Date.now();
+        const pulseFreq = 200;
+        const glowAlpha = 0.4 + 0.2 * Math.sin(currentTime / pulseFreq);
+
+        // Outer golden glow ring
+        context.save();
+        context.globalAlpha = glowAlpha;
+        context.strokeStyle = '#FFD700'; // Gold
+        context.lineWidth = 4;
+        context.shadowColor = '#FFD700';
+        context.shadowBlur = 15;
+
+        context.beginPath();
+        context.arc(canvasX, canvasY, PLAYER_RADIUS + 14, 0, Math.PI * 2);
+        context.stroke();
+        context.restore();
+
+        // Rotating dashed ring
+        const rotation = (currentTime / 1000) % (Math.PI * 2);
+        context.save();
+        context.translate(canvasX, canvasY);
+        context.rotate(rotation);
+        context.globalAlpha = 0.5;
+        context.strokeStyle = '#FFD700';
+        context.lineWidth = 2;
+        context.setLineDash([10, 5]);
+        context.beginPath();
+        context.arc(0, 0, PLAYER_RADIUS + 12, 0, Math.PI * 2);
+        context.stroke();
+        context.restore();
+    }
+
     // Draw health bar
     context.fillStyle = 'white';
     context.fillRect(
