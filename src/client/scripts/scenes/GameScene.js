@@ -88,12 +88,10 @@ export class GameScene extends Phaser.Scene {
     // Create grid graphics
     this.gridGraphics = this.add.graphics();
     this.gridGraphics.setDepth(2);
-    this.renderGrid(); // Draw grid once - it's static in world coordinates
 
     // Create boundary rectangle
     this.boundaryGraphics = this.add.graphics();
     this.boundaryGraphics.setDepth(3);
-    this.renderBoundary(); // Draw boundary once - it's static in world coordinates
 
     // Create particle emitter for smoke
     this.smokeEmitter = this.add.particles(0, 0, 'smoke-particle', {
@@ -127,6 +125,10 @@ export class GameScene extends Phaser.Scene {
     // Update camera to follow player
     this.cameras.main.scrollX = me.x - this.cameras.main.width / 2;
     this.cameras.main.scrollY = me.y - this.cameras.main.height / 2;
+
+    // Render grid and boundary every frame (matches original vanilla JS behavior)
+    this.renderGrid();
+    this.renderBoundary();
 
     // Update all game objects
     this.updateBullets(bullets);
@@ -187,6 +189,8 @@ export class GameScene extends Phaser.Scene {
 
   renderGrid() {
     const theme = getCurrentTheme();
+    this.gridGraphics.clear();
+
     if (!theme.grid.enabled) {
       return;
     }
@@ -203,6 +207,7 @@ export class GameScene extends Phaser.Scene {
 
   renderBoundary() {
     const theme = getCurrentTheme();
+    this.boundaryGraphics.clear();
     const color = Phaser.Display.Color.HexStringToColor(theme.boundary.color);
     this.boundaryGraphics.lineStyle(theme.boundary.lineWidth, color.color);
     this.boundaryGraphics.strokeRect(0, 0, MAP_SIZE, MAP_SIZE);
@@ -396,14 +401,17 @@ export class GameScene extends Phaser.Scene {
 
       if (!sprite) {
         sprite = this.add.sprite(crown.x, crown.y, 'crown');
-        sprite.setDisplaySize(CROWN_RADIUS * 2, CROWN_RADIUS * 2);
         sprite.setDepth(6);
+
+        // Calculate base scale to achieve desired display size
+        // Crown texture is 2000x2000, we want CROWN_RADIUS * 2 = 60 pixels
+        const baseScale = (CROWN_RADIUS * 2) / sprite.width;
 
         // Add pulsing animation - oscillates between 0.85 and 1.15 (±15% variation) to match original
         this.tweens.add({
           targets: sprite,
-          scale: { from: 0.85, to: 1.15 },
-          duration: 360, // Full cycle (180ms * 2 for yoyo)
+          scale: { from: baseScale * 0.85, to: baseScale * 1.15 },
+          duration: 360, // Full cycle to match sin wave period
           yoyo: true,
           repeat: -1
         });
@@ -437,14 +445,17 @@ export class GameScene extends Phaser.Scene {
 
       if (!sprite) {
         sprite = this.add.sprite(healthPack.x, healthPack.y, 'healthpack');
-        sprite.setDisplaySize(HEALTH_PACK_RADIUS * 2, HEALTH_PACK_RADIUS * 2);
         sprite.setDepth(6);
+
+        // Calculate base scale to achieve desired display size
+        // Health pack SVG is 100x100, we want HEALTH_PACK_RADIUS * 2 = 50 pixels
+        const baseScale = (HEALTH_PACK_RADIUS * 2) / sprite.width;
 
         // Add pulsing animation - oscillates between 0.9 and 1.1 (±10% variation) to match original
         this.tweens.add({
           targets: sprite,
-          scale: { from: 0.9, to: 1.1 },
-          duration: 400, // Full cycle (200ms * 2 for yoyo)
+          scale: { from: baseScale * 0.9, to: baseScale * 1.1 },
+          duration: 400, // Full cycle to match sin wave period
           yoyo: true,
           repeat: -1
         });
