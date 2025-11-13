@@ -198,10 +198,20 @@ export class GameScene extends Phaser.Scene {
     const color = Phaser.Display.Color.HexStringToColor(theme.grid.color);
     this.gridGraphics.lineStyle(theme.grid.lineWidth, color.color);
 
-    for (let x = 0; x < MAP_SIZE; x += 100) {
-      for (let y = 0; y < MAP_SIZE; y += 100) {
-        this.gridGraphics.strokeRect(x, y, 100, 100);
-      }
+    // Draw vertical lines
+    for (let x = 0; x <= MAP_SIZE; x += 100) {
+      this.gridGraphics.beginPath();
+      this.gridGraphics.moveTo(x, 0);
+      this.gridGraphics.lineTo(x, MAP_SIZE);
+      this.gridGraphics.strokePath();
+    }
+
+    // Draw horizontal lines
+    for (let y = 0; y <= MAP_SIZE; y += 100) {
+      this.gridGraphics.beginPath();
+      this.gridGraphics.moveTo(0, y);
+      this.gridGraphics.lineTo(MAP_SIZE, y);
+      this.gridGraphics.strokePath();
     }
   }
 
@@ -246,6 +256,12 @@ export class GameScene extends Phaser.Scene {
       // Get tank and turret textures based on tank style
       const tankKey = this.getTankKey(player.tankStyle);
       const turretKey = this.getTurretKey(player.tankStyle);
+
+      // Verify textures exist before creating sprites
+      if (!this.textures.exists(tankKey) || !this.textures.exists(turretKey)) {
+        console.warn(`Missing textures: ${tankKey} or ${turretKey}`);
+        return;
+      }
 
       // Create tank sprite
       const tankSprite = this.add.sprite(0, 0, tankKey);
