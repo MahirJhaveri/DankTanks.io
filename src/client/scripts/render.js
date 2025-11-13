@@ -375,15 +375,7 @@ function renderPowerup(canvas, me, powerup) {
     context.translate(canvasX, canvasY);
     context.scale(pulseScale, pulseScale);
 
-    // Map powerup type to sprite
-    let spriteKey;
-    if (powerup.type === 'health') {
-        spriteKey = SPRITES.HEALTH_PACK;
-    } else if (powerup.type === 'shield') {
-        spriteKey = SPRITES.SHIELD_PACK;
-    }
-
-    const sprite = getAsset(spriteKey);
+    const sprite = getAsset(POWERUP_CONFIGS[powerup.type].sprite);
     context.drawImage(
         sprite,
         -size / 2 / pulseScale,
