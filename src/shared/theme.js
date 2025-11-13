@@ -1,8 +1,8 @@
 /**
- * Theme System for DankTanks.io
+ * Theme System for DankTanks.io - Option B (Advanced)
  *
  * Centralized theme configuration for all visual elements.
- * Supports multiple themes with easy switching.
+ * Supports patterns, textures, animations, and post-processing effects.
  */
 
 const THEMES = {
@@ -12,20 +12,22 @@ const THEMES = {
 
     // Main background
     background: {
-      type: 'radial-gradient',
+      type: 'radial-gradient',  // 'radial-gradient' | 'pattern' | 'texture'
       colors: ['black', 'gray'],
-      centerRatio: 0.2  // MAP_SIZE / 5 relative to MAP_SIZE / 2
+      centerRatio: 0.2
     },
 
     // Grid overlay
     grid: {
       color: 'white',
       lineWidth: 0.1,
-      enabled: true
+      enabled: true,
+      opacity: 1.0
     },
 
     // Obstacles in main view
     obstacles: {
+      fillType: 'solid',  // 'solid' | 'pattern' | 'texture'
       fillColor: '#B24BCB',
       shadowColor: '#652DC1',
       shadowBlur: 35
@@ -48,28 +50,43 @@ const THEMES = {
 
   desert: {
     name: "Desert Warfare",
-    description: "Sandy battlefield with rocky terrain",
+    description: "Sandy battlefield with heat haze and rocky terrain",
 
     background: {
-      type: 'radial-gradient',
-      colors: ['#D4A574', '#E8D4B0'],  // Sand colors
-      centerRatio: 0.2
+      type: 'pattern',
+      patternType: 'noise',
+      patternConfig: {
+        density: 0.03,
+        colors: ['#D4A574', '#E8D4B0', '#C4955C'],
+        pointSize: 1
+      },
+      overlayGradient: {
+        enabled: true,
+        colors: ['rgba(232, 212, 176, 0.2)', 'rgba(180, 140, 90, 0.1)'],
+        centerRatio: 0.2
+      },
+      fallbackColors: ['#D4A574', '#E8D4B0']
     },
 
     grid: {
-      color: '#C4955C',  // Darker sand
-      lineWidth: 0.1,
-      enabled: true
+      color: '#C4955C',
+      lineWidth: 0.05,
+      enabled: true,
+      opacity: 0.3
     },
 
     obstacles: {
-      fillColor: '#8B7355',  // Rock brown
-      shadowColor: '#6B5345',  // Darker shadow
+      fillType: 'pattern',
+      patternType: 'rock',
+      patternConfig: {
+        colors: ['#8B7355', '#6B5345', '#5C4033']
+      },
+      shadowColor: '#6B5345',
       shadowBlur: 25
     },
 
     boundary: {
-      color: '#5C4033',  // Dark brown
+      color: '#5C4033',
       lineWidth: 2
     },
 
@@ -78,6 +95,27 @@ const THEMES = {
       obstacleColor: '#6B5345',
       borderColor: '#5C4033',
       borderWidth: 2
+    },
+
+    postProcessing: {
+      heatDistortion: {
+        enabled: true,
+        intensity: 1.5,
+        speed: 0.3,
+        frequency: 0.015
+      },
+      vignette: {
+        enabled: true,
+        strength: 0.2,
+        falloff: 0.8
+      },
+      colorGrading: {
+        enabled: true,
+        brightness: 1.1,
+        contrast: 1.1,
+        saturation: 1.2,
+        hueShift: 0
+      }
     }
   },
 
@@ -87,24 +125,26 @@ const THEMES = {
 
     background: {
       type: 'radial-gradient',
-      colors: ['#E8F4F8', '#B8D4E8'],  // Ice blue/white
+      colors: ['#E8F4F8', '#B8D4E8'],
       centerRatio: 0.2
     },
 
     grid: {
-      color: '#A0C4D8',  // Light blue
+      color: '#A0C4D8',
       lineWidth: 0.1,
-      enabled: true
+      enabled: true,
+      opacity: 0.6
     },
 
     obstacles: {
-      fillColor: '#A0C4D8',  // Ice blue
-      shadowColor: '#7BA4B8',  // Darker ice
+      fillType: 'solid',
+      fillColor: '#A0C4D8',
+      shadowColor: '#7BA4B8',
       shadowBlur: 30
     },
 
     boundary: {
-      color: '#6090B0',  // Deep ice blue
+      color: '#6090B0',
       lineWidth: 2
     },
 
@@ -113,34 +153,64 @@ const THEMES = {
       obstacleColor: '#7BA4B8',
       borderColor: '#6090B0',
       borderWidth: 2
+    },
+
+    postProcessing: {
+      vignette: {
+        enabled: true,
+        strength: 0.15,
+        falloff: 0.9
+      },
+      colorGrading: {
+        enabled: true,
+        brightness: 1.05,
+        contrast: 1.1,
+        saturation: 0.9,
+        hueShift: 0
+      }
     }
   },
 
   neon: {
     name: "Neon Cyberpunk",
-    description: "Futuristic grid world with glowing elements",
+    description: "Futuristic grid world with intense glow",
 
     background: {
-      type: 'radial-gradient',
-      colors: ['#0A0A0A', '#1A1A2E'],  // Dark purple-black
-      centerRatio: 0.2
+      type: 'pattern',
+      patternType: 'grid',
+      patternConfig: {
+        cellSize: 50,
+        lineWidth: 1,
+        color: '#00F0FF',
+        glowColor: '#00F0FF',
+        glowIntensity: 20,
+        animated: true,
+        animationSpeed: 0.002,
+        baseColor: '#0A0A0A'
+      },
+      fallbackColors: ['#0A0A0A', '#1A1A2E']
     },
 
     grid: {
-      color: '#00F0FF',  // Cyan
-      lineWidth: 0.2,  // Slightly thicker for visibility
-      enabled: true
+      enabled: false  // Using background pattern instead
     },
 
     obstacles: {
-      fillColor: '#FF00FF',  // Magenta
-      shadowColor: '#FF00FF',  // Same color for neon glow
-      shadowBlur: 50  // Stronger glow
+      fillType: 'solid',
+      fillColor: '#FF00FF',
+      shadowColor: '#FF00FF',
+      shadowBlur: 60,
+      glowAnimation: {
+        enabled: true,
+        pulseSpeed: 0.003,
+        minBlur: 40,
+        maxBlur: 80
+      }
     },
 
     boundary: {
-      color: '#00F0FF',  // Cyan
-      lineWidth: 3  // Thicker for neon look
+      color: '#00F0FF',
+      lineWidth: 3
     },
 
     minimap: {
@@ -148,11 +218,172 @@ const THEMES = {
       obstacleColor: '#FF00FF',
       borderColor: '#00F0FF',
       borderWidth: 2
+    },
+
+    postProcessing: {
+      bloom: {
+        enabled: true,
+        threshold: 0.5,
+        intensity: 0.8,
+        radius: 15
+      },
+      vignette: {
+        enabled: true,
+        strength: 0.5,
+        falloff: 0.5
+      },
+      colorGrading: {
+        enabled: true,
+        brightness: 1.2,
+        contrast: 1.3,
+        saturation: 1.5,
+        hueShift: 0
+      }
+    }
+  },
+
+  space: {
+    name: "Lunar Surface",
+    description: "Low gravity battlefield on the moon",
+
+    background: {
+      type: 'pattern',
+      patternType: 'stars',
+      patternConfig: {
+        count: 300,
+        colors: ['white', '#FFE4B5', '#87CEEB', '#FFA500'],
+        twinkle: true,
+        twinkleSpeed: 0.001,
+        baseColor: '#0A0A1E'
+      },
+      overlayGradient: {
+        enabled: true,
+        colors: ['rgba(10, 10, 30, 0.8)', 'rgba(30, 30, 50, 0.6)'],
+        centerRatio: 0.3
+      },
+      fallbackColors: ['#0A0A1E', '#1E1E32']
+    },
+
+    grid: {
+      color: '#4A4A6A',
+      lineWidth: 0.05,
+      enabled: true,
+      opacity: 0.2
+    },
+
+    obstacles: {
+      fillType: 'pattern',
+      patternType: 'crater',
+      patternConfig: {
+        colors: ['#666', '#888', '#AAA'],
+        baseColor: '#777'
+      },
+      shadowColor: '#222',
+      shadowBlur: 40
+    },
+
+    boundary: {
+      color: '#4A4A6A',
+      lineWidth: 2
+    },
+
+    minimap: {
+      background: ['rgba(10, 10, 30, 0.6)', 'rgba(30, 30, 50, 0.6)'],
+      obstacleColor: '#666',
+      borderColor: '#4A4A6A',
+      borderWidth: 2
+    },
+
+    postProcessing: {
+      vignette: {
+        enabled: true,
+        strength: 0.6,
+        falloff: 0.4
+      },
+      colorGrading: {
+        enabled: true,
+        brightness: 0.9,
+        contrast: 1.2,
+        saturation: 0.7,
+        hueShift: -10
+      }
+    }
+  },
+
+  lava: {
+    name: "Volcanic Wasteland",
+    description: "Dangerous molten terrain with glowing cracks",
+
+    background: {
+      type: 'pattern',
+      patternType: 'cracks',
+      patternConfig: {
+        lineCount: 25,
+        baseColor: '#2A0A0A',
+        glowColor: '#FF4500',
+        glowIntensity: 40,
+        animated: true,
+        pulseSpeed: 0.002
+      },
+      fallbackColors: ['#3A0A0A', '#5A1010']
+    },
+
+    grid: {
+      enabled: false
+    },
+
+    obstacles: {
+      fillType: 'solid',
+      fillColor: '#1A0A0A',  // Dark obsidian
+      shadowColor: '#FF4500',  // Orange glow
+      shadowBlur: 50,
+      strokeStyle: '#FF6600',
+      lineWidth: 2,
+      strokeGlow: true,
+      glowAnimation: {
+        enabled: true,
+        pulseSpeed: 0.0015,
+        minBlur: 30,
+        maxBlur: 70
+      }
+    },
+
+    boundary: {
+      color: '#FF4500',
+      lineWidth: 3
+    },
+
+    minimap: {
+      background: ['rgba(42, 10, 10, 0.8)', 'rgba(90, 16, 16, 0.8)'],
+      obstacleColor: '#1A0A0A',
+      borderColor: '#FF4500',
+      borderWidth: 2
+    },
+
+    postProcessing: {
+      bloom: {
+        enabled: true,
+        threshold: 0.3,
+        intensity: 0.6,
+        radius: 20
+      },
+      vignette: {
+        enabled: true,
+        strength: 0.4,
+        falloff: 0.6
+      },
+      colorGrading: {
+        enabled: true,
+        brightness: 1.0,
+        contrast: 1.3,
+        saturation: 1.4,
+        hueShift: 5
+      }
     }
   }
 };
 
-// Current active theme (default at start)
+// Current active theme (neon for testing)
 let currentTheme = 'neon';
 
 /**

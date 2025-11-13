@@ -1,6 +1,16 @@
 import { getAsset, getTank, getTurret } from './assets';
 import { getCurrentState } from './state';
 import { updateParticles, renderParticles, createTankSmoke } from './particles';
+import {
+    generateNoisePattern,
+    generateStarField,
+    generateAnimatedStarField,
+    generateCrackPattern,
+    generateGridPattern,
+    generateRockPattern,
+    generateCraterPattern
+} from './patterns';
+import { processFrame, hasPostProcessing } from './postProcessing';
 
 const Constants = require('../../shared/constants');
 const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES,
@@ -25,6 +35,13 @@ canvas2.classList.add('hidden')
 // Position tracking for smoke effect
 const lastPlayerPositions = new Map();
 
+// Background pattern cache
+let cachedBackgroundPattern = null;
+let cachedBackgroundTheme = null;
+
+// Animation time tracking
+let animationStartTime = Date.now();
+
 // add setCanvasDimensions for supporting smaller screens
 
 function render(canvas) {
@@ -34,20 +51,23 @@ function render(canvas) {
         return;
     }
 
+    // Get current theme and time for animations
+    const theme = getCurrentTheme();
+    const currentTime = Date.now() - animationStartTime;
+
     // Update particles
     updateParticles(1 / 60); // dt for 60 FPS
 
     // Draw background
-    renderBackground(canvas, me.x, me.y);
+    renderBackground(canvas, me.x, me.y, currentTime);
 
     /* Draw obstacles */
-    renderObstacles(canvas, me);
+    renderObstacles(canvas, me, currentTime);
 
     /* Draw the grid */
     renderGrid(context, me);
 
     // Draw boundaries
-    const theme = getCurrentTheme();
     context.save();
     context.strokeStyle = theme.boundary.color;
     context.lineWidth = theme.boundary.lineWidth;
@@ -78,6 +98,11 @@ function render(canvas) {
 
     // Render particles (after all game objects)
     renderParticles(canvas, me.x, me.y);
+
+    // Apply post-processing effects if theme has any
+    if (hasPostProcessing(theme)) {
+        processFrame(canvas, theme, currentTime);
+    }
 }
 
 // Helper function to check if a player is visible on screen
@@ -216,25 +241,96 @@ function renderPlayer(canvas, me, player) {
         canvasX - (username.length) / 2, canvasY + PLAYER_RADIUS + 25);
 }
 
-// render the background
-// play around with this
-function renderBackground(canvas, x, y) {
+// render the background with pattern support
+function renderBackground(canvas, x, y, time) {
     const context = canvas.getContext('2d');
     const theme = getCurrentTheme();
-    const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
-    const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
-    const backgroundGradient = context.createRadialGradient(
-        backgroundX,
-        backgroundY,
-        MAP_SIZE / 5,
-        backgroundX,
-        backgroundY,
-        MAP_SIZE / 2,
-    );
-    backgroundGradient.addColorStop(0, theme.background.colors[0]);
-    backgroundGradient.addColorStop(1, theme.background.colors[1]);
-    context.fillStyle = backgroundGradient;
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    const bg = theme.background;
+
+    // Handle different background types
+    if (bg.type === 'pattern') {
+        // Generate or update pattern
+        const needsRegeneration =
+            !cachedBackgroundPattern ||
+            cachedBackgroundTheme !== theme.name ||
+            (bg.patternType === 'stars' && bg.patternConfig.twinkle) ||
+            (bg.patternType === 'cracks' && bg.patternConfig.animated) ||
+            (bg.patternType === 'grid' && bg.patternConfig.animated);
+
+        if (needsRegeneration || (bg.patternType === 'stars' && bg.patternConfig.twinkle)) {
+            // Generate pattern based on type
+            switch (bg.patternType) {
+                case 'noise':
+                    cachedBackgroundPattern = generateNoisePattern(canvas.width, canvas.height, bg.patternConfig);
+                    break;
+                case 'stars':
+                    if (bg.patternConfig.twinkle) {
+                        cachedBackgroundPattern = generateAnimatedStarField(canvas.width, canvas.height, bg.patternConfig, time);
+                    } else {
+                        cachedBackgroundPattern = generateStarField(canvas.width, canvas.height, bg.patternConfig);
+                    }
+                    break;
+                case 'cracks':
+                    cachedBackgroundPattern = generateCrackPattern(canvas.width, canvas.height, bg.patternConfig, time);
+                    break;
+                case 'grid':
+                    cachedBackgroundPattern = generateGridPattern(canvas.width, canvas.height, bg.patternConfig, time);
+                    break;
+            }
+            cachedBackgroundTheme = theme.name;
+        }
+
+        // Draw pattern
+        if (cachedBackgroundPattern) {
+            context.drawImage(cachedBackgroundPattern, 0, 0);
+        } else {
+            // Fallback to gradient
+            const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
+            const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
+            const grad = context.createRadialGradient(
+                backgroundX, backgroundY, MAP_SIZE / 5,
+                backgroundX, backgroundY, MAP_SIZE / 2
+            );
+            grad.addColorStop(0, bg.fallbackColors[0]);
+            grad.addColorStop(1, bg.fallbackColors[1]);
+            context.fillStyle = grad;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Apply overlay gradient if enabled
+        if (bg.overlayGradient && bg.overlayGradient.enabled) {
+            const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
+            const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
+            const overlayGrad = context.createRadialGradient(
+                backgroundX,
+                backgroundY,
+                MAP_SIZE / 5,
+                backgroundX,
+                backgroundY,
+                MAP_SIZE / 2
+            );
+            overlayGrad.addColorStop(0, bg.overlayGradient.colors[0]);
+            overlayGrad.addColorStop(1, bg.overlayGradient.colors[1]);
+            context.fillStyle = overlayGrad;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    } else {
+        // Default radial gradient
+        const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
+        const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
+        const backgroundGradient = context.createRadialGradient(
+            backgroundX,
+            backgroundY,
+            MAP_SIZE / 5,
+            backgroundX,
+            backgroundY,
+            MAP_SIZE / 2,
+        );
+        backgroundGradient.addColorStop(0, bg.colors[0]);
+        backgroundGradient.addColorStop(1, bg.colors[1]);
+        context.fillStyle = backgroundGradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }
 }
 
 function renderGrid(context, me) {
@@ -242,8 +338,16 @@ function renderGrid(context, me) {
     if (!theme.grid.enabled) {
         return;
     }
+
+    context.save();
     context.strokeStyle = theme.grid.color;
     context.lineWidth = theme.grid.lineWidth;
+
+    // Apply opacity if specified
+    if (theme.grid.opacity !== undefined && theme.grid.opacity !== 1.0) {
+        context.globalAlpha = theme.grid.opacity;
+    }
+
     let X = 0;
     while (X < MAP_SIZE) {
         let Y = 0;
@@ -253,6 +357,8 @@ function renderGrid(context, me) {
         }
         X += 100;
     }
+
+    context.restore();
 }
 
 /* Renders a polygon with given vertices */
@@ -271,14 +377,74 @@ function renderPolygon(context, me, vertices) {
 }
 
 /* Renders all the obstacles as required */
-function renderObstacles(canvas, me) {
+function renderObstacles(canvas, me, time) {
     const context = canvas.getContext('2d');
     const theme = getCurrentTheme();
+    const obs = theme.obstacles;
+
     context.save();
-    context.fillStyle = theme.obstacles.fillColor;
-    context.shadowBlur = theme.obstacles.shadowBlur;
-    context.shadowColor = theme.obstacles.shadowColor;
+
+    // Handle animated glow
+    let currentShadowBlur = obs.shadowBlur;
+    if (obs.glowAnimation && obs.glowAnimation.enabled) {
+        const pulse = Math.sin(time * obs.glowAnimation.pulseSpeed);
+        const pulseNormalized = (pulse + 1) / 2; // 0 to 1
+        currentShadowBlur = obs.glowAnimation.minBlur +
+            (obs.glowAnimation.maxBlur - obs.glowAnimation.minBlur) * pulseNormalized;
+    }
+
+    context.shadowBlur = currentShadowBlur;
+    context.shadowColor = obs.shadowColor;
+
+    // Handle fill type
+    if (obs.fillType === 'pattern') {
+        // Generate pattern for obstacles
+        let patternCanvas;
+        switch (obs.patternType) {
+            case 'rock':
+                patternCanvas = generateRockPattern(100, 100, obs.patternConfig);
+                break;
+            case 'crater':
+                patternCanvas = generateCraterPattern(100, 100, obs.patternConfig);
+                break;
+            default:
+                // Fallback to solid color
+                context.fillStyle = obs.fillColor || '#888';
+        }
+
+        if (patternCanvas) {
+            context.fillStyle = context.createPattern(patternCanvas, 'repeat');
+        }
+    } else {
+        // Solid color fill
+        context.fillStyle = obs.fillColor;
+    }
+
+    // Draw obstacles
     OBSTACLES.forEach(renderPolygon.bind(null, context, me));
+
+    // Optional stroke/outline for obstacles
+    if (obs.strokeStyle) {
+        context.strokeStyle = obs.strokeStyle;
+        context.lineWidth = obs.lineWidth || 1;
+
+        if (obs.strokeGlow) {
+            context.shadowBlur = currentShadowBlur;
+            context.shadowColor = obs.strokeStyle;
+        }
+
+        OBSTACLES.forEach(vertices => {
+            context.beginPath();
+            const offsetX = canvas.width / 2 - me.x;
+            const offsetY = canvas.height / 2 - me.y;
+            context.moveTo(offsetX + vertices[0][0], offsetY + vertices[0][1]);
+            for (let i = 1; i < vertices.length; i++) {
+                context.lineTo(offsetX + vertices[i][0], offsetY + vertices[i][1]);
+            }
+            context.stroke();
+        });
+    }
+
     context.restore();
 }
 
@@ -342,7 +508,8 @@ function renderMainMenu(canvas) {
     const t = Date.now() / 7500;
     const x = MAP_SIZE / 2 + 800 * Math.cos(t);
     const y = MAP_SIZE / 2 + 800 * Math.sin(t);
-    renderBackground(canvas, x, y);
+    const currentTime = Date.now() - animationStartTime;
+    renderBackground(canvas, x, y, currentTime);
 }
 
 let renderInterval = setInterval(renderMainMenu.bind(null, canvas), 1000 / 60);
