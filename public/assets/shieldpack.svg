@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <defs>
+        <radialGradient id="shieldGrad" cx="40%" cy="40%">
+            <stop offset="0%" stop-color="#44D9FF" />
+            <stop offset="100%" stop-color="#0099CC" />
+        </radialGradient>
+    </defs>
+    <circle cx="50" cy="50" r="40" fill="url(#shieldGrad)" stroke="#0066AA" stroke-width="2"/>
+    <!-- Shield icon -->
+    <path d="M 50 25 L 65 30 L 65 45 Q 65 62 50 70 Q 35 62 35 45 L 35 30 Z"
+          fill="#FFFFFF" stroke="#0066AA" stroke-width="2"/>
+    <!-- Inner shield detail -->
+    <path d="M 50 32 L 60 35 L 60 45 Q 60 58 50 64 Q 40 58 40 45 L 40 35 Z"
+          fill="none" stroke="#44D9FF" stroke-width="1.5"/>
+</svg>

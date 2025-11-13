@@ -2,6 +2,7 @@ const DynamicEntity = require("./dynamicEntity");
 const Bullet = require("./bullet");
 const Constants = require("../shared/constants");
 const Crown = require("./crown");
+const TimedEffect = require("./timedEffect");
 
 class Player extends DynamicEntity {
   constructor(id, username, x, y, tankStyle, fireToogle) {
@@ -18,6 +19,7 @@ class Player extends DynamicEntity {
     this.fireToogle = fireToogle;
     this.successiveToogle = !fireToogle;
     this.lastHitByPlayer = null; /*to restore player health on kill*/
+    this.activeEffects = []; // Array of active timed effects
   }
 
   computeDirAndSpeed(dir1, speed1, tankSpeedX, tankSpeedY) {
@@ -68,6 +70,12 @@ class Player extends DynamicEntity {
   }
 
   takeBulletDamage(bullet) {
+    // Shield absorbs all damage
+    if (this.hasActiveEffect('shield')) {
+      return; // No damage taken
+    }
+
+    // Normal damage
     this.hp -= Constants.BULLET_DAMAGE;
     this.lastHitByPlayer = bullet.parentID;
   }
@@ -84,6 +92,7 @@ class Player extends DynamicEntity {
       username: this.username,
       hp: this.hp,
       tankStyle: this.tankStyle,
+      activeEffects: this.activeEffects.map(e => e.serialize()),
     };
   }
 
@@ -138,6 +147,34 @@ class Player extends DynamicEntity {
 
   canCollectHealthPack() {
     return this.hp < Constants.PLAYER_MAX_HP;
+  }
+
+  // Timed effect methods
+  addTimedEffect(type, duration) {
+    const effect = new TimedEffect(type, duration, Date.now());
+    this.activeEffects.push(effect);
+    return effect;
+  }
+
+  updateTimedEffects(currentTime) {
+    // Remove expired effects
+    this.activeEffects = this.activeEffects.filter(
+      effect => effect.isActive(currentTime)
+    );
+  }
+
+  hasActiveEffect(type) {
+    const now = Date.now();
+    return this.activeEffects.some(
+      effect => effect.type === type && effect.isActive(now)
+    );
+  }
+
+  getActiveEffect(type) {
+    const now = Date.now();
+    return this.activeEffects.find(
+      effect => effect.type === type && effect.isActive(now)
+    );
   }
 
   kill() {

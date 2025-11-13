@@ -12,10 +12,10 @@ const isSeparable = require('./utils/sat');
  /* Caching to avoid recomputing normals for obstacles over and over */
 const cache = {};
 
-function applyCollisions(players, bullets, obstacles, crowns, healthPacks) {
+function applyCollisions(players, bullets, obstacles, crowns, powerups) {
     const bulletsHit = []; /* bullets that hit another player */
     const crownsCaptured = []; /* crowns captured by someone */
-    const healthPacksCollected = []; /* health packs collected by players */
+    const powerupsCollected = []; /* powerups collected by players */
     const bulletsToRemove = {};
 
     /* Bullet-Obstacle Collisions 
@@ -75,21 +75,28 @@ function applyCollisions(players, bullets, obstacles, crowns, healthPacks) {
             }
         }
 
-        /* Player-HealthPack Collision */
-        for (let m = 0; m < healthPacks.length; m++) {
-            const healthPack = healthPacks[m];
+        /* Player-Powerup Collision (unified for all powerup types) */
+        for (let m = 0; m < powerups.length; m++) {
+            const powerup = powerups[m];
 
-            if (!healthPacksCollected.find(h => h.healthPack.id === healthPack.id) &&
-                player.canCollectHealthPack() &&
-                player.distanceTo(healthPack) <= (Constants.HEALTH_PACK_RADIUS + Constants.PLAYER_RADIUS)) {
+            // Skip if already collected this frame
+            if (powerupsCollected.find(p => p.powerup.id === powerup.id)) {
+                continue;
+            }
 
-                const healedAmount = player.heal(healthPack.healAmount);
-                healthPacksCollected.push({
-                    healthPack: healthPack,
+            // Check collection conditions
+            if (powerup.canCollect(player) &&
+                player.distanceTo(powerup) <= (powerup.getRadius() + Constants.PLAYER_RADIUS)) {
+
+                // Apply powerup effect
+                const result = powerup.apply(player);
+
+                powerupsCollected.push({
+                    powerup: powerup,
                     playerId: player.id,
-                    healedAmount: healedAmount
+                    result: result
                 });
-                break; // One health pack per player per frame
+                break; // One powerup per player per frame
             }
         }
     }
@@ -98,7 +105,7 @@ function applyCollisions(players, bullets, obstacles, crowns, healthPacks) {
         updatedBullets: bullets.filter(b => !bulletsToRemove[b.id]),
         bulletsHit: bulletsHit,
         crownsCaptured: crownsCaptured,
-        healthPacksCollected: healthPacksCollected,
+        powerupsCollected: powerupsCollected,
     };
 }
 
