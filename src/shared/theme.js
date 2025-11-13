@@ -153,7 +153,7 @@ const THEMES = {
 };
 
 // Current active theme (default at start)
-let currentTheme = 'default';
+let currentTheme = 'neon';
 
 /**
  * Get the current theme configuration object
