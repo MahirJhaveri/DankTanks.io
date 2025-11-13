@@ -3,7 +3,8 @@
 const SOUNDS = {
     HEALTH_PICKUP: 'health_pickup',
     CROWN_PICKUP: 'crown_pickup',
-    SHIELD_PICKUP: 'shield_pickup'
+    SHIELD_PICKUP: 'shield_pickup',
+    SPEED_PICKUP: 'speed_pickup'
     // Future sounds: SHOOT, HIT, EXPLOSION, etc.
 };
 
@@ -153,6 +154,45 @@ function playShieldPickupSound(volume = 0.3) {
     osc2.stop(now + 0.5);
 }
 
+// Procedurally generate speed pickup sound effect
+function playSpeedPickupSound(volume = 0.35) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Create oscillators for a "fast whoosh" sound
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    // Connect audio graph
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Configure oscillators with sawtooth for energetic feel
+    osc1.type = 'sawtooth';
+    osc2.type = 'triangle';
+
+    // Fast ascending sweep: 300Hz → 1200Hz (rapid, energetic)
+    osc1.frequency.setValueAtTime(300, now);
+    osc1.frequency.exponentialRampToValueAtTime(1200, now + 0.2);
+
+    osc2.frequency.setValueAtTime(450, now);
+    osc2.frequency.exponentialRampToValueAtTime(1600, now + 0.2);
+
+    // Quick, punchy envelope
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.02); // Very fast attack
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.25); // Quick decay
+
+    // Start and stop
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.25);
+    osc2.stop(now + 0.25);
+}
+
 // Play a sound effect
 export function playSound(soundKey, volume = 0.3) {
     if (!audioContext) {
@@ -174,6 +214,9 @@ export function playSound(soundKey, volume = 0.3) {
             break;
         case SOUNDS.SHIELD_PICKUP:
             playShieldPickupSound(volume);
+            break;
+        case SOUNDS.SPEED_PICKUP:
+            playSpeedPickupSound(volume);
             break;
         default:
             console.warn(`Unknown sound: ${soundKey}`);

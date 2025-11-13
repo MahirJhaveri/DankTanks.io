@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <defs>
+        <radialGradient id="speedGrad" cx="40%" cy="40%">
+            <stop offset="0%" stop-color="#FFB84D" />
+            <stop offset="100%" stop-color="#FF8C00" />
+        </radialGradient>
+    </defs>
+    <circle cx="50" cy="50" r="40" fill="url(#speedGrad)" stroke="#CC6600" stroke-width="2"/>
+    <!-- Lightning bolt icon for speed -->
+    <path d="M 55 25 L 40 50 L 50 50 L 45 75 L 65 45 L 53 45 Z"
+          fill="#FFFFFF" stroke="#CC6600" stroke-width="2" stroke-linejoin="miter"/>
+</svg>
