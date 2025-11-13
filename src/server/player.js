@@ -93,6 +93,7 @@ class Player extends DynamicEntity {
       hp: this.hp,
       tankStyle: this.tankStyle,
       activeEffects: this.activeEffects.map(e => e.serialize()),
+      crownPowerup: this.crownPowerup,
     };
   }
 
