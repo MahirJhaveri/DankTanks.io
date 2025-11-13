@@ -192,7 +192,9 @@ function renderPlayer(canvas, me, player) {
     context.restore();
 
     // Draw shield effect if player has active shield
-    const shieldEffect = player.activeEffects?.find(e => e.type === 'shield');
+    const shieldEffect = Array.isArray(player.activeEffects)
+        ? player.activeEffects.find(e => e.type === 'shield')
+        : null;
     if (shieldEffect) {
         const currentTime = Date.now();
         const remainingTime = shieldEffect.duration -
@@ -373,7 +375,15 @@ function renderPowerup(canvas, me, powerup) {
     context.translate(canvasX, canvasY);
     context.scale(pulseScale, pulseScale);
 
-    const sprite = getAsset(SPRITES[config.sprite.replace('.svg', '').toUpperCase().replace('PACK', '_PACK')]);
+    // Map powerup type to sprite
+    let spriteKey;
+    if (powerup.type === 'health') {
+        spriteKey = SPRITES.HEALTH_PACK;
+    } else if (powerup.type === 'shield') {
+        spriteKey = SPRITES.SHIELD_PACK;
+    }
+
+    const sprite = getAsset(spriteKey);
     context.drawImage(
         sprite,
         -size / 2 / pulseScale,
