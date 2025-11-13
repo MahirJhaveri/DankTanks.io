@@ -18,6 +18,7 @@ class Game {
         this.lastPowerupSpawn = {
             health: Date.now(),
             shield: Date.now(),
+            speed: Date.now(),
         };
         this.explosions = [];
         this.leaderboard = new Leaderboard(Constants.LEADERBOARD_SIZE);

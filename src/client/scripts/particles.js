@@ -92,6 +92,35 @@ export function createPowerupPickupEffect(x, y, type, config) {
                 10
             ));
         }
+    } else if (type === 'speed') {
+        // Orange/yellow speed trail burst (20 particles)
+        for (let i = 0; i < 20; i++) {
+            const angle = (Math.PI * 2 * i) / 20;
+            const speed = 150 + Math.random() * 80; // Faster particles for speed theme
+            particles.push(new Particle(
+                x, y,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                0.6,
+                color,
+                6
+            ));
+        }
+
+        // Lightning bolt sparkles (10)
+        for (let i = 0; i < 10; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 50 + Math.random() * 100;
+            particles.push(new Particle(
+                x + (Math.random() - 0.5) * 25,
+                y + (Math.random() - 0.5) * 25,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                1.0,
+                '255, 255, 100', // Bright yellow
+                8
+            ));
+        }
     }
 }
 

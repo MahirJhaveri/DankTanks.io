@@ -37,7 +37,17 @@ class Player extends DynamicEntity {
     const oldX = this.x;
     const oldY = this.y;
 
+    // Apply speed multiplier if speed boost is active
+    const originalSpeed = this.speed;
+    if (this.hasActiveEffect('speed')) {
+      const speedConfig = Constants.POWERUP_CONFIGS.speed;
+      this.speed *= speedConfig.speedMultiplier;
+    }
+
     super.update(dt);
+
+    // Restore original speed
+    this.speed = originalSpeed;
 
     this.score += Constants.SCORE_PER_SECOND;
 

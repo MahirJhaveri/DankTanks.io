@@ -232,6 +232,49 @@ function renderPlayer(canvas, me, player) {
         context.restore();
     }
 
+    // Draw speed effect if player has active speed boost
+    const speedEffect = Array.isArray(player.activeEffects)
+        ? player.activeEffects.find(e => e.type === 'speed')
+        : null;
+    if (speedEffect) {
+        const currentTime = Date.now();
+        const remainingTime = speedEffect.duration -
+            (currentTime - speedEffect.activatedAt) / 1000;
+
+        // Pulse faster when speed is expiring
+        const pulseFreq = remainingTime < 3 ? 80 : 150;
+        const glowAlpha = 0.3 + 0.2 * Math.sin(currentTime / pulseFreq);
+
+        // Orange/yellow speed aura
+        context.save();
+        const gradient = context.createRadialGradient(
+            canvasX, canvasY, PLAYER_RADIUS,
+            canvasX, canvasY, PLAYER_RADIUS + 15
+        );
+        gradient.addColorStop(0, `rgba(255, 165, 0, ${glowAlpha})`);
+        gradient.addColorStop(1, 'rgba(255, 165, 0, 0)');
+
+        context.fillStyle = gradient;
+        context.beginPath();
+        context.arc(canvasX, canvasY, PLAYER_RADIUS + 15, 0, Math.PI * 2);
+        context.fill();
+        context.restore();
+
+        // Speed trail lines (animated)
+        context.save();
+        context.strokeStyle = `rgba(255, 200, 0, ${glowAlpha})`;
+        context.lineWidth = 2;
+        const trailOffset = (currentTime / 50) % 20;
+        for (let i = 0; i < 3; i++) {
+            const offset = PLAYER_RADIUS + 10 + (i * 5) - trailOffset;
+            context.beginPath();
+            context.arc(canvasX, canvasY, offset, 0, Math.PI * 2);
+            context.setLineDash([8, 12]);
+            context.stroke();
+        }
+        context.restore();
+    }
+
     // Draw crown effect if player has crown powerup
     if (player.crownPowerup) {
         const currentTime = Date.now();
@@ -398,6 +441,9 @@ function renderPowerup(canvas, me, powerup) {
     if (powerup.type === 'shield') {
         pulseFreq = 250;
         pulseAmount = 0.15;
+    } else if (powerup.type === 'speed') {
+        pulseFreq = 150; // Faster pulse for speed theme
+        pulseAmount = 0.2;
     } else {
         pulseFreq = 200;
         pulseAmount = 0.1;

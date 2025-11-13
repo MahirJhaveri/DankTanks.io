@@ -40,6 +40,10 @@ class Powerup extends Entity {
                 player.addTimedEffect('shield', config.duration);
                 return { duration: config.duration };
 
+            case 'speed':
+                player.addTimedEffect('speed', config.duration);
+                return { duration: config.duration, multiplier: config.speedMultiplier };
+
             // Future powerups can be added here
             default:
                 return {};
@@ -55,6 +59,10 @@ class Powerup extends Entity {
             case 'shield':
                 // Can't collect if already shielded
                 return !player.hasActiveEffect('shield');
+
+            case 'speed':
+                // Can't collect if already speed-boosted
+                return !player.hasActiveEffect('speed');
 
             default:
                 return true;
