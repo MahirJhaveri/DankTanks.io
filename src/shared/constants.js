@@ -104,6 +104,14 @@ module.exports = Object.freeze({
         USA: 4
     },
 
+    TANK_NAMES: {
+        0: "Blue Steel",
+        1: "Cherry Bomber",
+        2: "Green Machine",
+        3: "Iron Giant",
+        4: "Star Spangled Slammer"
+    },
+
     SPRITES: {
         TANK_RED: "TankRed.png",
         TURRET_RED: "TurretRed.png",
