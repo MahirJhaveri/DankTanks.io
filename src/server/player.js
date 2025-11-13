@@ -67,6 +67,35 @@ class Player extends DynamicEntity {
       const tankSpeedX = (this.x - oldX != 0) ? this.speed * Math.sin(this.direction) : 0;
       const tankSpeedY = (this.y - oldY != 0) ? this.speed * Math.cos(this.direction) : 0;
       var [newTurretDirection, newBulletSpeed] = this.computeDirAndSpeed(this.turretDirection, Constants.BULLET_SPEED, tankSpeedX, tankSpeedY);
+
+      // Crown powerup: Fire two bullets at once with spread
+      if (this.crownPowerup) {
+        const spread = Constants.CROWN_DOUBLE_SHOT_SPREAD / 2;
+
+        // Left bullet (slightly counter-clockwise)
+        const bullet1 = new Bullet(
+          this.id,
+          this.x,
+          this.y,
+          newTurretDirection - spread,
+          newBulletSpeed,
+          this.turretDirection - spread
+        );
+
+        // Right bullet (slightly clockwise)
+        const bullet2 = new Bullet(
+          this.id,
+          this.x,
+          this.y,
+          newTurretDirection + spread,
+          newBulletSpeed,
+          this.turretDirection + spread
+        );
+
+        return [bullet1, bullet2];
+      }
+
+      // Normal: Fire one bullet
       return new Bullet(
         this.id,
         this.x,

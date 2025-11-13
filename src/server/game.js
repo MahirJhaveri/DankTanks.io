@@ -116,9 +116,14 @@ class Game {
         // Update each player
         Object.keys(this.sockets).forEach(playerID => {
             const player = this.players[playerID];
-            const newBullet = player.update(dt);
-            if (newBullet) {
-                this.bullets.push(newBullet);
+            const newBullets = player.update(dt);
+            if (newBullets) {
+                // Handle both single bullet and array of bullets (crown powerup)
+                if (Array.isArray(newBullets)) {
+                    this.bullets.push(...newBullets);
+                } else {
+                    this.bullets.push(newBullets);
+                }
             }
 
             // Update player timed effects

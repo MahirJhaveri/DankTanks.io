@@ -140,6 +140,7 @@ module.exports = Object.freeze({
 
     RAPID_FIRE_BULLET_SPEED: 1500,
     RAPID_FIRE_COOLDOWN: 0.2,
+    CROWN_DOUBLE_SHOT_SPREAD: 0.05, // Angle spread in radians for visual separation
 
     OBSTACLES: [
         [[500,500], [800, 200], [900, 700], [600, 600], [500, 500]],
