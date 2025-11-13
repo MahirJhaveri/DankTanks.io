@@ -88,10 +88,12 @@ export class GameScene extends Phaser.Scene {
     // Create grid graphics
     this.gridGraphics = this.add.graphics();
     this.gridGraphics.setDepth(2);
+    this.renderGrid(); // Draw grid once - it's static in world coordinates
 
     // Create boundary rectangle
     this.boundaryGraphics = this.add.graphics();
     this.boundaryGraphics.setDepth(3);
+    this.renderBoundary(); // Draw boundary once - it's static in world coordinates
 
     // Create particle emitter for smoke
     this.smokeEmitter = this.add.particles(0, 0, 'smoke-particle', {
@@ -125,10 +127,6 @@ export class GameScene extends Phaser.Scene {
     // Update camera to follow player
     this.cameras.main.scrollX = me.x - this.cameras.main.width / 2;
     this.cameras.main.scrollY = me.y - this.cameras.main.height / 2;
-
-    // Render dynamic elements
-    this.renderGrid();
-    this.renderBoundary();
 
     // Update all game objects
     this.updateBullets(bullets);
@@ -190,11 +188,9 @@ export class GameScene extends Phaser.Scene {
   renderGrid() {
     const theme = getCurrentTheme();
     if (!theme.grid.enabled) {
-      this.gridGraphics.clear();
       return;
     }
 
-    this.gridGraphics.clear();
     const color = Phaser.Display.Color.HexStringToColor(theme.grid.color);
     this.gridGraphics.lineStyle(theme.grid.lineWidth, color.color);
 
@@ -207,7 +203,6 @@ export class GameScene extends Phaser.Scene {
 
   renderBoundary() {
     const theme = getCurrentTheme();
-    this.boundaryGraphics.clear();
     const color = Phaser.Display.Color.HexStringToColor(theme.boundary.color);
     this.boundaryGraphics.lineStyle(theme.boundary.lineWidth, color.color);
     this.boundaryGraphics.strokeRect(0, 0, MAP_SIZE, MAP_SIZE);
@@ -404,11 +399,11 @@ export class GameScene extends Phaser.Scene {
         sprite.setDisplaySize(CROWN_RADIUS * 2, CROWN_RADIUS * 2);
         sprite.setDepth(6);
 
-        // Add pulsing animation - 15% variation to match original
+        // Add pulsing animation - oscillates between 0.85 and 1.15 (±15% variation) to match original
         this.tweens.add({
           targets: sprite,
-          scale: { from: 1.0, to: 1.15 },
-          duration: 180,
+          scale: { from: 0.85, to: 1.15 },
+          duration: 360, // Full cycle (180ms * 2 for yoyo)
           yoyo: true,
           repeat: -1
         });
@@ -445,11 +440,11 @@ export class GameScene extends Phaser.Scene {
         sprite.setDisplaySize(HEALTH_PACK_RADIUS * 2, HEALTH_PACK_RADIUS * 2);
         sprite.setDepth(6);
 
-        // Add pulsing animation - 10% variation to match original
+        // Add pulsing animation - oscillates between 0.9 and 1.1 (±10% variation) to match original
         this.tweens.add({
           targets: sprite,
-          scale: { from: 1.0, to: 1.10 },
-          duration: 200,
+          scale: { from: 0.9, to: 1.1 },
+          duration: 400, // Full cycle (200ms * 2 for yoyo)
           yoyo: true,
           repeat: -1
         });
