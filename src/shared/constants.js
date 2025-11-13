@@ -36,8 +36,8 @@ module.exports = Object.freeze({
         shield: {
             radius: 25,
             duration: 10, // 10 second shield
-            maxActive: 2,
-            spawnInterval: 30000, // 30 seconds
+            maxActive: 5,
+            spawnInterval: 20000, // 20 seconds
             spawnMargin: 100,
             sprite: 'shieldpack.svg',
             collectSound: 'SHIELD_PICKUP',
@@ -121,6 +121,7 @@ module.exports = Object.freeze({
         CROWN: "crown.png",
         HEALTH_PACK: "healthpack.svg",
         SHIELD_PACK: "shieldpack.svg",
+        SPEED_PACK: "speedpack.svg",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",
             STATE2: "explosions/explosion2.png",
