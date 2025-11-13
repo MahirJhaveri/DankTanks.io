@@ -52,18 +52,18 @@ const THEMES = {
 
     background: {
       type: 'radial-gradient',
-      colors: ['#D4A574', '#E8D4B0'],  // Sand colors
+      colors: ['black', '#f27d08ff'],  // Sand colors
       centerRatio: 0.2
     },
 
     grid: {
-      color: '#C4955C',  // Darker sand
+      color: '#1d1203ff',  // Darker sand
       lineWidth: 0.1,
       enabled: true
     },
 
     obstacles: {
-      fillColor: '#8B7355',  // Rock brown
+      fillColor: '#c08133ff',  // Rock brown
       shadowColor: '#6B5345',  // Darker shadow
       shadowBlur: 25
     },
@@ -75,7 +75,7 @@ const THEMES = {
 
     minimap: {
       background: ['rgba(212, 165, 116, 0.3)', 'rgba(232, 212, 176, 0.3)'],
-      obstacleColor: '#6B5345',
+      obstacleColor: '#a94d18ff',
       borderColor: '#5C4033',
       borderWidth: 2
     }
