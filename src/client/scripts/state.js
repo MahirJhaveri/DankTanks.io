@@ -97,7 +97,7 @@ function interpolateObject(object1, object2, ratio) {
 
     const interpolated = {};
     Object.keys(object1).forEach(key => {
-        if (key === 'username' || key === 'hp' || key === 'tankStyle' || key === 'activeEffects') {
+        if (key === 'username' || key === 'hp' || key === 'tankStyle' || key === 'activeEffects' || key === 'crownPowerup') {
             interpolated[key] = object1[key];
         }
         else if (key === 'direction' || key === 'turretDirection') {
