@@ -4,6 +4,9 @@ Deals with rendering the the navigation map at the bottom right corner of each p
 const Constants = require('../../shared/constants');
 const { MAP_SIZE, NAV_MAP_SIZE, OBSTACLES } = Constants;
 
+const Theme = require('../../shared/theme');
+const { getCurrentTheme } = Theme;
+
 const canvas = document.getElementById('map-canvas');
 const context = canvas.getContext('2d');
 
@@ -35,21 +38,26 @@ function renderPolygon(vertices) {
 }
 
 function drawObstaclesOnMap() {
+    const theme = getCurrentTheme();
     context.save();
-    context.fillStyle = "#926F5B";
+    context.fillStyle = theme.minimap.obstacleColor;
     OBSTACLES.forEach(renderPolygon);
     context.restore();
 }
 
 function renderMap() {
+    const theme = getCurrentTheme();
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    context.strokeStyle = 'black';
-    context.lineWidth = 2;
+    // Border
+    context.strokeStyle = theme.minimap.borderColor;
+    context.lineWidth = theme.minimap.borderWidth;
     context.strokeRect(originX, originY, NAV_MAP_SIZE, NAV_MAP_SIZE);
-    context.fillStyle = 'rgba(24, 99, 35, 0.2)';
+
+    // Background checkerboard pattern
+    context.fillStyle = theme.minimap.background[0];
     context.fillRect(originX, originY, NAV_MAP_SIZE, NAV_MAP_SIZE);
-    context.fillStyle = 'rgba(38, 156, 56, 0.2)';
+    context.fillStyle = theme.minimap.background[1];
     context.fillRect(originX, originY, NAV_MAP_SIZE / 2, NAV_MAP_SIZE / 2);
     context.fillRect(originX + NAV_MAP_SIZE / 2, originY + NAV_MAP_SIZE / 2, NAV_MAP_SIZE / 2, NAV_MAP_SIZE / 2);
 
