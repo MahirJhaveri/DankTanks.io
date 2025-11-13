@@ -5,7 +5,7 @@ const Leaderboard = require('./leaderboard');
 const Explosion = require('./explosion');
 const Crown = require('./crown');
 const Obstacle = require('./obstacle');
-const HealthPack = require('./healthPack');
+const Powerup = require('./powerup');
 
 class Game {
     constructor() {
@@ -14,8 +14,11 @@ class Game {
         this.bullets = [];
         this.obstacles = this.initObstacles();
         this.crowns = [new Crown(Constants.CROWN_POWERUP.RAPID_FIRE, Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
-        this.healthPacks = [];
-        this.lastHealthPackSpawn = Date.now();
+        this.powerups = [];
+        this.lastPowerupSpawn = {
+            health: Date.now(),
+            shield: Date.now(),
+        };
         this.explosions = [];
         this.leaderboard = new Leaderboard(Constants.LEADERBOARD_SIZE);
         this.lastUpdateTime = Date.now();
@@ -117,6 +120,9 @@ class Game {
                 this.bullets.push(newBullet);
             }
 
+            // Update player timed effects
+            player.updateTimedEffects(now);
+
             if (this.shouldSendLeaderboard == 0) {
                 this.leaderboard.updatePlayerScore(playerID, player.username, player.score);
             }
@@ -128,7 +134,7 @@ class Game {
             this.bullets,
             this.obstacles,
             this.crowns,
-            this.healthPacks
+            this.powerups
         );
 
         destroyedEntities.bulletsHit.forEach(bullet => {
@@ -159,18 +165,19 @@ class Game {
             }
         });
 
-        // Process collected health packs
-        destroyedEntities.healthPacksCollected.forEach(({ healthPack, playerId, healedAmount }) => {
-            // Remove health pack from game
-            this.healthPacks = this.healthPacks.filter(h => h.id !== healthPack.id);
+        // Process collected powerups
+        destroyedEntities.powerupsCollected.forEach(({ powerup, playerId, result }) => {
+            // Remove powerup from game
+            this.powerups = this.powerups.filter(p => p.id !== powerup.id);
 
             // Emit collection event to player for VFX/SFX
             const socket = this.sockets[playerId];
             if (socket) {
-                socket.emit(Constants.MSG_TYPES.HEALTH_PACK_COLLECTED, {
-                    x: healthPack.x,
-                    y: healthPack.y,
-                    healedAmount: healedAmount
+                socket.emit(Constants.MSG_TYPES.POWERUP_COLLECTED, {
+                    x: powerup.x,
+                    y: powerup.y,
+                    type: powerup.type,
+                    result: result
                 });
             }
         });
@@ -204,13 +211,10 @@ class Game {
             explosion => explosion.state != null
         );
 
-        // Spawn health packs
-        const now_spawn = Date.now();
-        if (now_spawn - this.lastHealthPackSpawn >= Constants.HEALTH_PACK_SPAWN_INTERVAL &&
-            this.healthPacks.length < Constants.HEALTH_PACK_MAX_ACTIVE) {
-            this.spawnHealthPack();
-            this.lastHealthPackSpawn = now_spawn;
-        }
+        // Spawn powerups (unified system for all types)
+        Object.keys(Constants.POWERUP_CONFIGS).forEach(type => {
+            this.checkAndSpawnPowerup(type, now);
+        });
 
         // Precompute the leaderboardUpdate package for efficiency
         var leaderboardUpdate = null;
@@ -262,8 +266,8 @@ class Game {
             c => player.distanceTo(c) <= Constants.MAP_SIZE / 2
         )
 
-        const nearbyHealthPacks = this.healthPacks.filter(
-            h => player.distanceTo(h) <= Constants.MAP_SIZE / 2
+        const nearbyPowerups = this.powerups.filter(
+            p => player.distanceTo(p) <= Constants.MAP_SIZE / 2
         )
 
         return {
@@ -273,20 +277,32 @@ class Game {
             bullets: nearbyBullets.map(b => b.serializeForUpdate()),
             explosions: nearbyExplosions.map(e => e.serializeForUpdate()),
             crowns: nearbyCrowns.map(c => c.serializeForUpdate()),
-            healthPacks: nearbyHealthPacks.map(h => h.serializeForUpdate()),
+            powerups: nearbyPowerups.map(p => p.serializeForUpdate()),
         }
     }
 
-    spawnHealthPack() {
-        const margin = Constants.HEALTH_PACK_SPAWN_MARGIN;
+    checkAndSpawnPowerup(type, currentTime) {
+        const config = Constants.POWERUP_CONFIGS[type];
+        const count = this.powerups.filter(p => p.type === type).length;
+
+        if (currentTime - this.lastPowerupSpawn[type] >= config.spawnInterval &&
+            count < config.maxActive) {
+            this.spawnPowerup(type);
+            this.lastPowerupSpawn[type] = currentTime;
+        }
+    }
+
+    spawnPowerup(type) {
+        const config = Constants.POWERUP_CONFIGS[type];
+        const margin = config.spawnMargin;
         const maxPos = Constants.MAP_SIZE - margin;
 
         // Random position avoiding edges
         const x = margin + Math.random() * (maxPos - margin);
         const y = margin + Math.random() * (maxPos - margin);
 
-        const id = `healthpack_${Date.now()}_${Math.random()}`;
-        this.healthPacks.push(new HealthPack(id, x, y));
+        const id = `${type}_${Date.now()}_${Math.random()}`;
+        this.powerups.push(new Powerup(id, x, y, type));
     }
 }
 

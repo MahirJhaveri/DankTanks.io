@@ -2,7 +2,8 @@
 
 const SOUNDS = {
     HEALTH_PICKUP: 'health_pickup',
-    CROWN_PICKUP: 'crown_pickup'
+    CROWN_PICKUP: 'crown_pickup',
+    SHIELD_PICKUP: 'shield_pickup'
     // Future sounds: SHOOT, HIT, EXPLOSION, etc.
 };
 
@@ -113,6 +114,45 @@ function playCrownPickupSound(volume = 0.4) {
     osc3.stop(now + 0.45);
 }
 
+// Procedurally generate shield pickup sound effect
+function playShieldPickupSound(volume = 0.3) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Create oscillators for a "protective" sound
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    // Connect audio graph
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Configure oscillators
+    osc1.type = 'sine';
+    osc2.type = 'triangle';
+
+    // Ascending "protective" sweep: 200Hz → 600Hz
+    osc1.frequency.setValueAtTime(200, now);
+    osc1.frequency.exponentialRampToValueAtTime(600, now + 0.4);
+
+    osc2.frequency.setValueAtTime(400, now);
+    osc2.frequency.exponentialRampToValueAtTime(800, now + 0.4);
+
+    // Smooth envelope
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+    // Start and stop
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.5);
+    osc2.stop(now + 0.5);
+}
+
 // Play a sound effect
 export function playSound(soundKey, volume = 0.3) {
     if (!audioContext) {
@@ -131,6 +171,9 @@ export function playSound(soundKey, volume = 0.3) {
             break;
         case SOUNDS.CROWN_PICKUP:
             playCrownPickupSound(volume);
+            break;
+        case SOUNDS.SHIELD_PICKUP:
+            playShieldPickupSound(volume);
             break;
         default:
             console.warn(`Unknown sound: ${soundKey}`);

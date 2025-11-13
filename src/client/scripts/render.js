@@ -5,7 +5,7 @@ import { updateParticles, renderParticles, createTankSmoke } from './particles';
 const Constants = require('../../shared/constants');
 const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES,
     EXPLOSION_RADIUS, CROWN_RADIUS, HEALTH_PACK_RADIUS, OBSTACLES,
-    SMOKE_SPAWN_DISTANCE } = Constants;
+    SMOKE_SPAWN_DISTANCE, POWERUP_CONFIGS } = Constants;
 
 const Theme = require('../../shared/theme');
 const { getCurrentTheme } = Theme;
@@ -29,7 +29,7 @@ const lastPlayerPositions = new Map();
 
 function render(canvas) {
     const context = canvas.getContext('2d');
-    const { me, others, bullets, explosions, crowns, healthPacks } = getCurrentState();
+    const { me, others, bullets, explosions, crowns, powerups } = getCurrentState();
     if (!me) {
         return;
     }
@@ -72,8 +72,8 @@ function render(canvas) {
 
     crowns.forEach(renderCrowns.bind(null, canvas, me));
 
-    if (healthPacks) {
-        healthPacks.forEach(renderHealthPack.bind(null, canvas, me));
+    if (powerups) {
+        powerups.forEach(renderPowerup.bind(null, canvas, me));
     }
 
     // Render particles (after all game objects)
@@ -190,6 +190,47 @@ function renderPlayer(canvas, me, player) {
         60,
     );
     context.restore();
+
+    // Draw shield effect if player has active shield
+    const shieldEffect = Array.isArray(player.activeEffects)
+        ? player.activeEffects.find(e => e.type === 'shield')
+        : null;
+    if (shieldEffect) {
+        const currentTime = Date.now();
+        const remainingTime = shieldEffect.duration -
+            (currentTime - shieldEffect.activatedAt) / 1000;
+
+        // Pulse faster when shield is expiring
+        const pulseFreq = remainingTime < 3 ? 100 : 200;
+        const glowAlpha = 0.4 + 0.2 * Math.sin(currentTime / pulseFreq);
+
+        // Outer glow ring
+        context.save();
+        context.globalAlpha = glowAlpha;
+        context.strokeStyle = '#00D9FF'; // Cyan
+        context.lineWidth = 4;
+        context.shadowColor = '#00D9FF';
+        context.shadowBlur = 15;
+
+        context.beginPath();
+        context.arc(canvasX, canvasY, PLAYER_RADIUS + 8, 0, Math.PI * 2);
+        context.stroke();
+        context.restore();
+
+        // Rotating dashed ring
+        const rotation = (currentTime / 1000) % (Math.PI * 2);
+        context.save();
+        context.translate(canvasX, canvasY);
+        context.rotate(rotation);
+        context.globalAlpha = 0.5;
+        context.strokeStyle = '#00D9FF';
+        context.lineWidth = 2;
+        context.setLineDash([10, 5]);
+        context.beginPath();
+        context.arc(0, 0, PLAYER_RADIUS + 5, 0, Math.PI * 2);
+        context.stroke();
+        context.restore();
+    }
 
     // Draw health bar
     context.fillStyle = 'white';
@@ -311,21 +352,30 @@ function renderCrowns(canvas, me, crown) {
     );
 }
 
-function renderHealthPack(canvas, me, healthPack) {
+function renderPowerup(canvas, me, powerup) {
+    const config = POWERUP_CONFIGS[powerup.type];
     const context = canvas.getContext('2d');
-    const { x, y } = healthPack;
+    const { x, y } = powerup;
     const canvasX = canvas.width / 2 + x - me.x;
     const canvasY = canvas.height / 2 + y - me.y;
 
-    // Pulse animation
-    const pulseScale = 1 + 0.1 * Math.sin(Date.now() / 200);
-    const size = HEALTH_PACK_RADIUS * 2 * pulseScale;
+    // Type-specific pulse animation
+    let pulseFreq, pulseAmount;
+    if (powerup.type === 'shield') {
+        pulseFreq = 250;
+        pulseAmount = 0.15;
+    } else {
+        pulseFreq = 200;
+        pulseAmount = 0.1;
+    }
+    const pulseScale = 1 + pulseAmount * Math.sin(Date.now() / pulseFreq);
+    const size = config.radius * 2 * pulseScale;
 
     context.save();
     context.translate(canvasX, canvasY);
     context.scale(pulseScale, pulseScale);
 
-    const sprite = getAsset(SPRITES.HEALTH_PACK);
+    const sprite = getAsset(POWERUP_CONFIGS[powerup.type].sprite);
     context.drawImage(
         sprite,
         -size / 2 / pulseScale,

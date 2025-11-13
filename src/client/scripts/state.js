@@ -82,7 +82,7 @@ export function getCurrentState() {
                 bullets: interpolateObjectArray(baseUpdate.bullets, nextUpdate.bullets, r),
                 explosions: baseUpdate.explosions,
                 crowns: baseUpdate.crowns,
-                healthPacks: baseUpdate.healthPacks || [],
+                powerups: baseUpdate.powerups || [],
             };
         }
     }
@@ -97,7 +97,7 @@ function interpolateObject(object1, object2, ratio) {
 
     const interpolated = {};
     Object.keys(object1).forEach(key => {
-        if (key === 'username' || key === 'hp' || key === 'tankStyle') {
+        if (key === 'username' || key === 'hp' || key === 'tankStyle' || key === 'activeEffects') {
             interpolated[key] = object1[key];
         }
         else if (key === 'direction' || key === 'turretDirection') {

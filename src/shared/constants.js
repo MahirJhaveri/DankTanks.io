@@ -21,6 +21,30 @@ module.exports = Object.freeze({
     HEALTH_PACK_SPAWN_INTERVAL: 20000, // 20 seconds in ms
     HEALTH_PACK_SPAWN_MARGIN: 100, // Distance from edges
 
+    // Unified powerup configuration
+    POWERUP_CONFIGS: {
+        health: {
+            radius: 25,
+            healAmount: 50,
+            maxActive: 3,
+            spawnInterval: 20000, // 20 seconds
+            spawnMargin: 100,
+            sprite: 'healthpack.svg',
+            collectSound: 'HEALTH_PICKUP',
+            particleColor: '0, 255, 0', // Green
+        },
+        shield: {
+            radius: 25,
+            duration: 10, // 10 second shield
+            maxActive: 2,
+            spawnInterval: 30000, // 30 seconds
+            spawnMargin: 100,
+            sprite: 'shieldpack.svg',
+            collectSound: 'SHIELD_PICKUP',
+            particleColor: '0, 217, 255', // Cyan
+        },
+    },
+
     // Smoke effect constants
     SMOKE_PARTICLE_COLOR: '60, 60, 60', // Dark gray RGB
     SMOKE_PARTICLE_LIFESPAN: 1, // seconds
@@ -49,6 +73,7 @@ module.exports = Object.freeze({
         MAP_UPDATE: 'map_update',
         HEALTH_PACK_COLLECTED: 'health_pack_collected',
         CROWN_COLLECTED: 'crown_collected',
+        POWERUP_COLLECTED: 'powerup_collected',
     },
 
     KEY: {
@@ -84,6 +109,7 @@ module.exports = Object.freeze({
         MISSILE: "Missile.png",
         CROWN: "crown.png",
         HEALTH_PACK: "healthpack.svg",
+        SHIELD_PACK: "shieldpack.svg",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",
             STATE2: "explosions/explosion2.png",

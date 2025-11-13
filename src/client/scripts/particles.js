@@ -34,34 +34,70 @@ class Particle {
 
 const particles = [];
 
-// Create a green burst effect for health pack collection
-export function createHealthPickupEffect(x, y) {
-    // Green burst particles
-    for (let i = 0; i < 12; i++) {
-        const angle = (Math.PI * 2 * i) / 12;
-        const speed = 100 + Math.random() * 50;
-        particles.push(new Particle(
-            x, y,
-            Math.cos(angle) * speed,
-            Math.sin(angle) * speed,
-            0.5,  // 0.5 second life
-            '0, 255, 0',  // Green RGB
-            8
-        ));
-    }
+// Generic powerup pickup effect (config-driven)
+export function createPowerupPickupEffect(x, y, type, config) {
+    const color = config.particleColor;
 
-    // Add floating "+" symbols
-    for (let i = 0; i < 3; i++) {
-        particles.push(new Particle(
-            x + (Math.random() - 0.5) * 20,
-            y,
-            (Math.random() - 0.5) * 30,
-            -80 - Math.random() * 40,
-            0.8,  // 0.8 second life
-            '255, 255, 255',  // White RGB
-            12
-        ));
+    if (type === 'health') {
+        // Green burst particles
+        for (let i = 0; i < 12; i++) {
+            const angle = (Math.PI * 2 * i) / 12;
+            const speed = 100 + Math.random() * 50;
+            particles.push(new Particle(
+                x, y,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                0.5,
+                color,
+                8
+            ));
+        }
+
+        // Floating "+" symbols
+        for (let i = 0; i < 3; i++) {
+            particles.push(new Particle(
+                x + (Math.random() - 0.5) * 20,
+                y,
+                (Math.random() - 0.5) * 30,
+                -80 - Math.random() * 40,
+                0.8,
+                '255, 255, 255',
+                12
+            ));
+        }
+    } else if (type === 'shield') {
+        // Cyan expanding ring
+        for (let i = 0; i < 24; i++) {
+            const angle = (Math.PI * 2 * i) / 24;
+            const speed = 120 + Math.random() * 60;
+            particles.push(new Particle(
+                x, y,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                0.8,
+                color,
+                7
+            ));
+        }
+
+        // Sparkles
+        for (let i = 0; i < 8; i++) {
+            particles.push(new Particle(
+                x + (Math.random() - 0.5) * 30,
+                y + (Math.random() - 0.5) * 30,
+                (Math.random() - 0.5) * 50,
+                -60 - Math.random() * 40,
+                1.0,
+                '255, 255, 255',
+                10
+            ));
+        }
     }
+}
+
+// Legacy function for backward compatibility (if needed)
+export function createHealthPickupEffect(x, y) {
+    createPowerupPickupEffect(x, y, 'health', { particleColor: '0, 255, 0' });
 }
 
 // Create a golden burst effect for crown collection

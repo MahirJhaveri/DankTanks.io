@@ -3,9 +3,10 @@ import { processGameUpdate } from './state';
 import { processLeaderboardUpdate } from './leaderboard';
 import { processMapUpdate } from './map';
 import { playSound, SOUNDS } from './audio';
-import { createHealthPickupEffect, createCrownPickupEffect } from './particles';
+import { createPowerupPickupEffect, createCrownPickupEffect } from './particles';
 
 const Constants = require('../../shared/constants');
+const { POWERUP_CONFIGS } = Constants;
 
 const protocol = window.location.protocol.includes('https') ? 'wss' : 'ws';
 const socket = io(`${protocol}://${window.location.host}`, { transports: ['websocket'] });
@@ -26,9 +27,10 @@ export const connect = onGameOver => (
         socket.on(Constants.MSG_TYPES.GAME_OVER, onGameOver);
         socket.on(Constants.MSG_TYPES.LEADERBOARD_UPDATE, processLeaderboardUpdate);
         socket.on(Constants.MSG_TYPES.MAP_UPDATE, processMapUpdate);
-        socket.on(Constants.MSG_TYPES.HEALTH_PACK_COLLECTED, ({ x, y, healedAmount }) => {
-            playSound(SOUNDS.HEALTH_PICKUP);
-            createHealthPickupEffect(x, y);
+        socket.on(Constants.MSG_TYPES.POWERUP_COLLECTED, ({ x, y, type, result }) => {
+            const config = POWERUP_CONFIGS[type];
+            playSound(SOUNDS[config.collectSound]);
+            createPowerupPickupEffect(x, y, type, config);
         });
         socket.on(Constants.MSG_TYPES.CROWN_COLLECTED, ({ x, y, powerupType }) => {
             playSound(SOUNDS.CROWN_PICKUP);
