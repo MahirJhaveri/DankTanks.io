@@ -8,6 +8,7 @@ var styles = Object.values(TANK);
 
 const chooseTankCanvas = document.getElementById("choose-tank-canvas");
 const context = chooseTankCanvas.getContext('2d');
+const tankNameDisplay = document.getElementById("tank-name-display");
 
 const prevButton = document.getElementById("prev-tank-button");
 const nextButton = document.getElementById("next-tank-button");
@@ -32,28 +33,8 @@ function updateChooseTankDisplay() {
     );
     context.restore();
 
-    // Draw skin name below tank
-    context.save();
-    context.font = 'bold 24px "Courier New", Courier, monospace';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    const skinName = TANK_NAMES[styles[tankStyle]];
-
-    // Add text shadow for depth
-    context.shadowColor = 'rgba(0, 0, 0, 0.5)';
-    context.shadowBlur = 4;
-    context.shadowOffsetX = 2;
-    context.shadowOffsetY = 2;
-
-    // Draw text stroke for bold outline
-    context.strokeStyle = '#2c2416';
-    context.lineWidth = 3;
-    context.strokeText(skinName, 125, 235);
-
-    // Draw filled text
-    context.fillStyle = '#c7b68f';
-    context.fillText(skinName, 125, 235);
-    context.restore();
+    // Update tank name display
+    tankNameDisplay.textContent = TANK_NAMES[styles[tankStyle]];
 }
 
 function handlePrevTankButton() {
@@ -68,7 +49,7 @@ function handleNextTankButton() {
 
 export function initChooseTankController() {
     chooseTankCanvas.width = 250;
-    chooseTankCanvas.height = 280;
+    chooseTankCanvas.height = 250;
     prevButton.onclick = handlePrevTankButton;
     nextButton.onclick = handleNextTankButton;
     updateChooseTankDisplay();
