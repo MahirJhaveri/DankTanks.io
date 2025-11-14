@@ -34,12 +34,25 @@ function updateChooseTankDisplay() {
 
     // Draw skin name below tank
     context.save();
-    context.font = 'bold 20px Chalkboard';
-    context.fillStyle = '#c7b68f';
+    context.font = 'bold 24px "Courier New", Courier, monospace';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     const skinName = TANK_NAMES[styles[tankStyle]];
-    context.fillText(skinName, 125, 210);
+
+    // Add text shadow for depth
+    context.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    context.shadowBlur = 4;
+    context.shadowOffsetX = 2;
+    context.shadowOffsetY = 2;
+
+    // Draw text stroke for bold outline
+    context.strokeStyle = '#2c2416';
+    context.lineWidth = 3;
+    context.strokeText(skinName, 125, 235);
+
+    // Draw filled text
+    context.fillStyle = '#c7b68f';
+    context.fillText(skinName, 125, 235);
     context.restore();
 }
 
