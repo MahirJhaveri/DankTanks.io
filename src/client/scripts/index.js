@@ -14,6 +14,7 @@ import {
 } from "./leaderboard";
 import { startRenderingMap, stopRenderingMap } from "./map";
 import { initChooseTankController, getTankStyle } from "./playMenu";
+import { initNotifications } from "./notifications";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/main.css";
@@ -29,6 +30,7 @@ export const intialToggle = document.getElementById("togBtn"); // true is auto(o
 Promise.all([connect(onGameOver), downloadAssets()])
   .then(() => {
     loadAudio(); // Initialize audio system
+    initNotifications(); // Initialize notification system
     playMenu.classList.remove("hidden");
     initChooseTankController();
     usernameInput.focus();

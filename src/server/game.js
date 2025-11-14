@@ -29,6 +29,18 @@ class Game {
         setInterval(this.update_map.bind(this), 1000 / 5); // send out map updates at 5fps
     }
 
+    // Broadcast event notification to all connected clients
+    broadcastEvent(eventType, data) {
+        const payload = {
+            eventType: eventType,
+            data: data,
+            timestamp: Date.now()
+        };
+        Object.keys(this.sockets).forEach(socketID => {
+            this.sockets[socketID].emit(Constants.MSG_TYPES.EVENT_NOTIFICATION, payload);
+        });
+    }
+
     /* Initializes a list of Obstacles from data in constants */
     initObstacles() {
         const obs = [];
@@ -44,6 +56,11 @@ class Game {
         const x = Constants.MAP_SIZE * (0.25 + Math.random() * 0.5);
         const y = Constants.MAP_SIZE * (0.25 + Math.random() * 0.5);
         this.players[socket.id] = new Player(socket.id, username, x, y, tankStyle,fireToggle);
+
+        // Broadcast player join event
+        this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_JOIN, {
+            player: username
+        });
     }
 
     removePlayer(socket) {
@@ -51,7 +68,14 @@ class Game {
         const player = this.players[socket.id];
         if (player) {
             const crown = player.dropCrownPowerup();
-            if (crown) this.crowns.push(crown);
+            if (crown) {
+                this.crowns.push(crown);
+
+                // Broadcast crown drop event to all players
+                this.broadcastEvent(Constants.EVENT_TYPES.CROWN_DROP, {
+                    player: player.username
+                });
+            }
         }
 
         delete this.sockets[socket.id];
@@ -162,12 +186,20 @@ class Game {
 
             // Emit collection event to player for VFX/SFX
             const socket = this.sockets[playerId];
+            const player = this.players[playerId];
             if (socket) {
                 socket.emit(Constants.MSG_TYPES.CROWN_COLLECTED, {
                     x: crown.x,
                     y: crown.y,
                     powerupType: crown.id
                 });
+
+                // Broadcast crown pickup event to all players
+                if (player) {
+                    this.broadcastEvent(Constants.EVENT_TYPES.CROWN_PICKUP, {
+                        player: player.username
+                    });
+                }
             }
         });
 
@@ -197,7 +229,20 @@ class Game {
                 /* Restore the health of player who killed */
                 if(player.lastHitByPlayer) {
                     const killedByPlayer = this.players[player.lastHitByPlayer];
-                    killedByPlayer.hp = Constants.PLAYER_MAX_HP;
+                    if (killedByPlayer) {
+                        killedByPlayer.hp = Constants.PLAYER_MAX_HP;
+
+                        // Broadcast kill event (player killed by another player)
+                        this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_KILL, {
+                            killer: killedByPlayer.username,
+                            victim: player.username
+                        });
+                    }
+                } else {
+                    // Broadcast death event (player died to obstacle/environment)
+                    this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_DEATH, {
+                        victim: player.username
+                    });
                 }
 
                 socket.emit(Constants.MSG_TYPES.GAME_OVER);

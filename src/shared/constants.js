@@ -94,6 +94,7 @@ module.exports = Object.freeze({
         HEALTH_PACK_COLLECTED: 'health_pack_collected',
         CROWN_COLLECTED: 'crown_collected',
         POWERUP_COLLECTED: 'powerup_collected',
+        EVENT_NOTIFICATION: 'event_notification',
     },
 
     KEY: {
@@ -158,6 +159,24 @@ module.exports = Object.freeze({
     RAPID_FIRE_BULLET_SPEED: 1500,
     RAPID_FIRE_COOLDOWN: 0.2,
     CROWN_DOUBLE_SHOT_SPREAD: 0.05, // Angle spread in radians for visual separation
+
+    // Event notification types
+    EVENT_TYPES: {
+        PLAYER_KILL: 'player_kill',
+        PLAYER_JOIN: 'player_join',
+        PLAYER_DEATH: 'player_death',
+        CROWN_PICKUP: 'crown_pickup',
+        CROWN_DROP: 'crown_drop',
+    },
+
+    // Event notification durations (in milliseconds)
+    NOTIFICATION_DURATIONS: {
+        PLAYER_KILL: 3000,      // 3 seconds
+        PLAYER_JOIN: 2500,      // 2.5 seconds
+        PLAYER_DEATH: 2500,     // 2.5 seconds
+        CROWN_PICKUP: -1,       // Persistent (never auto-hide)
+        CROWN_DROP: 3000,       // 3 seconds
+    },
 
     OBSTACLES: [
         [[500,500], [800, 200], [900, 700], [600, 600], [500, 500]],

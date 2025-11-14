@@ -338,4 +338,176 @@ html, body {
   }
 
   .slider.round:before {
-    border-radius: 50%;} 
+    border-radius: 50%;}
+
+/* ========================================
+   EVENT NOTIFICATION STYLES
+   ======================================== */
+
+/* Main notification container - top center */
+#notification-container {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none; /* Don't block clicks */
+    z-index: 1000;
+}
+
+/* Individual transient notification */
+.notification {
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-family: "Courier New", Courier, monospace;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+    white-space: nowrap;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+    /* Slide-in animation */
+    animation: notificationSlideIn 0.3s ease-out;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Slide in animation */
+@keyframes notificationSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fade out class (applied when removing) */
+.notification-fadeout {
+    animation: notificationFadeOut 0.3s ease-out forwards;
+}
+
+@keyframes notificationFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Crown notification container - below transient notifications */
+#crown-notification-container {
+    position: fixed;
+    top: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    pointer-events: none;
+}
+
+/* Persistent crown notification */
+.crown-notification {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 12px;
+    border: 3px solid #FFD700;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow:
+        2px 2px 4px rgba(0, 0, 0, 1),
+        -1px -1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow:
+        0 0 20px rgba(255, 215, 0, 0.6),
+        0 4px 8px rgba(0, 0, 0, 0.4);
+    white-space: nowrap;
+
+    /* Entrance animation */
+    animation: crownSlideDown 0.4s ease-out, crownPulse 2s ease-in-out infinite;
+}
+
+/* Slide down entrance animation */
+@keyframes crownSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Pulsing glow effect */
+@keyframes crownPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 20px rgba(255, 215, 0, 0.6),
+            0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    50% {
+        box-shadow:
+            0 0 30px rgba(255, 215, 0, 0.9),
+            0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Crown notification fade out */
+.crown-notification-fadeout {
+    animation: crownFadeOut 0.3s ease-out forwards;
+}
+
+@keyframes crownFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 640px) {
+    #notification-container {
+        top: 50px;
+        width: 95vw;
+    }
+
+    .notification {
+        font-size: 14px;
+        padding: 10px 18px;
+    }
+
+    #crown-notification-container {
+        top: 170px;
+    }
+
+    .crown-notification {
+        font-size: 16px;
+        padding: 12px 24px;
+    }
+}
+
+/* Ensure notifications appear above game canvas but below menus */
+#notification-container,
+#crown-notification-container {
+    z-index: 900; /* Below menus (z-index: 1000+) but above canvas */
+}
