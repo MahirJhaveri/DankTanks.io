@@ -68,7 +68,7 @@ function handleNextTankButton() {
 
 export function initChooseTankController() {
     chooseTankCanvas.width = 250;
-    chooseTankCanvas.height = 250;
+    chooseTankCanvas.height = 280;
     prevButton.onclick = handlePrevTankButton;
     nextButton.onclick = handleNextTankButton;
     updateChooseTankDisplay();
