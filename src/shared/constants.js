@@ -63,6 +63,15 @@ module.exports = Object.freeze({
     SMOKE_PARTICLE_SPEED: 80, // base speed in pixels/second
     SMOKE_SPAWN_DISTANCE: 10, // min pixels moved to emit smoke
 
+    // Trail mark constants
+    TRAIL_MARK_LIFESPAN: 0.75, // seconds
+    TRAIL_MARK_WIDTH: 8, // pixels
+    TRAIL_MARK_LENGTH: 15, // pixels
+    TRAIL_MARK_SPAWN_DISTANCE: 15, // min pixels moved to emit trail mark
+    TRAIL_MARK_TREAD_OFFSET: 30, // pixels from tank center to tread
+    TRAIL_MARK_MAX_COUNT: 500, // performance limit
+    TRAIL_MARK_COLOR: '200, 200, 200', // dark gray RGB
+
     SCORE_BULLET_HIT: 20,
     SCORE_PER_SECOND: 1,
 

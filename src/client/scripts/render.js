@@ -1,6 +1,7 @@
 import { getAsset, getTank, getTurret } from './assets';
 import { getCurrentState } from './state';
 import { updateParticles, renderParticles, createTankSmoke } from './particles';
+import { updateTrailMarks, renderTrailMarks, checkAndEmitTrailMarks, cleanupTreadTracking } from './trailMarks';
 
 const Constants = require('../../shared/constants');
 const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES,
@@ -37,8 +38,14 @@ function render(canvas) {
     // Update particles
     updateParticles(1 / 60); // dt for 60 FPS
 
+    // Update trail marks
+    updateTrailMarks(1 / 60); // dt for 60 FPS
+
     // Draw background
     renderBackground(canvas, me.x, me.y);
+
+    // Draw trail marks on the ground (before other objects)
+    renderTrailMarks(canvas, me.x, me.y);
 
     /* Draw obstacles */
     renderObstacles(canvas, me);
@@ -61,8 +68,13 @@ function render(canvas) {
     checkAndEmitSmoke(canvas, me, me);
     others.forEach(other => checkAndEmitSmoke(canvas, me, other));
 
+    // Check and emit trail marks for all moving players
+    checkAndEmitTrailMarks(canvas, me, me, Constants);
+    others.forEach(other => checkAndEmitTrailMarks(canvas, me, other, Constants));
+
     // Cleanup position tracking for disconnected players
     cleanupPositionTracking([me, ...others]);
+    cleanupTreadTracking([me, ...others]);
 
     // Draw all players
     renderPlayer(canvas, me, me);

@@ -163,8 +163,8 @@ export function createCrownPickupEffect(x, y) {
 
 // Create smoke particles for tank movement
 export function createTankSmoke(x, y, direction, hp, constants) {
-    const { SMOKE_PARTICLE_COLOR, SMOKE_PARTICLE_LIFESPAN,
-            SMOKE_PARTICLE_DENSITY, SMOKE_PARTICLE_SPEED, PLAYER_MAX_HP } = constants;
+    const { SMOKE_PARTICLE_LIFESPAN, SMOKE_PARTICLE_DENSITY, 
+        SMOKE_PARTICLE_SPEED, PLAYER_MAX_HP } = constants;
 
     // Calculate damage ratio (0 = no damage, 1 = critical damage)
     const damageRatio = Math.max(0, (PLAYER_MAX_HP - hp) / PLAYER_MAX_HP);
