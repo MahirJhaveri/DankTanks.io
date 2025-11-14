@@ -1,19 +1,20 @@
 import { getTank, getTurret } from './assets';
 
 const Constants = require('../../shared/constants');
-const { TANK, PLAYER_RADIUS } = Constants;
+const { TANK, PLAYER_RADIUS, TANK_NAMES } = Constants;
 
 var tankStyle = 0;
 var styles = Object.values(TANK);
 
 const chooseTankCanvas = document.getElementById("choose-tank-canvas");
 const context = chooseTankCanvas.getContext('2d');
+const tankNameDisplay = document.getElementById("tank-name-display");
 
 const prevButton = document.getElementById("prev-tank-button");
 const nextButton = document.getElementById("next-tank-button");
 
 function updateChooseTankDisplay() {
-    context.clearRect(0, 0, 100, 100);
+    context.clearRect(0, 0, chooseTankCanvas.width, chooseTankCanvas.height);
     context.save()
     context.translate(125, 125);
     context.drawImage(
@@ -31,6 +32,9 @@ function updateChooseTankDisplay() {
         100,
     );
     context.restore();
+
+    // Update tank name display
+    tankNameDisplay.textContent = TANK_NAMES[styles[tankStyle]];
 }
 
 function handlePrevTankButton() {

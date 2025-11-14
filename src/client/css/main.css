@@ -81,6 +81,21 @@ html, body {
     background-color: rgba(0,0,0,0);
   }
 
+  #tank-name-display {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 24px;
+    font-weight: bold;
+    color: #c7b68f;
+    text-align: center;
+    margin-top: 10px;
+    text-shadow:
+      2px 2px 4px rgba(0, 0, 0, 0.5),
+      -1px -1px 0 #2c2416,
+      1px -1px 0 #2c2416,
+      -1px 1px 0 #2c2416,
+      1px 1px 0 #2c2416;
+  }
+
   ::placeholder {
     color: #dbdbdb;
   }
