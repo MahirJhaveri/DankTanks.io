@@ -67,7 +67,7 @@ function isPlayerVisible(canvas, me, player) {
 
 // Check player movement and emit trail marks if needed
 export function checkAndEmitTrailMarks(canvas, me, player, constants) {
-    const { TRAIL_MARK_SPAWN_DISTANCE, TRAIL_MARK_TREAD_OFFSET } = constants;
+    const { TRAIL_MARK_SPAWN_DISTANCE, TRAIL_MARK_TREAD_OFFSET, PLAYER_RADIUS } = constants;
 
     // Only emit trail marks for visible tanks (performance optimization)
     if (!isPlayerVisible(canvas, me, player)) {
@@ -88,14 +88,15 @@ export function checkAndEmitTrailMarks(canvas, me, player, constants) {
     const lastTreads = lastTreadPositions.get(playerId);
 
     // Calculate left and right tread positions
-    // Perpendicular to tank direction: direction + 90° (Math.PI/2)
-    const perpDirection = player.direction + Math.PI / 2;
 
-    const leftTreadX = player.x + Math.cos(perpDirection) * TRAIL_MARK_TREAD_OFFSET;
-    const leftTreadY = player.y + Math.sin(perpDirection) * TRAIL_MARK_TREAD_OFFSET;
+    const baseX = player.x - Math.sin(player.direction) * PLAYER_RADIUS;
+    const baseY = player.y + Math.cos(player.direction) * PLAYER_RADIUS;
 
-    const rightTreadX = player.x - Math.cos(perpDirection) * TRAIL_MARK_TREAD_OFFSET;
-    const rightTreadY = player.y - Math.sin(perpDirection) * TRAIL_MARK_TREAD_OFFSET;
+    const leftTreadX = baseX + Math.cos(player.direction) * TRAIL_MARK_TREAD_OFFSET;
+    const leftTreadY = baseY + Math.sin(player.direction) * TRAIL_MARK_TREAD_OFFSET;
+
+    const rightTreadX = baseX - Math.cos(player.direction) * TRAIL_MARK_TREAD_OFFSET;
+    const rightTreadY = baseY - Math.sin(player.direction) * TRAIL_MARK_TREAD_OFFSET;
 
     // Check left tread distance moved
     const leftDx = leftTreadX - lastTreads.left.x;
