@@ -1,11 +1,16 @@
 const Tank = require('./tank');
 const Constants = require('../shared/constants');
-const { circlePolygon } = require('./collisions');
+const isSeparable = require('./utils/sat');
 
 /**
  * Static state for tracking used bot names
  */
 const usedNames = new Set();
+
+/**
+ * Cache for SAT collision detection (avoids recomputing normals)
+ */
+const collisionCache = {};
 
 /**
  * Bot - AI-controlled tank
@@ -153,15 +158,17 @@ class Bot extends Tank {
     const futureY = this.y + Math.sin(this.currentDirection) * lookAheadDistance;
 
     // Check if future position collides with any obstacle
+    // isSeparable returns true if NOT colliding, false if colliding
     for (const obstacle of obstacles) {
-      const collision = circlePolygon(
-        futureX,
-        futureY,
+      const notColliding = isSeparable(
+        obstacle.id,
+        obstacle.vertices,
+        [futureX, futureY],
         this.radius,
-        obstacle.vertices
+        collisionCache
       );
 
-      if (collision) return true;
+      if (!notColliding) return true; // Found a collision
     }
 
     return false;
