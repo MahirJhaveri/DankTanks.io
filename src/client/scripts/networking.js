@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { processGameUpdate } from './state';
+import { processGameUpdate, getCurrentState } from './state';
 import { processLeaderboardUpdate } from './leaderboard';
 import { processMapUpdate } from './map';
 import { playSound, SOUNDS } from './audio';
@@ -40,6 +40,15 @@ export const connect = onGameOver => (
         socket.on(Constants.MSG_TYPES.EVENT_NOTIFICATION, ({ eventType, data }) => {
             // Add notification to queue (all notifications treated equally)
             addNotification(eventType, data);
+
+            // Play kill sound if this player is the killer
+            if (eventType === Constants.EVENT_TYPES.PLAYER_KILL) {
+                const gameState = getCurrentState();
+                const myPlayerId = gameState.me?.id;
+                if (myPlayerId && data.killerId === myPlayerId) {
+                    playSound(SOUNDS.KILL, 0.4);
+                }
+            }
         });
     })
 );

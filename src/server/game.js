@@ -235,7 +235,9 @@ class Game {
                         // Broadcast kill event (player killed by another player)
                         this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_KILL, {
                             killer: killedByPlayer.username,
-                            victim: player.username
+                            victim: player.username,
+                            killerId: killedByPlayer.id,
+                            victimId: player.id
                         });
                     }
                 } else {
