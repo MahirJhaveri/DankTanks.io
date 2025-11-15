@@ -14,7 +14,7 @@ import {
 } from "./leaderboard";
 import { startRenderingMap, stopRenderingMap } from "./map";
 import { initChooseTankController, getTankStyle } from "./playMenu";
-import { initNotifications } from "./notifications";
+import { initNotifications, clearAllNotifications } from "./notifications";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/main.css";
@@ -25,6 +25,7 @@ const ENABLE_DOUBLE_BUFFERING = true;
 const playMenu = document.getElementById("play-menu");
 const playButton = document.getElementById("play-button");
 const usernameInput = document.getElementById("username-input");
+const notificationContainer = document.getElementById("notification-container");
 export const intialToggle = document.getElementById("togBtn"); // true is auto(on), false is click(off)
 
 Promise.all([connect(onGameOver), downloadAssets()])
@@ -38,6 +39,7 @@ Promise.all([connect(onGameOver), downloadAssets()])
       // start playing...
       play(usernameInput.value, getTankStyle(), intialToggle.checked);
       playMenu.classList.add("hidden");
+      notificationContainer.classList.remove("hidden");
       initState();
       startCapturingInput();
       ENABLE_DOUBLE_BUFFERING
@@ -54,5 +56,7 @@ function onGameOver() {
   stopRendering();
   stopRenderingLeaderboard();
   stopRenderingMap();
+  notificationContainer.classList.add("hidden");
+  clearAllNotifications();
   playMenu.classList.remove("hidden");
 }

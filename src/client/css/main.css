@@ -351,7 +351,7 @@ html, body {
     right: 10px;
     width: 280px;
     max-height: 400px;
-    background: rgba(0, 0, 0, 0.75);
+    background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     padding: 10px;
@@ -361,7 +361,7 @@ html, body {
     overflow-y: auto;
     pointer-events: auto;
     z-index: 900;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: none;
 }
 
 /* Hide scrollbar but keep functionality */
