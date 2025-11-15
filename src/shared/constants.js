@@ -61,8 +61,8 @@ module.exports = Object.freeze({
         MAX_COUNT: 1,                    // Number of simultaneous bots (easy to increase later)
         RESPAWN_DELAY: 5000,             // Not used directly, implicit in spawn check interval
         SPAWN_CHECK_INTERVAL: 5000,      // Check for spawning every 5 seconds
-        ATTACK_RADIUS: 700,              // Distance (px) to detect and shoot at players
-        AIM_INACCURACY: 0.15,            // ±0.15 radians (~8.6 degrees) for human-like aim
+        ATTACK_RADIUS: 500,              // Distance (px) to detect and shoot at players
+        AIM_INACCURACY: 0.20,            // ±0.15 radians (~8.6 degrees) for human-like aim
         DIRECTION_CHANGE_CHANCE: 0.02,   // 2% chance per frame to randomly change direction
         OBSTACLE_LOOKAHEAD: 150,         // Distance (px) to check for obstacles ahead
         BOUNDARY_MARGIN: 100,            // Distance (px) from map edge to trigger turn

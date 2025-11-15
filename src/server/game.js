@@ -113,7 +113,7 @@ class Game {
         const { MAX_COUNT } = Constants.BOT_CONFIG;
 
         // If under max count, spawn exactly 1 bot
-        if (currentBotCount < MAX_COUNT) {
+        if (currentBotCount < MAX_COUNT && Object.keys(this.players).length > 0) {
             this.spawnBot();
         }
     }

@@ -52,14 +52,14 @@ class Bot extends Tank {
 
     // Random direction change (2% per frame = ~once per second at 60fps)
     if (Math.random() < DIRECTION_CHANGE_CHANCE) {
-      this.currentDirection = Math.random() * 2 * Math.PI;
+      this.currentDirection += Math.PI / 2 * (Math.random() < 0.5 ? -1 : 1); // Turn left or right 90 degrees
     }
 
     // Check for obstacles ahead
     const obstacleAhead = this.checkObstacleAhead(obstacles, OBSTACLE_LOOKAHEAD);
     if (obstacleAhead) {
       // Turn away from obstacle (add 90-180 degrees)
-      this.currentDirection += Math.PI / 2 + Math.random() * Math.PI / 2;
+      this.currentDirection += Math.PI / 2 + (Math.random() < 0.5 ? 0 : 1) * Math.PI / 2;
     }
 
     // Check map boundaries
@@ -99,7 +99,7 @@ class Bot extends Tank {
     // If within attack radius, aim and shoot
     if (distance <= ATTACK_RADIUS) {
       // Calculate angle to target
-      let angleToTarget = Math.atan2(dx, dy);
+      let angleToTarget = Math.atan2(dy, dx) + Math.PI / 2;
 
       // Add inaccuracy for human-like aim
       const inaccuracy = (Math.random() - 0.5) * 2 * AIM_INACCURACY;
