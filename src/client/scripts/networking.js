@@ -4,6 +4,7 @@ import { processLeaderboardUpdate } from './leaderboard';
 import { processMapUpdate } from './map';
 import { playSound, SOUNDS } from './audio';
 import { createPowerupPickupEffect, createCrownPickupEffect } from './particles';
+import { addNotification } from './notifications';
 
 const Constants = require('../../shared/constants');
 const { POWERUP_CONFIGS } = Constants;
@@ -35,6 +36,10 @@ export const connect = onGameOver => (
         socket.on(Constants.MSG_TYPES.CROWN_COLLECTED, ({ x, y, powerupType }) => {
             playSound(SOUNDS.CROWN_PICKUP);
             createCrownPickupEffect(x, y);
+        });
+        socket.on(Constants.MSG_TYPES.EVENT_NOTIFICATION, ({ eventType, data }) => {
+            // Add notification to queue (all notifications treated equally)
+            addNotification(eventType, data);
         });
     })
 );

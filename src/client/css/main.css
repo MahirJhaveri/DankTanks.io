@@ -338,4 +338,108 @@ html, body {
   }
 
   .slider.round:before {
-    border-radius: 50%;} 
+    border-radius: 50%;}
+
+/* ========================================
+   EVENT NOTIFICATION STYLES
+   ======================================== */
+
+/* Notification container - chat window style on right side below leaderboard */
+#notification-container {
+    position: fixed;
+    top: 220px; /* Below leaderboard */
+    right: 10px;
+    width: 280px;
+    max-height: 400px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    pointer-events: auto;
+    z-index: 900;
+    box-shadow: none;
+}
+
+/* Hide scrollbar but keep functionality */
+#notification-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+#notification-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+#notification-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+#notification-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Individual notification message */
+.notification {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid rgba(255, 255, 255, 0.5);
+    font-family: "Courier New", Courier, monospace;
+    font-size: 13px;
+    font-weight: normal;
+    text-align: left;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    word-wrap: break-word;
+    white-space: normal;
+    animation: notificationSlideIn 0.3s ease-out;
+}
+
+/* Slide in animation from right */
+@keyframes notificationSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Fade out class (applied when removing from queue) */
+.notification-fadeout {
+    animation: notificationFadeOut 0.3s ease-out forwards;
+}
+
+@keyframes notificationFadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 640px) {
+    #notification-container {
+        top: 200px;
+        right: 5px;
+        width: 200px;
+        max-height: 300px;
+        padding: 8px;
+    }
+
+    .notification {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}
