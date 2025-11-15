@@ -1,16 +1,19 @@
 const Constants = require('../shared/constants');
 const Player = require('./player');
+const Bot = require('./bot');
 const applyCollisions = require('./collisions');
 const Leaderboard = require('./leaderboard');
 const Explosion = require('./explosion');
 const Crown = require('./crown');
 const Obstacle = require('./obstacle');
 const Powerup = require('./powerup');
+const shortid = require('shortid');
 
 class Game {
     constructor() {
         this.sockets = {};
         this.players = {};
+        this.bots = {}; // AI-controlled tanks
         this.bullets = [];
         this.obstacles = this.initObstacles();
         this.crowns = [new Crown(Constants.CROWN_POWERUP.RAPID_FIRE, Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
@@ -25,8 +28,12 @@ class Game {
         this.lastUpdateTime = Date.now();
         this.shouldSendUpdate = false;
         this.shouldSendLeaderboard = 1; // send leaderboard updates only once every 4 game updates
+        this.botSpawnTimer = 0; // Accumulates time for bot spawn checks
         setInterval(this.update.bind(this), 1000 / 60); // process game updates at 60fps
         setInterval(this.update_map.bind(this), 1000 / 5); // send out map updates at 5fps
+
+        // Initial bot spawn
+        this.checkBotSpawning();
     }
 
     // Broadcast event notification to all connected clients
@@ -82,6 +89,62 @@ class Game {
         delete this.players[socket.id];
     }
 
+    // ===== BOT MANAGEMENT METHODS =====
+
+    /**
+     * Spawn a new bot at a random position
+     */
+    spawnBot() {
+        const id = shortid.generate();
+        const x = Constants.MAP_SIZE * (0.25 + Math.random() * 0.5);
+        const y = Constants.MAP_SIZE * (0.25 + Math.random() * 0.5);
+
+        const bot = new Bot(id, x, y);
+        this.bots[id] = bot;
+
+        console.log(`Bot spawned: ${bot.username} (${id})`);
+    }
+
+    /**
+     * Check if we need to spawn bots (called every 5 seconds)
+     */
+    checkBotSpawning() {
+        const currentBotCount = Object.keys(this.bots).length;
+        const { MAX_COUNT } = Constants.BOT_CONFIG;
+
+        // If under max count, spawn exactly 1 bot
+        if (currentBotCount < MAX_COUNT && Object.keys(this.players).length > 0) {
+            this.spawnBot();
+        }
+    }
+
+    /**
+     * Handle bot death (cleanup and allow respawn)
+     */
+    handleBotDeath(botId) {
+        const bot = this.bots[botId];
+        if (!bot) return;
+
+        console.log(`Bot died: ${bot.username} (${botId})`);
+
+        // Release name for reuse
+        Bot.releaseUsername(bot.username);
+
+        // Drop crown if bot has one
+        const crown = bot.dropCrownPowerup();
+        if (crown) {
+            this.crowns.push(crown);
+        }
+
+        // Remove from bots collection
+        delete this.bots[botId];
+
+        // Create explosion
+        this.explosions.push(new Explosion(bot.x, bot.y));
+
+        // Note: Next spawn check will spawn a new bot if under MAX_COUNT
+    }
+
     handleMouseInput(socket, dir) {
         if (this.players[socket.id]) {
             this.players[socket.id].setTurretDirection(dir);
@@ -107,9 +170,14 @@ class Game {
      */
     update_map() {
         const playerLocations = [];
+        // Include both players and bots in map
         Object.keys(this.players).forEach(playerID => {
             playerLocations.push(this.players[playerID].serializeForMapUpdate());
         });
+        Object.keys(this.bots).forEach(botID => {
+            playerLocations.push(this.bots[botID].serializeForMapUpdate());
+        });
+
         Object.keys(this.sockets).forEach(socketID => {
             this.sockets[socketID].emit(Constants.MSG_TYPES.MAP_UPDATE, {
                 players: playerLocations,
@@ -125,6 +193,13 @@ class Game {
         const now = Date.now();
         const dt = (now - this.lastUpdateTime) / 1000;
         this.lastUpdateTime = now;
+
+        // === BOT SPAWN CHECK (every 5 seconds) ===
+        this.botSpawnTimer += dt;
+        if (this.botSpawnTimer >= Constants.BOT_CONFIG.SPAWN_CHECK_INTERVAL / 1000) {
+            this.botSpawnTimer = 0;
+            this.checkBotSpawning();
+        }
 
         // update each bullet
         const bulletsRemoved = [];
@@ -158,9 +233,36 @@ class Game {
             }
         });
 
-        // Check for collisions
+        // === UPDATE BOTS ===
+        const allTanks = { ...this.players, ...this.bots };
+        Object.values(this.bots).forEach(bot => {
+            // Update AI (decision making)
+            bot.updateAI(allTanks, this.obstacles, Constants.MAP_SIZE);
+
+            // Update tank physics and get bullets
+            const newBullets = bot.update(dt);
+            if (newBullets) {
+                // Handle both single bullet and array of bullets (crown powerup)
+                if (Array.isArray(newBullets)) {
+                    this.bullets.push(...newBullets);
+                } else {
+                    this.bullets.push(newBullets);
+                }
+            }
+
+            // Update bot timed effects
+            bot.updateTimedEffects(now);
+
+            // Update bot in leaderboard
+            if (this.shouldSendLeaderboard == 0) {
+                this.leaderboard.updatePlayerScore(bot.id, bot.username, bot.score);
+            }
+        });
+
+        // Check for collisions (combine players and bots)
+        const allTanksArray = [...Object.values(this.players), ...Object.values(this.bots)];
         const destroyedEntities = applyCollisions(
-            Object.values(this.players),
+            allTanksArray,
             this.bullets,
             this.obstacles,
             this.crowns,
@@ -168,6 +270,7 @@ class Game {
         );
 
         destroyedEntities.bulletsHit.forEach(bullet => {
+            // Check if shooter is a player
             if (this.players[bullet.parentID]) {
                 this.players[bullet.parentID].onDealtDamage()
                 if (this.shouldSendLeaderboard == 0) {
@@ -175,8 +278,16 @@ class Game {
                         this.players[bullet.parentID].username, this.players[bullet.parentID].score);
                 }
             }
+            // Check if shooter is a bot
+            else if (this.bots[bullet.parentID]) {
+                this.bots[bullet.parentID].onDealtDamage()
+                if (this.shouldSendLeaderboard == 0) {
+                    this.leaderboard.updatePlayerScore(bullet.parentID,
+                        this.bots[bullet.parentID].username, this.bots[bullet.parentID].score);
+                }
+            }
         });
-        
+
         this.bullets = destroyedEntities.updatedBullets;
 
         // Process collected crowns (emit events for VFX/SFX)
@@ -226,15 +337,18 @@ class Game {
             const player = this.players[playerID];
 
             if (player.hp <= 0) {
-                /* Restore the health of player who killed */
+                /* Restore the health of player/bot who killed */
                 if(player.lastHitByPlayer) {
                     const killedByPlayer = this.players[player.lastHitByPlayer];
-                    if (killedByPlayer) {
-                        killedByPlayer.hp = Constants.PLAYER_MAX_HP;
+                    const killedByBot = this.bots[player.lastHitByPlayer];
+                    const killer = killedByPlayer || killedByBot;
 
-                        // Broadcast kill event (player killed by another player)
+                    if (killer) {
+                        killer.hp = Constants.PLAYER_MAX_HP;
+
+                        // Broadcast kill event (player killed by another player/bot)
                         this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_KILL, {
-                            killer: killedByPlayer.username,
+                            killer: killer.username,
                             victim: player.username
                         });
                     }
@@ -248,6 +362,27 @@ class Game {
                 socket.emit(Constants.MSG_TYPES.GAME_OVER);
                 this.removePlayer(socket);
                 this.explosions.push(new Explosion(player.x, player.y));
+            }
+        });
+
+        // Check for dead bots
+        Object.keys(this.bots).forEach(botID => {
+            const bot = this.bots[botID];
+
+            if (bot.hp <= 0) {
+                /* Restore the health of player/bot who killed */
+                if(bot.lastHitByPlayer) {
+                    const killedByPlayer = this.players[bot.lastHitByPlayer];
+                    const killedByBot = this.bots[bot.lastHitByPlayer];
+                    const killer = killedByPlayer || killedByBot;
+
+                    if (killer) {
+                        killer.hp = Constants.PLAYER_MAX_HP;
+                    }
+                }
+
+                // Handle bot death (removes bot and creates explosion)
+                this.handleBotDeath(botID);
             }
         });
 
@@ -301,8 +436,13 @@ class Game {
     }
 
     createUpdate(player) {
+        // Include both players and bots as "others"
         const nearbyPlayers = Object.values(this.players).filter(
             p => p !== player && p.distanceTo(player) <= Constants.MAP_SIZE / 2
+        );
+
+        const nearbyBots = Object.values(this.bots).filter(
+            b => b.distanceTo(player) <= Constants.MAP_SIZE / 2
         );
 
         const nearbyBullets = this.bullets.filter(
@@ -324,7 +464,7 @@ class Game {
         return {
             t: Date.now(),
             me: player.serializeForUpdate(),
-            others: nearbyPlayers.map(p => p.serializeForUpdate()),
+            others: [...nearbyPlayers, ...nearbyBots].map(p => p.serializeForUpdate()),
             bullets: nearbyBullets.map(b => b.serializeForUpdate()),
             explosions: nearbyExplosions.map(e => e.serializeForUpdate()),
             crowns: nearbyCrowns.map(c => c.serializeForUpdate()),
