@@ -4,7 +4,8 @@ const SOUNDS = {
     HEALTH_PICKUP: 'health_pickup',
     CROWN_PICKUP: 'crown_pickup',
     SHIELD_PICKUP: 'shield_pickup',
-    SPEED_PICKUP: 'speed_pickup'
+    SPEED_PICKUP: 'speed_pickup',
+    KILL: 'kill'
     // Future sounds: SHOOT, HIT, EXPLOSION, etc.
 };
 
@@ -193,6 +194,56 @@ function playSpeedPickupSound(volume = 0.35) {
     osc2.stop(now + 0.25);
 }
 
+// Procedurally generate kill confirmation sound effect
+function playKillSound(volume = 0.4) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Create oscillators for an aggressive "elimination" sound
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const osc3 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    // Connect audio graph
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    osc3.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Aggressive descending sweep (like an "elimination" sound)
+    // Start high, drop low for impact
+    osc1.type = 'sawtooth';
+    osc2.type = 'square';
+    osc3.type = 'triangle';
+
+    // High impact start (800Hz) → deep punch (100Hz)
+    osc1.frequency.setValueAtTime(800, now);
+    osc1.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+
+    osc2.frequency.setValueAtTime(400, now);
+    osc2.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+
+    // Add harmonic for richness
+    osc3.frequency.setValueAtTime(1200, now);
+    osc3.frequency.exponentialRampToValueAtTime(150, now + 0.3);
+
+    // Punchy envelope with sharp attack and moderate decay
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.01); // Immediate impact
+    gainNode.gain.setValueAtTime(volume, now + 0.1);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4); // Smooth fadeout
+
+    // Start and stop
+    osc1.start(now);
+    osc2.start(now);
+    osc3.start(now);
+    osc1.stop(now + 0.4);
+    osc2.stop(now + 0.4);
+    osc3.stop(now + 0.4);
+}
+
 // Play a sound effect
 export function playSound(soundKey, volume = 0.3) {
     if (!audioContext) {
@@ -217,6 +268,9 @@ export function playSound(soundKey, volume = 0.3) {
             break;
         case SOUNDS.SPEED_PICKUP:
             playSpeedPickupSound(volume);
+            break;
+        case SOUNDS.KILL:
+            playKillSound(volume);
             break;
         default:
             console.warn(`Unknown sound: ${soundKey}`);
