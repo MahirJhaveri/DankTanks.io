@@ -5,6 +5,9 @@
  * Supports multiple themes with easy switching.
  */
 
+const Constants = require('./constants');
+const { SPRITES } = Constants;
+
 const THEMES = {
   default: {
     name: "Classic",
@@ -51,9 +54,9 @@ const THEMES = {
     description: "Sandy battlefield with rocky terrain",
 
     background: {
-      type: 'radial-gradient',
-      colors: ['black', '#f27d08ff'],  // Sand colors
-      centerRatio: 0.2
+      type: 'image',
+      imageName: SPRITES.BACKGROUND_DESERT,
+      fallbackColors: ['black', '#f27d08ff']  // Fallback gradient if image fails
     },
 
     grid: {
