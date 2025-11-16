@@ -351,6 +351,62 @@ function renderPlayer(canvas, me, player) {
 function renderBackground(canvas, x, y) {
     const context = canvas.getContext('2d');
     const theme = getCurrentTheme();
+
+    if (theme.background.type === 'image') {
+        // Render tiled background image
+        const bgImage = getAsset(theme.background.imageName);
+
+        if (bgImage && bgImage.complete) {
+            context.save();
+
+            // Create repeating pattern
+            const pattern = context.createPattern(bgImage, 'repeat');
+            context.fillStyle = pattern;
+
+            // Calculate offset to align pattern with player position
+            // Use modulo to keep pattern aligned as player moves
+            const imageWidth = bgImage.width || 2048;
+            const imageHeight = bgImage.height || 1080;
+            const offsetX = -(x % imageWidth);
+            const offsetY = -(y % imageHeight);
+
+            // Translate context to apply pattern offset
+            context.translate(offsetX, offsetY);
+
+            // Fill entire canvas with the pattern
+            context.fillRect(-offsetX, -offsetY, canvas.width, canvas.height);
+
+            context.restore();
+
+            // Apply gradient overlay if configured
+            if (theme.background.overlay && theme.background.overlay.enabled) {
+                const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
+                const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
+                const overlayGradient = context.createRadialGradient(
+                    backgroundX,
+                    backgroundY,
+                    MAP_SIZE * (theme.background.overlay.centerRatio || 0.2),
+                    backgroundX,
+                    backgroundY,
+                    MAP_SIZE / 2,
+                );
+                overlayGradient.addColorStop(0, theme.background.overlay.colors[0]);
+                overlayGradient.addColorStop(1, theme.background.overlay.colors[1]);
+                context.fillStyle = overlayGradient;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        } else if (theme.background.fallbackColors) {
+            // Fallback to gradient if image not loaded
+            renderGradientBackground(context, theme, x, y, canvas);
+        }
+    } else {
+        // Render gradient background (original behavior)
+        renderGradientBackground(context, theme, x, y, canvas);
+    }
+}
+
+// Helper function for gradient backgrounds
+function renderGradientBackground(context, theme, x, y, canvas) {
     const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
     const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
     const backgroundGradient = context.createRadialGradient(
@@ -361,8 +417,9 @@ function renderBackground(canvas, x, y) {
         backgroundY,
         MAP_SIZE / 2,
     );
-    backgroundGradient.addColorStop(0, theme.background.colors[0]);
-    backgroundGradient.addColorStop(1, theme.background.colors[1]);
+    const colors = theme.background.colors || theme.background.fallbackColors;
+    backgroundGradient.addColorStop(0, colors[0]);
+    backgroundGradient.addColorStop(1, colors[1]);
     context.fillStyle = backgroundGradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
