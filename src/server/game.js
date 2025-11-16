@@ -103,6 +103,11 @@ class Game {
         this.bots[id] = bot;
 
         console.log(`Bot spawned: ${bot.username} (${id})`);
+
+        // Broadcast bot join event
+        this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_JOIN, {
+            player: bot.username
+        });
     }
 
     /**
@@ -134,6 +139,11 @@ class Game {
         const crown = bot.dropCrownPowerup();
         if (crown) {
             this.crowns.push(crown);
+
+            // Broadcast crown drop event to all players
+            this.broadcastEvent(Constants.EVENT_TYPES.CROWN_DROP, {
+                player: bot.username
+            });
         }
 
         // Remove from bots collection
@@ -291,26 +301,33 @@ class Game {
         this.bullets = destroyedEntities.updatedBullets;
 
         // Process collected crowns (emit events for VFX/SFX)
-        destroyedEntities.crownsCaptured.forEach(({ crown, playerId }) => {
+        destroyedEntities.crownsCaptured.forEach(({ crown, tankId }) => {
             // Remove crown from game
             this.crowns = this.crowns.filter(c => c !== crown);
 
-            // Emit collection event to player for VFX/SFX
-            const socket = this.sockets[playerId];
-            const player = this.players[playerId];
-            if (socket) {
-                socket.emit(Constants.MSG_TYPES.CROWN_COLLECTED, {
-                    x: crown.x,
-                    y: crown.y,
-                    powerupType: crown.id
-                });
+            let tank;
+            let socket;
+            if (this.players[tankId]) {
+                tank = this.players[tankId];
+                socket = this.sockets[tankId];
+            } else {
+                tank = this.bots[tankId];
+            }
 
-                // Broadcast crown pickup event to all players
-                if (player) {
-                    this.broadcastEvent(Constants.EVENT_TYPES.CROWN_PICKUP, {
-                        player: player.username
+            // Emit collection event to tank for VFX/SFX
+            if (tank) {
+                if (socket) {
+                    socket.emit(Constants.MSG_TYPES.CROWN_COLLECTED, {
+                        x: crown.x,
+                        y: crown.y,
+                        powerupType: crown.id
                     });
                 }
+
+                // Broadcast crown pickup event to all players
+                this.broadcastEvent(Constants.EVENT_TYPES.CROWN_PICKUP, {
+                        player: tank.username
+                    });
             }
         });
 
@@ -380,7 +397,20 @@ class Game {
 
                     if (killer) {
                         killer.hp = Constants.PLAYER_MAX_HP;
+
+                        // Broadcast kill event (player killed by another player/bot)
+                        this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_KILL, {
+                            killer: killer.username,
+                            victim: bot.username,
+                            killerId: killer.id,
+                            victimId: bot.id
+                        });
                     }
+                } else {
+                    // Broadcast death event (player died to obstacle/environment)
+                    this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_DEATH, {
+                        victim: bot.username
+                    });
                 }
 
                 // Handle bot death (removes bot and creates explosion)

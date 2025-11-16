@@ -3,19 +3,19 @@ const isSeparable = require('./utils/sat');
 
 /* NOTES:
  * First, design the obstacles class
- * Obstacles are treated as game entities, just like player and bullets 
+ * Obstacles are treated as game entities, just like tank and bullets 
  * Add obstacles to the list of params of the functions
- * check for collision of obstacles with player 
+ * check for collision of obstacles with tanks 
  * check for collision of obstacles with bullets
  */
 
  /* Caching to avoid recomputing normals for obstacles over and over */
 const cache = {};
 
-function applyCollisions(players, bullets, obstacles, crowns, powerups) {
-    const bulletsHit = []; /* bullets that hit another player */
+function applyCollisions(tanks, bullets, obstacles, crowns, powerups) {
+    const bulletsHit = []; /* bullets that hit another tank */
     const crownsCaptured = []; /* crowns captured by someone */
-    const powerupsCollected = []; /* powerups collected by players */
+    const powerupsCollected = []; /* powerups collected by tanks */
     const bulletsToRemove = {};
 
     /* Bullet-Obstacle Collisions 
@@ -33,49 +33,49 @@ function applyCollisions(players, bullets, obstacles, crowns, powerups) {
         }
     }
     
-    /* Player Collision */
-    for (let i = 0; i < players.length; i++) {
-        const player = players[i];
+    /* Tank Collision */
+    for (let i = 0; i < tanks.length; i++) {
+        const tank = tanks[i];
         
         /* Player-Obstacle Collision */
         for(let l = 0; l < obstacles.length; l++) {
             const obstacle = obstacles[l];
             if(!isSeparable(obstacle.id, obstacle.vertices, 
-                player.getCoordinates(), Constants.PLAYER_RADIUS, cache)) {
-                player.lastHitByPlayer = null; /*since collided with obstacle*/
-                player.kill();
+                tank.getCoordinates(), Constants.PLAYER_RADIUS, cache)) {
+                tank.lastHitByPlayer = null; /*since collided with obstacle*/
+                tank.kill();
                 continue;
             }
         }
         
-        /* Player-Bullet Collision */
+        /* Tank-Bullet Collision */
         for (let j = 0; j < bullets.length; j++) {
             const bullet = bullets[j];
-            if (bullet.parentID != player.id &&
-                bullet.distanceTo(player) <= (Constants.BULLET_RADIUS + Constants.PLAYER_RADIUS)) {
+            if (bullet.parentID != tank.id &&
+                bullet.distanceTo(tank) <= (Constants.BULLET_RADIUS + Constants.PLAYER_RADIUS)) {
                 bulletsHit.push(bullet);
                 bulletsToRemove[bullet.id] = true;
-                player.takeBulletDamage(bullet);
+                tank.takeBulletDamage(bullet);
                 break;
             }
         }
 
-        /* Player-Crown Collision */
+        /* Tank-Crown Collision */
         for (let k = 0; k < crowns.length; k++) {
             const crown = crowns[k];
             // Update this to use maps and have a faster check (will not matter now as there is just one crown)
             if (!crownsCaptured.find(c => c.crown === crown) &&
-                player.distanceTo(crown) <= (Constants.CROWN_RADIUS + Constants.PLAYER_RADIUS)) {
-                player.addCrownPowerup(crown);
+                tank.distanceTo(crown) <= (Constants.CROWN_RADIUS + Constants.PLAYER_RADIUS)) {
+                tank.addCrownPowerup(crown);
                 crownsCaptured.push({
                     crown: crown,
-                    playerId: player.id
+                    tankId: tank.id
                 });
                 break;
             }
         }
 
-        /* Player-Powerup Collision (unified for all powerup types) */
+        /* Tank-Powerup Collision (unified for all powerup types) */
         for (let m = 0; m < powerups.length; m++) {
             const powerup = powerups[m];
 
@@ -85,18 +85,18 @@ function applyCollisions(players, bullets, obstacles, crowns, powerups) {
             }
 
             // Check collection conditions
-            if (powerup.canCollect(player) &&
-                player.distanceTo(powerup) <= (powerup.getRadius() + Constants.PLAYER_RADIUS)) {
+            if (powerup.canCollect(tank) &&
+                tank.distanceTo(powerup) <= (powerup.getRadius() + Constants.PLAYER_RADIUS)) {
 
                 // Apply powerup effect
-                const result = powerup.apply(player);
+                const result = powerup.apply(tank);
 
                 powerupsCollected.push({
                     powerup: powerup,
-                    playerId: player.id,
+                    playerId: tank.id,
                     result: result
                 });
-                break; // One powerup per player per frame
+                break; // One powerup per tank per frame
             }
         }
     }
