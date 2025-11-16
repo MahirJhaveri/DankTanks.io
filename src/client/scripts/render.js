@@ -377,6 +377,24 @@ function renderBackground(canvas, x, y) {
             context.fillRect(-offsetX, -offsetY, canvas.width, canvas.height);
 
             context.restore();
+
+            // Apply gradient overlay if configured
+            if (theme.background.overlay && theme.background.overlay.enabled) {
+                const backgroundX = MAP_SIZE / 2 - x + canvas.width / 2;
+                const backgroundY = MAP_SIZE / 2 - y + canvas.height / 2;
+                const overlayGradient = context.createRadialGradient(
+                    backgroundX,
+                    backgroundY,
+                    MAP_SIZE * (theme.background.overlay.centerRatio || 0.2),
+                    backgroundX,
+                    backgroundY,
+                    MAP_SIZE / 2,
+                );
+                overlayGradient.addColorStop(0, theme.background.overlay.colors[0]);
+                overlayGradient.addColorStop(1, theme.background.overlay.colors[1]);
+                context.fillStyle = overlayGradient;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
         } else if (theme.background.fallbackColors) {
             // Fallback to gradient if image not loaded
             renderGradientBackground(context, theme, x, y, canvas);

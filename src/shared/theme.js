@@ -56,7 +56,12 @@ const THEMES = {
     background: {
       type: 'image',
       imageName: SPRITES.BACKGROUND_DESERT,
-      fallbackColors: ['black', '#f27d08ff']  // Fallback gradient if image fails
+      fallbackColors: ['black', '#f27d08ff'],  // Fallback gradient if image fails
+      overlay: {
+        enabled: true,
+        colors: ['rgba(0, 0, 0, 0.3)', 'rgba(242, 125, 8, 0.4)'],  // Semi-transparent gradient overlay
+        centerRatio: 0.2
+      }
     },
 
     grid: {
