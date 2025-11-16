@@ -56,23 +56,23 @@ const THEMES = {
     background: {
       type: 'image',
       imageName: SPRITES.BACKGROUND_DESERT,
-      fallbackColors: ['black', '#f27d08ff'],  // Fallback gradient if image fails
+      fallbackColors: ['black', 'rgba(242, 125, 8, 1)'],  // Fallback gradient if image fails
       overlay: {
         enabled: true,
-        colors: ['rgba(0, 0, 0, 0.3)', 'rgba(242, 125, 8, 0.4)'],  // Semi-transparent gradient overlay
+        colors: ['rgba(0, 0, 0, 0.9)', 'rgba(242, 125, 8, 0.43)'],  // Semi-transparent gradient overlay
         centerRatio: 0.2
       }
     },
 
     grid: {
       color: '#1d1203ff',  // Darker sand
-      lineWidth: 0.1,
+      lineWidth: 0.3,
       enabled: true
     },
 
     obstacles: {
-      fillColor: '#c08133ff',  // Rock brown
-      shadowColor: '#6B5345',  // Darker shadow
+      fillColor: '#462003ff',  // Rock brown
+      shadowColor: '#bf4e0cff',  // Darker shadow
       shadowBlur: 25
     },
 
@@ -161,7 +161,7 @@ const THEMES = {
 };
 
 // Current active theme (default at start)
-let currentTheme = 'neon';
+let currentTheme = 'desert';
 
 /**
  * Get the current theme configuration object
