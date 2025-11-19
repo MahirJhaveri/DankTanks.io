@@ -1,4 +1,5 @@
 import { getTank, getTurret } from './assets';
+import { playSound, SOUNDS } from './audio';
 
 const Constants = require('../../shared/constants');
 const { TANK, PLAYER_RADIUS, TANK_NAMES } = Constants;
@@ -53,11 +54,13 @@ function updateChooseTankDisplay() {
 }
 
 function handlePrevTankButton() {
+    playSound(SOUNDS.BUTTON_CLICK, 0.15);
     tankStyle = (tankStyle > 0) ? tankStyle - 1 : styles.length - 1;
     updateChooseTankDisplay();
 }
 
 function handleNextTankButton() {
+    playSound(SOUNDS.BUTTON_CLICK, 0.15);
     tankStyle = (tankStyle < styles.length - 1) ? tankStyle + 1 : 0;
     updateChooseTankDisplay();
 }
@@ -72,11 +75,13 @@ function updateThemeDisplay() {
 }
 
 function handlePrevThemeButton() {
+    playSound(SOUNDS.BUTTON_CLICK, 0.15);
     themeIndex = (themeIndex > 0) ? themeIndex - 1 : availableThemes.length - 1;
     updateThemeDisplay();
 }
 
 function handleNextThemeButton() {
+    playSound(SOUNDS.BUTTON_CLICK, 0.15);
     themeIndex = (themeIndex < availableThemes.length - 1) ? themeIndex + 1 : 0;
     updateThemeDisplay();
 }

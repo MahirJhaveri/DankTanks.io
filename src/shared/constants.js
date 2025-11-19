@@ -101,6 +101,22 @@ module.exports = Object.freeze({
         SCANLINE_INTERVAL: 3000, // Time between scanlines in ms
         ACCENT_COLOR: 'rgba(255, 200, 0, 0.2)', // Amber accent
         FLICKER_INTENSITY: 0.05, // Amount of random flicker (0-1)
+
+        // Radar sweep
+        RADAR_RADIUS: 80, // Radar circle radius
+        RADAR_POSITION: { x: 120, y: 120 }, // Top-left position
+        RADAR_SWEEP_SPEED: 1.5, // Radians per second
+        RADAR_BLIP_COUNT: 8, // Number of random blips
+        RADAR_RING_INTERVAL: 2000, // Pulse ring every 2 seconds
+        RADAR_COLOR: 'rgba(0, 255, 100, 0.6)',
+        RADAR_SWEEP_COLOR: 'rgba(0, 255, 100, 0.4)',
+        RADAR_BLIP_COLOR: 'rgba(255, 100, 0, 0.8)',
+
+        // Tactical data displays
+        DATA_UPDATE_INTERVAL: 2000, // Update stats every 2 seconds
+        COORD_UPDATE_INTERVAL: 100, // Update coordinates frequently
+        TEXT_COLOR: 'rgba(0, 255, 100, 0.7)',
+        TEXT_SIZE: 12,
     },
 
     SCORE_BULLET_HIT: 20,

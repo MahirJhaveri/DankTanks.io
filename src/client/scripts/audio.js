@@ -5,7 +5,10 @@ const SOUNDS = {
     CROWN_PICKUP: 'crown_pickup',
     SHIELD_PICKUP: 'shield_pickup',
     SPEED_PICKUP: 'speed_pickup',
-    KILL: 'kill'
+    KILL: 'kill',
+    BUTTON_CLICK: 'button_click',
+    TYPING: 'typing',
+    SWITCH_TOGGLE: 'switch_toggle',
     // Future sounds: SHOOT, HIT, EXPLOSION, etc.
 };
 
@@ -244,6 +247,119 @@ function playKillSound(volume = 0.4) {
     osc3.stop(now + 0.4);
 }
 
+// Procedurally generate mechanical button click sound
+function playButtonClickSound(volume = 0.15) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Create noise buffer for mechanical "click"
+    const bufferSize = audioContext.sampleRate * 0.05; // 50ms
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    // Generate filtered noise for click
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.1));
+    }
+
+    const noiseSource = audioContext.createBufferSource();
+    noiseSource.buffer = buffer;
+
+    // Add tone for mechanical resonance
+    const osc = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.05);
+
+    noiseSource.connect(gainNode);
+    osc.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Sharp envelope for mechanical click
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.005);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+
+    noiseSource.start(now);
+    osc.start(now);
+    noiseSource.stop(now + 0.05);
+    osc.stop(now + 0.05);
+}
+
+// Procedurally generate keyboard typing sound
+function playTypingSound(volume = 0.1) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Very short click for keystroke
+    const bufferSize = audioContext.sampleRate * 0.02; // 20ms
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    // Generate short click noise
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.15));
+    }
+
+    const noiseSource = audioContext.createBufferSource();
+    noiseSource.buffer = buffer;
+
+    const gainNode = audioContext.createGain();
+    noiseSource.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Very quick envelope
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.002);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.02);
+
+    noiseSource.start(now);
+    noiseSource.stop(now + 0.02);
+}
+
+// Procedurally generate mechanical switch toggle sound
+function playSwitchToggleSound(volume = 0.2) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Two-stage mechanical switch sound (down + up)
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    osc1.type = 'square';
+    osc2.type = 'triangle';
+
+    // First click (down)
+    osc1.frequency.setValueAtTime(200, now);
+    osc1.frequency.exponentialRampToValueAtTime(100, now + 0.04);
+
+    // Second click (up) - slightly higher pitch
+    osc2.frequency.setValueAtTime(250, now + 0.06);
+    osc2.frequency.exponentialRampToValueAtTime(120, now + 0.1);
+
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Two-stage envelope
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+    gainNode.gain.linearRampToValueAtTime(volume * 0.7, now + 0.07);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+
+    osc1.start(now);
+    osc1.stop(now + 0.04);
+    osc2.start(now + 0.06);
+    osc2.stop(now + 0.12);
+}
+
 // Play a sound effect
 export function playSound(soundKey, volume = 0.3) {
     if (!audioContext) {
@@ -271,6 +387,15 @@ export function playSound(soundKey, volume = 0.3) {
             break;
         case SOUNDS.KILL:
             playKillSound(volume);
+            break;
+        case SOUNDS.BUTTON_CLICK:
+            playButtonClickSound(volume);
+            break;
+        case SOUNDS.TYPING:
+            playTypingSound(volume);
+            break;
+        case SOUNDS.SWITCH_TOGGLE:
+            playSwitchToggleSound(volume);
             break;
         default:
             console.warn(`Unknown sound: ${soundKey}`);

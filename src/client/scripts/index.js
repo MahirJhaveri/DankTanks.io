@@ -7,7 +7,7 @@ import {
 import { startCapturingInput, stopCapturingInput } from "./input";
 import { downloadAssets } from "./assets";
 import { initState } from "./state";
-import { loadAudio } from "./audio";
+import { loadAudio, playSound, SOUNDS } from "./audio";
 import {
   startRenderingLeaderboard,
   stopRenderingLeaderboard,
@@ -41,7 +41,19 @@ Promise.all([connect(onGameOver), downloadAssets()])
     showCommandCenter(); // Show tactical background
     initChooseTankController();
     usernameInput.focus();
+
+    // Add typing sound to username input
+    usernameInput.addEventListener('keydown', () => {
+      playSound(SOUNDS.TYPING, 0.08);
+    });
+
+    // Add toggle sound to fire mode switch
+    intialToggle.addEventListener('change', () => {
+      playSound(SOUNDS.SWITCH_TOGGLE, 0.2);
+    });
+
     playButton.onclick = () => {
+      playSound(SOUNDS.BUTTON_CLICK, 0.2);
       // start playing...
       // Ensure the selected theme is applied
       setTheme(getThemeChoice());
