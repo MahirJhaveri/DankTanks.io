@@ -13,8 +13,11 @@ import {
   stopRenderingLeaderboard,
 } from "./leaderboard";
 import { startRenderingMap, stopRenderingMap } from "./map";
-import { initChooseTankController, getTankStyle } from "./playMenu";
+import { initChooseTankController, getTankStyle, getThemeChoice } from "./playMenu";
 import { initNotifications, clearAllNotifications } from "./notifications";
+
+const Theme = require('../../shared/theme');
+const { setTheme } = Theme;
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/main.css";
@@ -26,7 +29,7 @@ const playMenu = document.getElementById("play-menu");
 const playButton = document.getElementById("play-button");
 const usernameInput = document.getElementById("username-input");
 const notificationContainer = document.getElementById("notification-container");
-export const intialToggle = document.getElementById("togBtn"); // true is auto(on), false is click(off)
+export const intialToggle = document.getElementById("togBtn"); // true is auto(on), false is manual(off)
 
 Promise.all([connect(onGameOver), downloadAssets()])
   .then(() => {
@@ -37,6 +40,8 @@ Promise.all([connect(onGameOver), downloadAssets()])
     usernameInput.focus();
     playButton.onclick = () => {
       // start playing...
+      // Ensure the selected theme is applied
+      setTheme(getThemeChoice());
       play(usernameInput.value, getTankStyle(), intialToggle.checked);
       playMenu.classList.add("hidden");
       notificationContainer.classList.remove("hidden");

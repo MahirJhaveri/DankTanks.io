@@ -16,17 +16,38 @@
         <h1 id="logo"><strong><span style="color:#c7b68f;">Dank</span><span style="color:#768a5f;">Tanks</span><span
                     style="color:#c7b68f;">.io</span></strong></h1>
         <div id="game-options">
+            <div id="selection-title">Choose Your Tank:</div>
+
             <div id="choose-tank">
                 <button id="prev-tank-button" class="change-tank-button">&lt;</button>
                 <canvas id="choose-tank-canvas" style="vertical-align:middle;"></canvas>
                 <button id="next-tank-button" class="change-tank-button">&gt;</button>
             </div>
             <div id="tank-name-display"></div>
+
+            <div id="selection-title">Select Terrain:</div>
+            <div id="choose-theme">
+                <button id="prev-theme-button" class="change-theme-button">&lt;</button>
+                <div id="theme-display-container">
+                    <div id="theme-name-display"></div>
+                    <div id="theme-description-display"></div>
+                </div>
+                <button id="next-theme-button" class="change-theme-button">&gt;</button>
+            </div>
+
             <input type="text" id="username-input" placeholder="Enter a name..." />
             <button id="play-button"><strong>Play!</strong></button>
             
-        <label class="switch"><input type="checkbox" id="togBtn" checked><div class="slider round">
-            <span class="off"><strong>Auto</strong></span><span class="on"> <strong>Click</strong></span><!--END--></div></label>
+            <div style="display: flex; align-items: center; margin-top: 15px; justify-content: center;">
+                <div id="selection-title" style="margin-top: 0; margin-bottom: 0; margin-right: 10px;">Fire-Mode:</div>
+                <label class="switch" style="margin-top: 10px; padding-top: 0;">
+                    <input type="checkbox" id="togBtn" checked>
+                    <div class="slider round">
+                        <span class="off"><strong>Auto</strong></span>
+                        <span class="on"> <strong>Manual</strong></span>
+                    </div>
+                </label>
+            </div>
         </div>
     </div>
 
