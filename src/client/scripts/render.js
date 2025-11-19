@@ -9,7 +9,7 @@ const { PLAYER_RADIUS, PLAYER_MAX_HP, BULLET_RADIUS, MAP_SIZE, SPRITES,
     SMOKE_SPAWN_DISTANCE, POWERUP_CONFIGS } = Constants;
 
 const Theme = require('../../shared/theme');
-const { getCurrentTheme } = Theme;
+const { getCurrentTheme, getCurrentThemeName } = Theme;
 
 const canvas = document.getElementById('game-canvas');
 const canvas2 = document.getElementById('game-canvas-2');
@@ -461,8 +461,23 @@ function renderPolygon(context, me, vertices) {
 function renderObstacles(canvas, me) {
     const context = canvas.getContext('2d');
     const theme = getCurrentTheme();
+    const themeName = getCurrentThemeName();
     context.save();
-    context.fillStyle = theme.obstacles.fillColor;
+
+    // Use lava texture for desert theme obstacles
+    if (themeName === 'desert') {
+        const lavaImage = getAsset(SPRITES.LAVA);
+        if (lavaImage && lavaImage.complete) {
+            const pattern = context.createPattern(lavaImage, 'repeat');
+            context.fillStyle = pattern;
+        } else {
+            // Fallback to solid color if image not loaded
+            context.fillStyle = theme.obstacles.fillColor;
+        }
+    } else {
+        context.fillStyle = theme.obstacles.fillColor;
+    }
+
     context.shadowBlur = theme.obstacles.shadowBlur;
     context.shadowColor = theme.obstacles.shadowColor;
     OBSTACLES.forEach(renderPolygon.bind(null, context, me));
