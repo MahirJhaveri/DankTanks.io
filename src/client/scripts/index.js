@@ -15,6 +15,7 @@ import {
 import { startRenderingMap, stopRenderingMap } from "./map";
 import { initChooseTankController, getTankStyle, getThemeChoice } from "./playMenu";
 import { initNotifications, clearAllNotifications } from "./notifications";
+import { init as initCommandCenter, show as showCommandCenter, hide as hideCommandCenter } from "./commandCenterBg";
 
 const Theme = require('../../shared/theme');
 const { setTheme } = Theme;
@@ -35,7 +36,9 @@ Promise.all([connect(onGameOver), downloadAssets()])
   .then(() => {
     loadAudio(); // Initialize audio system
     initNotifications(); // Initialize notification system
+    initCommandCenter(); // Initialize command center background
     playMenu.classList.remove("hidden");
+    showCommandCenter(); // Show tactical background
     initChooseTankController();
     usernameInput.focus();
     playButton.onclick = () => {
@@ -44,6 +47,7 @@ Promise.all([connect(onGameOver), downloadAssets()])
       setTheme(getThemeChoice());
       play(usernameInput.value, getTankStyle(), intialToggle.checked);
       playMenu.classList.add("hidden");
+      hideCommandCenter(); // Hide tactical background
       notificationContainer.classList.remove("hidden");
       initState();
       startCapturingInput();
@@ -64,4 +68,5 @@ function onGameOver() {
   notificationContainer.classList.add("hidden");
   clearAllNotifications();
   playMenu.classList.remove("hidden");
+  showCommandCenter(); // Show tactical background again
 }
