@@ -11,6 +11,7 @@ let animationFrameId = null;
 let scanlines = [];
 let lastScanlineTime = 0;
 let startTime = 0;
+let statusIndicatorTime = 0; // Used to render status indicator animation
 
 // Radar sweep state
 let radarAngle = 0;
@@ -398,6 +399,42 @@ function drawTacticalData() {
   ctx.restore();
 }
 
+/**
+ * Draw status indicator dots
+ */
+function drawStatusIndicators(statusIndicatorTime) {
+  const margin = 30;
+  const dotSize = 4;
+  const spacing = 12;
+  const count = 8;
+
+  ctx.globalAlpha = 0.5;
+
+  for (let i = 0; i < count; i++) {
+    // Alternate between green (active) and dim
+    const isActive = Math.sin(statusIndicatorTime * 2 + i) > 0;
+    ctx.fillStyle = isActive ? '#00ff00' : '#535151ff';
+
+    // Draw in top-right corner
+    const x = canvas.width - margin - i * spacing;
+    const y = margin + 18 * 3;
+
+    ctx.beginPath();
+    ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Add subtle glow for active indicators
+    if (isActive) {
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = '#00ff00';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  ctx.globalAlpha = 1.0;
+}
+
 function update() {
   if (!isActive) return;
 
@@ -430,6 +467,10 @@ function update() {
   updateTacticalData(currentTime);
   drawTacticalData();
 
+  // Draw status indicators
+  drawStatusIndicators(statusIndicatorTime);
+  statusIndicatorTime += dt;
+
   animationFrameId = requestAnimationFrame(update);
 }
 
@@ -442,6 +483,7 @@ export function init() {
   lastRadarRingTime = now;
   lastDataUpdateTime = now;
   lastCoordUpdateTime = now;
+  statusIndicatorTime = 0;
 }
 
 export function show() {
