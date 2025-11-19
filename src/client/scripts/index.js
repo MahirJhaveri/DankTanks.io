@@ -7,7 +7,7 @@ import {
 import { startCapturingInput, stopCapturingInput } from "./input";
 import { downloadAssets } from "./assets";
 import { initState } from "./state";
-import { loadAudio } from "./audio";
+import { loadAudio, playSound, SOUNDS } from "./audio";
 import {
   startRenderingLeaderboard,
   stopRenderingLeaderboard,
@@ -57,11 +57,21 @@ Promise.all([connect(onGameOver), downloadAssets()])
   .catch((error) => console.log(error));
 
 function onGameOver() {
+  // Stop input immediately to prevent player actions
   stopCapturingInput();
-  stopRendering();
-  stopRenderingLeaderboard();
-  stopRenderingMap();
-  notificationContainer.classList.add("hidden");
-  clearAllNotifications();
-  playMenu.classList.remove("hidden");
+
+  // Play death sound effect
+  playSound(SOUNDS.DEATH, 0.5);
+
+  // Wait for explosion animation to complete before showing menu
+  // Explosion has 8 frames at ~1/15 seconds each (~533ms total)
+  // Adding buffer time to ensure full animation completion
+  setTimeout(() => {
+    stopRendering();
+    stopRenderingLeaderboard();
+    stopRenderingMap();
+    notificationContainer.classList.add("hidden");
+    clearAllNotifications();
+    playMenu.classList.remove("hidden");
+  }, 650); // 650ms delay for explosion animation
 }

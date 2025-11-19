@@ -5,8 +5,9 @@ const SOUNDS = {
     CROWN_PICKUP: 'crown_pickup',
     SHIELD_PICKUP: 'shield_pickup',
     SPEED_PICKUP: 'speed_pickup',
-    KILL: 'kill'
-    // Future sounds: SHOOT, HIT, EXPLOSION, etc.
+    KILL: 'kill',
+    DEATH: 'death'
+    // Future sounds: SHOOT, HIT, etc.
 };
 
 let audioContext = null;
@@ -244,6 +245,55 @@ function playKillSound(volume = 0.4) {
     osc3.stop(now + 0.4);
 }
 
+// Procedurally generate death/explosion sound effect
+function playDeathSound(volume = 0.5) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Create oscillators and noise for dramatic explosion sound
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const osc3 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    // Connect audio graph
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    osc3.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Dramatic explosion: deep rumble with descending pitch
+    osc1.type = 'sawtooth';
+    osc2.type = 'square';
+    osc3.type = 'triangle';
+
+    // Deep explosion rumble: 150Hz → 30Hz (very low, bass-heavy)
+    osc1.frequency.setValueAtTime(150, now);
+    osc1.frequency.exponentialRampToValueAtTime(30, now + 0.5);
+
+    osc2.frequency.setValueAtTime(200, now);
+    osc2.frequency.exponentialRampToValueAtTime(40, now + 0.5);
+
+    // Add high-frequency component for initial impact
+    osc3.frequency.setValueAtTime(1000, now);
+    osc3.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+
+    // Explosive envelope: instant attack, long decay
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.005); // Very sharp attack
+    gainNode.gain.exponentialRampToValueAtTime(volume * 0.7, now + 0.1);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6); // Long rumbling decay
+
+    // Start and stop
+    osc1.start(now);
+    osc2.start(now);
+    osc3.start(now);
+    osc1.stop(now + 0.6);
+    osc2.stop(now + 0.6);
+    osc3.stop(now + 0.6);
+}
+
 // Play a sound effect
 export function playSound(soundKey, volume = 0.3) {
     if (!audioContext) {
@@ -271,6 +321,9 @@ export function playSound(soundKey, volume = 0.3) {
             break;
         case SOUNDS.KILL:
             playKillSound(volume);
+            break;
+        case SOUNDS.DEATH:
+            playDeathSound(volume);
             break;
         default:
             console.warn(`Unknown sound: ${soundKey}`);

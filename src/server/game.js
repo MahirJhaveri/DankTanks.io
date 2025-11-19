@@ -14,6 +14,7 @@ class Game {
         this.sockets = {};
         this.players = {};
         this.bots = {}; // AI-controlled tanks
+        this.deadPlayers = {}; // Players waiting to be disconnected after death animation
         this.bullets = [];
         this.obstacles = this.initObstacles();
         this.crowns = [new Crown(Constants.CROWN_POWERUP.RAPID_FIRE, Constants.MAP_SIZE / 2, Constants.MAP_SIZE / 2)];
@@ -353,7 +354,7 @@ class Game {
             const socket = this.sockets[playerID];
             const player = this.players[playerID];
 
-            if (player.hp <= 0) {
+            if (player && player.hp <= 0) {
                 /* Restore the health of player/bot who killed */
                 if(player.lastHitByPlayer) {
                     const killedByPlayer = this.players[player.lastHitByPlayer];
@@ -378,9 +379,29 @@ class Game {
                     });
                 }
 
-                socket.emit(Constants.MSG_TYPES.GAME_OVER);
-                this.removePlayer(socket);
+                // Create explosion at death location
                 this.explosions.push(new Explosion(player.x, player.y));
+
+                // Notify client of death
+                socket.emit(Constants.MSG_TYPES.GAME_OVER);
+
+                // Move player to dead players list (keeps socket connection for explosion animation)
+                this.deadPlayers[playerID] = {
+                    socket: socket,
+                    player: player,
+                    deathTime: Date.now()
+                };
+
+                // Remove from active players
+                delete this.players[playerID];
+
+                // Schedule removal after explosion animation completes (700ms)
+                setTimeout(() => {
+                    if (this.deadPlayers[playerID]) {
+                        this.removePlayer(this.deadPlayers[playerID].socket);
+                        delete this.deadPlayers[playerID];
+                    }
+                }, 700);
             }
         });
 
@@ -445,11 +466,15 @@ class Game {
             Object.keys(this.sockets).forEach(playerID => {
                 const socket = this.sockets[playerID];
                 const player = this.players[playerID];
-                socket.emit(Constants.MSG_TYPES.GAME_UPDATE, this.createUpdate(player));
+                const deadPlayerData = this.deadPlayers[playerID];
 
-                // Make sure to keep the frequency of leaderboardupdates divisible by the freq of 
+                // Send updates to both alive and dead players (dead players need to see explosion)
+                const playerForUpdate = player || (deadPlayerData ? deadPlayerData.player : null);
+                socket.emit(Constants.MSG_TYPES.GAME_UPDATE, this.createUpdate(playerForUpdate, !player));
+
+                // Make sure to keep the frequency of leaderboardupdates divisible by the freq of
                 // game updates
-                if (this.shouldSendLeaderboard == 0) {
+                if (this.shouldSendLeaderboard == 0 && player) {
                     const update = {
                         leaderboardUpdate: leaderboardUpdate,
                         score: player.score
@@ -467,7 +492,7 @@ class Game {
         //console.log(`Time to run update = ${(Date.now() - now)}`);
     }
 
-    createUpdate(player) {
+    createUpdate(player, isDead = false) {
         // Include both players and bots as "others"
         const nearbyPlayers = Object.values(this.players).filter(
             p => p !== player && p.distanceTo(player) <= Constants.MAP_SIZE / 2
@@ -495,7 +520,7 @@ class Game {
 
         return {
             t: Date.now(),
-            me: player.serializeForUpdate(),
+            me: isDead ? null : player.serializeForUpdate(),
             others: [...nearbyPlayers, ...nearbyBots].map(p => p.serializeForUpdate()),
             bullets: nearbyBullets.map(b => b.serializeForUpdate()),
             explosions: nearbyExplosions.map(e => e.serializeForUpdate()),

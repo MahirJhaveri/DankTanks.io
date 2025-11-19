@@ -26,13 +26,26 @@ canvas2.classList.add('hidden')
 // Position tracking for smoke effect
 const lastPlayerPositions = new Map();
 
+// Store last known camera position for when player dies
+let lastCameraPosition = { x: 0, y: 0 };
+
 // add setCanvasDimensions for supporting smaller screens
 
 function render(canvas) {
     const context = canvas.getContext('2d');
     const { me, others, bullets, explosions, crowns, powerups } = getCurrentState();
-    if (!me) {
+
+    // If no game state yet, return early
+    if (!me && !others) {
         return;
+    }
+
+    // Use camera position from alive player, or last known position if dead
+    const cameraPos = me ? { x: me.x, y: me.y } : lastCameraPosition;
+
+    // Update last known camera position when player is alive
+    if (me) {
+        lastCameraPosition = { x: me.x, y: me.y };
     }
 
     // Update particles
@@ -42,54 +55,61 @@ function render(canvas) {
     updateTrailMarks(1 / 60); // dt for 60 FPS
 
     // Draw background
-    renderBackground(canvas, me.x, me.y);
+    renderBackground(canvas, cameraPos.x, cameraPos.y);
 
     // Draw trail marks on the ground (before other objects)
-    renderTrailMarks(canvas, me.x, me.y);
+    renderTrailMarks(canvas, cameraPos.x, cameraPos.y);
 
     /* Draw obstacles */
-    renderObstacles(canvas, me);
+    renderObstacles(canvas, cameraPos);
 
     /* Draw the grid */
-    renderGrid(context, me);
+    renderGrid(context, cameraPos);
 
     // Draw boundaries
     const theme = getCurrentTheme();
     context.save();
     context.strokeStyle = theme.boundary.color;
     context.lineWidth = theme.boundary.lineWidth;
-    context.strokeRect(canvas.width / 2 - me.x, canvas.height / 2 - me.y, MAP_SIZE, MAP_SIZE);
+    context.strokeRect(canvas.width / 2 - cameraPos.x, canvas.height / 2 - cameraPos.y, MAP_SIZE, MAP_SIZE);
     context.restore();
 
     // Draw all bullets
-    bullets.forEach(renderBullet.bind(null, canvas, me));
+    bullets.forEach(renderBullet.bind(null, canvas, cameraPos));
 
     // Check and emit smoke for all moving players
-    checkAndEmitSmoke(canvas, me, me);
-    others.forEach(other => checkAndEmitSmoke(canvas, me, other));
+    if (me) {
+        checkAndEmitSmoke(canvas, cameraPos, me);
+    }
+    others.forEach(other => checkAndEmitSmoke(canvas, cameraPos, other));
 
     // Check and emit trail marks for all moving players
-    checkAndEmitTrailMarks(canvas, me, me, Constants);
-    others.forEach(other => checkAndEmitTrailMarks(canvas, me, other, Constants));
+    if (me) {
+        checkAndEmitTrailMarks(canvas, cameraPos, me, Constants);
+    }
+    others.forEach(other => checkAndEmitTrailMarks(canvas, cameraPos, other, Constants));
 
     // Cleanup position tracking for disconnected players
-    cleanupPositionTracking([me, ...others]);
-    cleanupTreadTracking([me, ...others]);
+    const allPlayers = me ? [me, ...others] : others;
+    cleanupPositionTracking(allPlayers);
+    cleanupTreadTracking(allPlayers);
 
-    // Draw all players
-    renderPlayer(canvas, me, me);
-    others.forEach(renderPlayer.bind(null, canvas, me));
+    // Draw all players (skip own player if dead)
+    if (me) {
+        renderPlayer(canvas, cameraPos, me);
+    }
+    others.forEach(renderPlayer.bind(null, canvas, cameraPos));
 
-    explosions.forEach(renderExplosion.bind(null, canvas, me));
+    explosions.forEach(renderExplosion.bind(null, canvas, cameraPos));
 
-    crowns.forEach(renderCrowns.bind(null, canvas, me));
+    crowns.forEach(renderCrowns.bind(null, canvas, cameraPos));
 
     if (powerups) {
-        powerups.forEach(renderPowerup.bind(null, canvas, me));
+        powerups.forEach(renderPowerup.bind(null, canvas, cameraPos));
     }
 
     // Render particles (after all game objects)
-    renderParticles(canvas, me.x, me.y);
+    renderParticles(canvas, cameraPos.x, cameraPos.y);
 }
 
 // Helper function to check if a player is visible on screen
