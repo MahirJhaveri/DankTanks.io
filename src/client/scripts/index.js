@@ -19,6 +19,8 @@ import { initNotifications, clearAllNotifications } from "./notifications";
 const Theme = require('../../shared/theme');
 const { setTheme } = Theme;
 
+const menuBackground = require('./menuBackground');
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/main.css";
 
@@ -37,6 +39,11 @@ Promise.all([connect(onGameOver), downloadAssets()])
     initNotifications(); // Initialize notification system
     playMenu.classList.remove("hidden");
     initChooseTankController();
+
+    // Initialize menu background
+    const menuBackgroundCanvas = document.getElementById("menu-background-canvas");
+    menuBackground.init(menuBackgroundCanvas);
+
     usernameInput.focus();
     playButton.onclick = () => {
       // start playing...
@@ -45,6 +52,10 @@ Promise.all([connect(onGameOver), downloadAssets()])
       play(usernameInput.value, getTankStyle(), intialToggle.checked);
       playMenu.classList.add("hidden");
       notificationContainer.classList.remove("hidden");
+
+      // Stop menu background animation
+      menuBackground.stop();
+
       initState();
       startCapturingInput();
       ENABLE_DOUBLE_BUFFERING
@@ -64,4 +75,8 @@ function onGameOver() {
   notificationContainer.classList.add("hidden");
   clearAllNotifications();
   playMenu.classList.remove("hidden");
+
+  // Restart menu background animation
+  const menuBackgroundCanvas = document.getElementById("menu-background-canvas");
+  menuBackground.init(menuBackgroundCanvas);
 }
