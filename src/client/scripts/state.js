@@ -91,13 +91,16 @@ export function getCurrentState() {
 
 // Functions to interpolate the different structures
 function interpolateObject(object1, object2, ratio) {
+    if (!object1) {
+        return object1; // Handle dead player case
+    }
     if (!object2) {
         return object1;
     }
 
     const interpolated = {};
     Object.keys(object1).forEach(key => {
-        if (key === 'username' || key === 'hp' || key === 'tankStyle' || key === 'activeEffects' || 
+        if (key === 'username' || key === 'hp' || key === 'tankStyle' || key === 'activeEffects' ||
             key === 'crownPowerup' || key === 'id') {
             interpolated[key] = object1[key];
         }
