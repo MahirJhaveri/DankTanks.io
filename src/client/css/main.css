@@ -96,6 +96,54 @@ html, body {
       1px 1px 0 #2c2416;
   }
 
+  #choose-theme {
+    padding: 20px 30px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .change-theme-button {
+    vertical-align: middle;
+    color: white;
+    font-size: 40px;
+    font-family: 'Chalkboard';
+  }
+
+  .change-theme-button:hover {
+    background-color: rgba(0,0,0,0);
+  }
+
+  #theme-display-container {
+    min-width: 250px;
+    text-align: center;
+  }
+
+  #theme-name-display {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 20px;
+    font-weight: bold;
+    color: #768a5f;
+    text-align: center;
+    text-shadow:
+      2px 2px 4px rgba(0, 0, 0, 0.5),
+      -1px -1px 0 #2c2416,
+      1px -1px 0 #2c2416,
+      -1px 1px 0 #2c2416,
+      1px 1px 0 #2c2416;
+  }
+
+  #theme-description-display {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 12px;
+    color: #a0a0a0;
+    text-align: center;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
   ::placeholder {
     color: #dbdbdb;
   }
