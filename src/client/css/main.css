@@ -96,6 +96,20 @@ html, body {
       1px 1px 0 #2c2416;
   }
 
+  #theme-selection-title {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: -10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow:
+      2px 2px 4px rgba(0, 0, 0, 0.7);
+  }
+
   #choose-theme {
     padding: 20px 30px;
     margin-top: 20px;
