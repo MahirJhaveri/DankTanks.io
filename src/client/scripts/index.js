@@ -29,7 +29,7 @@ const playMenu = document.getElementById("play-menu");
 const playButton = document.getElementById("play-button");
 const usernameInput = document.getElementById("username-input");
 const notificationContainer = document.getElementById("notification-container");
-export const intialToggle = document.getElementById("togBtn"); // true is auto(on), false is click(off)
+export const intialToggle = document.getElementById("togBtn"); // true is auto(on), false is manual(off)
 
 Promise.all([connect(onGameOver), downloadAssets()])
   .then(() => {
