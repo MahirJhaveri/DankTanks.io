@@ -6,6 +6,8 @@ const { TANK, PLAYER_RADIUS, TANK_NAMES } = Constants;
 const Theme = require('../../shared/theme');
 const { setTheme } = Theme;
 
+const menuBackground = require('./menuBackground');
+
 var tankStyle = 0;
 var styles = Object.values(TANK);
 
@@ -69,6 +71,7 @@ function updateThemeDisplay() {
 
     // Update the menu background preview in real-time
     setTheme(currentTheme.id);
+    menuBackground.updateTheme();
 }
 
 function handlePrevThemeButton() {
