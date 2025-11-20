@@ -1,6 +1,38 @@
 
 // Constants shared by both client and server
 
+// ============================================================================
+// MAP SIZE CONFIGURATION
+// ============================================================================
+// To adjust the map size, simply change the MAP_SIZE constant below.
+// All obstacles will automatically scale to the new size.
+//
+// Recommended sizes:
+//   3000 (original) - Good for 1-3 players
+//   4000 - Comfortable for 3-5 players
+//   4500 (current) - Spacious for 4-7 players
+//   5000+ - Large battles with 5-8+ players
+//
+// Note: Obstacles are defined as relative coordinates (0.0-1.0) and
+// automatically scaled to MAP_SIZE, making future adjustments easy.
+// ============================================================================
+
+const MAP_SIZE = 4500;
+
+// Obstacles defined as relative coordinates (0.0 to 1.0)
+// These are automatically scaled to MAP_SIZE for easy map size adjustments
+const OBSTACLES_RELATIVE = [
+    [[0.1667, 0.1667], [0.2667, 0.0667], [0.3, 0.2333], [0.2, 0.2], [0.1667, 0.1667]],
+    [[0.6667, 0.6667], [0.7333, 0.7333], [0.8, 0.6667], [0.7667, 0.6], [0.6667, 0.6667]],
+    [[0.7, 0.3667], [0.7, 0.3], [0.67, 0.2333], [0.6, 0.3], [0.6167, 0.3667], [0.6633, 0.4], [0.7, 0.3667]],
+    [[0.1333, 0.5667], [0.1833, 0.6333], [0.2333, 0.6], [0.2, 0.3], [0.1333, 0.5667]],
+];
+
+// Scale obstacles to actual map size
+const OBSTACLES = OBSTACLES_RELATIVE.map(relativeVertices =>
+    relativeVertices.map(vertex => [vertex[0] * MAP_SIZE, vertex[1] * MAP_SIZE])
+);
+
 module.exports = Object.freeze({
     PLAYER_RADIUS: 40,
     PLAYER_MAX_HP: 100,
@@ -124,7 +156,7 @@ module.exports = Object.freeze({
 
     RENDER_DELAY: 120,
 
-    MAP_SIZE: 3000,
+    MAP_SIZE: MAP_SIZE,
     NAV_MAP_SIZE: 100,
 
     MSG_TYPES: {
@@ -226,10 +258,6 @@ module.exports = Object.freeze({
         CROWN_DROP: 3000,       // 3 seconds
     },
 
-    OBSTACLES: [
-        [[500,500], [800, 200], [900, 700], [600, 600], [500, 500]],
-        [[2000, 2000], [2200, 2200], [2400, 2000], [2300, 1800], [2000, 2000],],
-        [[2100, 1100],[2100, 900],[2010, 700],[1800, 900],[1850, 1100],[1990, 1200],[2100, 1100],],
-        [[400,1700],[550, 1900],[700, 1800],[600,900],[400,1700]],
-    ],
+    // Obstacles (auto-scaled from OBSTACLES_RELATIVE defined at top of file)
+    OBSTACLES: OBSTACLES,
 });
