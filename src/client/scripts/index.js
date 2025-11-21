@@ -73,6 +73,7 @@ Promise.all([connect(onGameOver), downloadAssets()])
   .catch((error) => console.log(error));
 
 function onGameOver() {
+  playSound(SOUNDS.DEATH, 0.5); // Play death sound
   stopCapturingInput();
   stopRendering();
   stopRenderingLeaderboard();

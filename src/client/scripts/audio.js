@@ -6,6 +6,7 @@ const SOUNDS = {
     SHIELD_PICKUP: 'shield_pickup',
     SPEED_PICKUP: 'speed_pickup',
     KILL: 'kill',
+    DEATH: 'death',
     BUTTON_CLICK: 'button_click',
     TYPING: 'typing',
     SWITCH_TOGGLE: 'switch_toggle',
@@ -247,6 +248,68 @@ function playKillSound(volume = 0.4) {
     osc3.stop(now + 0.4);
 }
 
+// Procedurally generate death sound effect (when player dies)
+function playDeathSound(volume = 0.5) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    // Create oscillators for a dramatic "game over" sound
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const osc3 = audioContext.createOscillator();
+    const osc4 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    // Connect audio graph
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    osc3.connect(gainNode);
+    osc4.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Use different wave types for a rich, dramatic sound
+    osc1.type = 'sawtooth';
+    osc2.type = 'square';
+    osc3.type = 'triangle';
+    osc4.type = 'sine';
+
+    // Dramatic descending progression: high tension → deep defeat
+    // Start with dissonant high frequencies, drop to rumbling lows
+
+    // Main descending tone (440Hz → 55Hz) - A4 to A1
+    osc1.frequency.setValueAtTime(440, now);
+    osc1.frequency.exponentialRampToValueAtTime(55, now + 0.6);
+
+    // Dissonant harmony (330Hz → 41Hz) - slightly off-key for tension
+    osc2.frequency.setValueAtTime(330, now);
+    osc2.frequency.exponentialRampToValueAtTime(41, now + 0.6);
+
+    // Lower rumble (220Hz → 27Hz)
+    osc3.frequency.setValueAtTime(220, now);
+    osc3.frequency.exponentialRampToValueAtTime(27, now + 0.6);
+
+    // Sub-bass impact for weight (110Hz → 20Hz)
+    osc4.frequency.setValueAtTime(110, now);
+    osc4.frequency.exponentialRampToValueAtTime(20, now + 0.6);
+
+    // Dramatic envelope: sharp attack, sustained peak, long decay
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(volume, now + 0.05); // Quick dramatic attack
+    gainNode.gain.setValueAtTime(volume, now + 0.2); // Hold at peak
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8); // Long dramatic fadeout
+
+    // Start and stop
+    osc1.start(now);
+    osc2.start(now);
+    osc3.start(now);
+    osc4.start(now);
+    osc1.stop(now + 0.8);
+    osc2.stop(now + 0.8);
+    osc3.stop(now + 0.8);
+    osc4.stop(now + 0.8);
+}
+
 // Procedurally generate mechanical button click sound
 function playButtonClickSound(volume = 0.15) {
     if (!audioContext) return;
@@ -387,6 +450,9 @@ export function playSound(soundKey, volume = 0.3) {
             break;
         case SOUNDS.KILL:
             playKillSound(volume);
+            break;
+        case SOUNDS.DEATH:
+            playDeathSound(volume);
             break;
         case SOUNDS.BUTTON_CLICK:
             playButtonClickSound(volume);
