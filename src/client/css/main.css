@@ -254,14 +254,52 @@ html, body {
     border-radius: 5px;
   }
   
+  #leaderboard table {
+    border-collapse: collapse;
+  }
+
+  #leaderboard thead {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
   #leaderboard th {
     text-align: center;
-    padding: 2px 5px;
+    padding: 4px 8px;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
   }
-  
+
   #leaderboard td {
     text-align: center;
-    padding: 2px 5px;
+    padding: 2px 8px;
+  }
+
+  #leaderboard th:first-child,
+  #leaderboard td:first-child {
+    text-align: left;
+    padding-left: 5px;
+    width: 25px;
+  }
+
+  #leaderboard th:nth-child(2),
+  #leaderboard td:nth-child(2) {
+    text-align: left;
+    min-width: 100px;
+  }
+
+  #leaderboard th:nth-child(3),
+  #leaderboard td:nth-child(3) {
+    text-align: right;
+    min-width: 50px;
+  }
+
+  #leaderboard th:nth-child(4),
+  #leaderboard td:nth-child(4) {
+    text-align: right;
+    min-width: 40px;
   }
   
   #disconnect-modal {
@@ -304,15 +342,22 @@ html, body {
     }
   
     #leaderboard th {
-      padding: 0 3px;
+      padding: 2px 3px;
+      font-size: 11px;
     }
-  
+
     #leaderboard td {
       padding: 0 3px;
+      font-size: 12px;
     }
-  
+
     #leaderboard table {
-      font-size: 14px;
+      font-size: 12px;
+    }
+
+    #leaderboard th:nth-child(2),
+    #leaderboard td:nth-child(2) {
+      min-width: 70px;
     }
   }
 

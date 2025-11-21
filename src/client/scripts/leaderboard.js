@@ -2,9 +2,10 @@ const Constants = require('../../shared/constants');
 
 var leaderboard = null;
 var score = 0;
+var kills = 0;
 
 const leaderboardTable = document.getElementById('leaderboard');
-const rows = document.querySelectorAll('#leaderboard table tr');
+const rows = document.querySelectorAll('#leaderboard table tbody tr');
 const scorecard = document.getElementById('scorecard');
 const scorebox = document.querySelector('#scorecard span');
 
@@ -13,23 +14,24 @@ const renderLeaderboard = () => {
     if (leaderboard != null) {
         for (let i = 0; i < Object.keys(leaderboard).length; i++) {
             rows[i].innerHTML = `<td>${i + 1})</td><td>${escape(leaderboard[i + 1].username.slice(0, 15)) || 'Anonymous'}</td><td>${
-                leaderboard[i + 1].score}</td>`;
+                leaderboard[i + 1].score}</td><td>${leaderboard[i + 1].kills}</td>`;
         }
         for (let i = Object.keys(leaderboard).length; i < 5; i++) {
-            rows[i].innerHTML = '<td></td><td></td><td></td>';
+            rows[i].innerHTML = '<td></td><td></td><td></td><td></td>';
         }
     }
     renderScore();
 };
 
 const renderScore = () => {
-    scorebox.textContent = score;
+    scorebox.textContent = `${score} | ${kills} Kills`;
 }
 
 // save the leaderboard to the local leaderboard variable
 export const processLeaderboardUpdate = (update) => {
     leaderboard = update.leaderboardUpdate;
     score = update.score;
+    kills = update.kills;
 };
 
 let renderInterval = null;

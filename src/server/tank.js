@@ -20,6 +20,7 @@ class Tank extends DynamicEntity {
     this.hp = Constants.PLAYER_MAX_HP;
     this.fireCooldown = 0;
     this.score = 0;
+    this.kills = 0;
 
     // Physics
     this.radius = Constants.PLAYER_RADIUS;
@@ -284,6 +285,7 @@ class Tank extends DynamicEntity {
       tankStyle: this.tankStyle,
       activeEffects: this.activeEffects.map(e => e.serialize()),
       crownPowerup: this.crownPowerup,
+      kills: this.kills,
     };
   }
 

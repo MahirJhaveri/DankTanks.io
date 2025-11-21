@@ -240,7 +240,7 @@ class Game {
             player.updateTimedEffects(now);
 
             if (this.shouldSendLeaderboard == 0) {
-                this.leaderboard.updatePlayerScore(playerID, player.username, player.score);
+                this.leaderboard.updatePlayerScore(playerID, player.username, player.score, player.kills);
             }
         });
 
@@ -266,7 +266,7 @@ class Game {
 
             // Update bot in leaderboard
             if (this.shouldSendLeaderboard == 0) {
-                this.leaderboard.updatePlayerScore(bot.id, bot.username, bot.score);
+                this.leaderboard.updatePlayerScore(bot.id, bot.username, bot.score, bot.kills);
             }
         });
 
@@ -286,7 +286,7 @@ class Game {
                 this.players[bullet.parentID].onDealtDamage()
                 if (this.shouldSendLeaderboard == 0) {
                     this.leaderboard.updatePlayerScore(bullet.parentID,
-                        this.players[bullet.parentID].username, this.players[bullet.parentID].score);
+                        this.players[bullet.parentID].username, this.players[bullet.parentID].score, this.players[bullet.parentID].kills);
                 }
             }
             // Check if shooter is a bot
@@ -294,7 +294,7 @@ class Game {
                 this.bots[bullet.parentID].onDealtDamage()
                 if (this.shouldSendLeaderboard == 0) {
                     this.leaderboard.updatePlayerScore(bullet.parentID,
-                        this.bots[bullet.parentID].username, this.bots[bullet.parentID].score);
+                        this.bots[bullet.parentID].username, this.bots[bullet.parentID].score, this.bots[bullet.parentID].kills);
                 }
             }
         });
@@ -363,6 +363,7 @@ class Game {
 
                     if (killer) {
                         killer.hp = Constants.PLAYER_MAX_HP;
+                        killer.kills++;
 
                         // Broadcast kill event (player killed by another player/bot)
                         this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_KILL, {
@@ -398,6 +399,7 @@ class Game {
 
                     if (killer) {
                         killer.hp = Constants.PLAYER_MAX_HP;
+                        killer.kills++;
 
                         // Broadcast kill event (player killed by another player/bot)
                         this.broadcastEvent(Constants.EVENT_TYPES.PLAYER_KILL, {
@@ -453,7 +455,8 @@ class Game {
                 if (this.shouldSendLeaderboard == 0) {
                     const update = {
                         leaderboardUpdate: leaderboardUpdate,
-                        score: player.score
+                        score: player.score,
+                        kills: player.kills
                     }
                     socket.emit(Constants.MSG_TYPES.LEADERBOARD_UPDATE, update);
                 }
