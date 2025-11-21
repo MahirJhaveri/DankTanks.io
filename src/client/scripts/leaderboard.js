@@ -24,7 +24,7 @@ const renderLeaderboard = () => {
 };
 
 const renderScore = () => {
-    scorebox.textContent = `${score} | ${kills} Kills`;
+    scorebox.textContent = `Score: ${score} | Kills: ${kills}`;
 }
 
 // save the leaderboard to the local leaderboard variable

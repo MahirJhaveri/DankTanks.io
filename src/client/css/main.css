@@ -264,9 +264,9 @@ html, body {
 
   #leaderboard th {
     text-align: center;
-    padding: 4px 8px;
+    padding: 4px 4px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
     opacity: 0.8;
@@ -274,7 +274,8 @@ html, body {
 
   #leaderboard td {
     text-align: center;
-    padding: 2px 8px;
+    padding: 2px 4px;
+    font-size: 12px;
   }
 
   #leaderboard th:first-child,
@@ -287,18 +288,18 @@ html, body {
   #leaderboard th:nth-child(2),
   #leaderboard td:nth-child(2) {
     text-align: left;
-    min-width: 100px;
+    min-width: 75px;
   }
 
   #leaderboard th:nth-child(3),
   #leaderboard td:nth-child(3) {
-    text-align: right;
+    text-align: left;
     min-width: 50px;
   }
 
   #leaderboard th:nth-child(4),
   #leaderboard td:nth-child(4) {
-    text-align: right;
+    text-align: left;
     min-width: 40px;
   }
   
