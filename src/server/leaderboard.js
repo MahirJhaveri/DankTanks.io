@@ -17,6 +17,7 @@ class Leaderboard {
             result[i] = {
                 username: player[1],
                 score: player[2],
+                kills: player[3],
             };
             i += 1
         });
@@ -24,13 +25,13 @@ class Leaderboard {
         return result;
     }
 
-    updatePlayerScore(playerID, username, score) {
+    updatePlayerScore(playerID, username, score, kills) {
         if (this.topPlayers.length < this.size) {
-            this.topPlayers.push([playerID, username, score]);
+            this.topPlayers.push([playerID, username, score, kills]);
             this.sort();
         } else {
             if (score > this.getMinScore()) {
-                this.topPlayers[-1] = [playerID, username, score];
+                this.topPlayers[-1] = [playerID, username, score, kills];
                 this.sort();
             }
         }
