@@ -49,6 +49,7 @@ class Game {
     }
 
     /* Initializes a list of Obstacles from data in constants */
+    /* Obstacles are auto-scaled to MAP_SIZE in constants.js */
     initObstacles() {
         const obs = [];
         for(let i = 0; i < Constants.OBSTACLES.length; i++) {
