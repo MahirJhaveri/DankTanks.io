@@ -220,6 +220,7 @@ module.exports = Object.freeze({
         SHIELD_PACK: "shieldpack.svg",
         SPEED_PACK: "speedpack.svg",
         BACKGROUND_DESERT: "background.png",
+        LAVA: "lava.png",
         EXPLOSION: {
             STATE1: "explosions/explosion1.png",
             STATE2: "explosions/explosion2.png",
