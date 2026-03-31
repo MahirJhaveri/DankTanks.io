@@ -13,11 +13,19 @@ const scorebox = document.querySelector('#scorecard span');
 const renderLeaderboard = () => {
     if (leaderboard != null) {
         for (let i = 0; i < Object.keys(leaderboard).length; i++) {
-            rows[i].innerHTML = `<td>${i + 1})</td><td>${escape(leaderboard[i + 1].username.slice(0, 15)) || 'Anonymous'}</td><td>${
-                leaderboard[i + 1].score}</td><td>${leaderboard[i + 1].kills}</td>`;
+            const entry = leaderboard[i + 1];
+            const tds = rows[i].querySelectorAll('td');
+            tds[0].textContent = `${i + 1})`;
+            tds[1].textContent = (entry.username || 'Anonymous').slice(0, 15);
+            tds[2].textContent = entry.score;
+            tds[3].textContent = entry.kills;
         }
         for (let i = Object.keys(leaderboard).length; i < 5; i++) {
-            rows[i].innerHTML = '<td></td><td></td><td></td><td></td>';
+            const tds = rows[i].querySelectorAll('td');
+            tds[0].textContent = '';
+            tds[1].textContent = '';
+            tds[2].textContent = '';
+            tds[3].textContent = '';
         }
     }
     renderScore();

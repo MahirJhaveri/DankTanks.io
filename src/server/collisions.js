@@ -47,6 +47,9 @@ function applyCollisions(tanks, bullets, obstacles, crowns, powerups) {
                 continue;
             }
         }
+
+        // Skip remaining collision checks for tanks killed by obstacles
+        if (tank.hp <= 0) continue;
         
         /* Tank-Bullet Collision */
         for (let j = 0; j < bullets.length; j++) {

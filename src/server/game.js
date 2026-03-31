@@ -240,7 +240,7 @@ class Game {
             player.updateTimedEffects(now);
 
             if (this.shouldSendLeaderboard == 0) {
-                this.leaderboard.updatePlayerScore(playerID, player.username, player.score, player.kills);
+                this.leaderboard.updatePlayerScore(playerID, player.username, Math.round(player.score), player.kills);
             }
         });
 
@@ -266,7 +266,7 @@ class Game {
 
             // Update bot in leaderboard
             if (this.shouldSendLeaderboard == 0) {
-                this.leaderboard.updatePlayerScore(bot.id, bot.username, bot.score, bot.kills);
+                this.leaderboard.updatePlayerScore(bot.id, bot.username, Math.round(bot.score), bot.kills);
             }
         });
 
@@ -455,7 +455,7 @@ class Game {
                 if (this.shouldSendLeaderboard == 0) {
                     const update = {
                         leaderboardUpdate: leaderboardUpdate,
-                        score: player.score,
+                        score: Math.round(player.score),
                         kills: player.kills
                     }
                     socket.emit(Constants.MSG_TYPES.LEADERBOARD_UPDATE, update);
