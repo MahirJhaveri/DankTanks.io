@@ -58,7 +58,7 @@ class Tank extends DynamicEntity {
     // Restore original speed
     this.speed = originalSpeed;
 
-    this.score += Constants.SCORE_PER_SECOND;
+    this.score += Constants.SCORE_PER_SECOND * dt;
 
     // Make sure the tank stays in bounds
     this.x = Math.max(0, Math.min(Constants.MAP_SIZE, this.x));

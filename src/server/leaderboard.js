@@ -31,7 +31,7 @@ class Leaderboard {
             this.sort();
         } else {
             if (score > this.getMinScore()) {
-                this.topPlayers[-1] = [playerID, username, score, kills];
+                this.topPlayers[this.topPlayers.length - 1] = [playerID, username, score, kills];
                 this.sort();
             }
         }
