@@ -241,7 +241,8 @@ class Bot extends Tank {
       Constants.TANK.RED,
       Constants.TANK.GREEN,
       Constants.TANK.GRAY,
-      Constants.TANK.USA
+      Constants.TANK.USA,
+      Constants.TANK.PIZZA
     ];
     return styles[Math.floor(Math.random() * styles.length)];
   }
