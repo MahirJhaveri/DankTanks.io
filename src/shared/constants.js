@@ -190,7 +190,8 @@ module.exports = Object.freeze({
         RED: 1,
         GREEN: 2,
         GRAY: 3,
-        USA: 4
+        USA: 4,
+        COW: 5
     },
 
     TANK_NAMES: {
@@ -198,7 +199,8 @@ module.exports = Object.freeze({
         1: "Cherry Bomber",
         2: "Green Machine",
         3: "Iron Giant",
-        4: "Star Spangled Slammer"
+        4: "Star Spangled Slammer",
+        5: "Moo-ving Target"
     },
 
     SPRITES: {
@@ -212,6 +214,8 @@ module.exports = Object.freeze({
         TURRET_GRAY: "TurretGray.png",
         TANK_USA: "TankUSA.png",
         TURRET_USA: "TurretUSA.png",
+        TANK_COW: "TankCow.png",
+        TURRET_COW: "TurretCow.png",
         BULLET: "bullet.svg",
         LASERBEAM: "LaserBeam.png",
         MISSILE: "Missile.png",
