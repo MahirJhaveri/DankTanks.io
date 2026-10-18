@@ -3,7 +3,7 @@ const Constants = require('../../shared/constants');
 const { TANK, SPRITES } = Constants;
 
 const ASSET_NAMES = [SPRITES.TANK_RED, SPRITES.TURRET_RED, SPRITES.TANK_BLUE, SPRITES.TURRET_BLUE, SPRITES.TANK_GREEN, SPRITES.TURRET_GREEN, SPRITES.TANK_GRAY,
-SPRITES.TURRET_GRAY, SPRITES.TANK_USA, SPRITES.TURRET_USA, SPRITES.BULLET, SPRITES.LASERBEAM, SPRITES.MISSILE, SPRITES.CROWN, SPRITES.HEALTH_PACK, SPRITES.SHIELD_PACK, SPRITES.SPEED_PACK,
+SPRITES.TURRET_GRAY, SPRITES.TANK_USA, SPRITES.TURRET_USA, SPRITES.TANK_PUMPKIN, SPRITES.TURRET_PUMPKIN, SPRITES.TANK_PIZZA, SPRITES.TURRET_PIZZA, SPRITES.TANK_COW, SPRITES.TURRET_COW, SPRITES.BULLET, SPRITES.LASERBEAM, SPRITES.MISSILE, SPRITES.CROWN, SPRITES.HEALTH_PACK, SPRITES.SHIELD_PACK, SPRITES.SPEED_PACK,
 SPRITES.BACKGROUND_DESERT,
 SPRITES.EXPLOSION.STATE1, SPRITES.EXPLOSION.STATE2, SPRITES.EXPLOSION.STATE3, SPRITES.EXPLOSION.STATE4, SPRITES.EXPLOSION.STATE5,
 SPRITES.EXPLOSION.STATE6, SPRITES.EXPLOSION.STATE7, SPRITES.EXPLOSION.STATE8];
@@ -45,6 +45,15 @@ export const getTank = (tankStyle) => {
         case TANK.USA:
             return getAsset(SPRITES.TANK_USA);
             break;
+        case TANK.PUMPKIN:
+            return getAsset(SPRITES.TANK_PUMPKIN);
+            break;
+        case TANK.PIZZA:
+            return getAsset(SPRITES.TANK_PIZZA);
+            break;
+        case TANK.COW:
+            return getAsset(SPRITES.TANK_COW);
+            break;
         default:
             return getAsset(SPRITES.TANK_BLUE);
     }
@@ -64,6 +73,15 @@ export const getTurret = (tankStyle) => {
             break;
         case TANK.USA:
             return getAsset(SPRITES.TURRET_USA);
+            break;
+        case TANK.PUMPKIN:
+            return getAsset(SPRITES.TURRET_PUMPKIN);
+            break;
+        case TANK.PIZZA:
+            return getAsset(SPRITES.TURRET_PIZZA);
+            break;
+        case TANK.COW:
+            return getAsset(SPRITES.TURRET_COW);
             break;
         default:
             return getAsset(SPRITES.TURRET_BLUE);
